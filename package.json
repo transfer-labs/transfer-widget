@@ -1,0 +1,27 @@
+{
+  "name": "transfer-widget",
+  "version": "1.0.0",
+  "description": "Transfer widget",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/argo-crypto/transfer-widget.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/argo-crypto/transfer-widget/issues"
+  },
+  "homepage": "https://github.com/argo-crypto/transfer-widget#readme",
+  "devDependencies": {
+    "@types/react": "^18.2.29",
+    "react": "^18.2.0",
+    "typescript": "^5.2.2"
+  }
+}
