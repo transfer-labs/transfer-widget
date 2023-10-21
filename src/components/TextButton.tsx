@@ -1,10 +1,10 @@
 import React from 'react';
 
-type ButtonProps = {
+export type TextButtonProps = {
     label: string
 }
 
-function TextButton({label}: ButtonProps) {
+function TextButton({label}: TextButtonProps) {
   return (
     <>
         <button>{label}</button>

@@ -7,7 +7,7 @@ export type ActionButtonProps = {
 };
 
 const BASE_BUTTON_CLASSES =
-  'cursor-pointer border-radius-6 rounded border-1 font-bold font-manrope font-weight-bold py-2 px-4 w-446 h-50';
+  'cursor-pointer border-radius-6 rounded border-1 border-border-color font-manrope font-medium py-3 px-4 w-full';
 
 const ActionButton: React.FC<ActionButtonProps> = ({ label, background, textColor }) => {
   
