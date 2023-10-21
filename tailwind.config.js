@@ -15,7 +15,8 @@ module.exports = {
         'shadow-element': '#242424',
         'success-green': '#57FFC0',
         'loading-yellow': '#FECE51',
-        'failure-red': '#DB6666'
+        'failure-red': '#DB6666',
+        'tooltip-green': "#2A4239"
       },
       borderWidth: {
         '1': '1px'

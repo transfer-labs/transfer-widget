@@ -1,6 +1,6 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { TransferWidget } from "@/components/TransferWidget";
+import { TransferWidget } from "../components/TransferWidget";
 
 const meta: Meta<typeof TransferWidget> = {
   component: TransferWidget,
@@ -17,13 +17,39 @@ export const Primary: Story = {
       background: "bg-component-background",
       textColor: "text-unselected-text",
     },
+    fromtokennetworkinput: {
+      status: 'default',
+      direction: 'from',
+    },
+    totokennetworkinput: {
+      status: 'default',
+      direction: 'to',
+    }
   },
 };
 
-export const Default: Story = {
-  // args: {
-  //     label:'Select Tokens',
-  //     background: "bg-component-black",
-  //     textColor: 'text-white',
-  // }
+export const Selected: Story = {
+  args: {
+    actionbutton: {
+      label: "Review Bridge",
+      background: "bg-success-green",
+      textColor: "text-black",
+    },
+    fromtokennetworkinput: {
+      status: 'selected',
+      direction: 'from',
+      value: '10',
+      tokenName: 'USDC',
+      chainName: 'Ethereum',
+      balance: '10',
+    },
+    totokennetworkinput: {
+      status: 'selected',
+      direction: 'to',
+      value: '9.95',
+      tokenName: 'USDC',
+      chainName: 'Polygon',
+      balance: '4',
+    }
+  },
 };

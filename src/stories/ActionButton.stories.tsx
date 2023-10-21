@@ -2,7 +2,7 @@ import React from "react";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
-import ActionButton from "@/components/ActionButton";
+import ActionButton from "../components/ActionButton";
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
