@@ -13,7 +13,7 @@ export interface TransferWidgetProps {
 
 const TransferWidget: React.FC<TransferWidgetProps> = ({ actionbutton }) => {
   return (
-    <div className="inline-flex flex-col py-5 px-6 gap-6 border rounded-lg border-border-color bg-modal-background  w-[35vw]">
+    <div className="inline-flex flex-col py-5 px-6 gap-6 border rounded-lg border-border-color bg-modal-background  w-[450px]">
       <div className = "flex flex-col gap-3">
         <p className = 'text-white font-manrope font-bold text-xl'>Transfer</p>
         <div className = "flex flex-col gap-1">

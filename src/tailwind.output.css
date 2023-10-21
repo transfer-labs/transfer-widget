@@ -546,8 +546,8 @@ video {
   display: contents;
 }
 
-.w-\[32\.5vw\] {
-  width: 32.5vw;
+.w-\[450px\] {
+  width: 450px;
 }
 
 .w-full {
