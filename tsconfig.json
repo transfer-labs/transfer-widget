@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5", 
+     "baseUrl": "src",
     "esModuleInterop": true, 
     "forceConsistentCasingInFileNames": true,
     "strict": true, 
@@ -14,9 +15,5 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "emitDeclarationOnly": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": ["src"]
+  }
 }
