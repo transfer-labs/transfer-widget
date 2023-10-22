@@ -6,6 +6,10 @@ export interface TransferWidgetProps {
   actionbutton: ActionButtonProps
   fromtokennetworkinput: TokenNetworkInputProps
   totokennetworkinput: TokenNetworkInputProps
+  fromTokenAddress?: string
+  toTokenAddress?: string
+  fromChainId?: number
+  toChainId?: number
 }
 
 const SwitchArrow = (): ReactNode => {
@@ -63,6 +67,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   totokennetworkinput
 }) => {
   useEffect(() => {
+    // TODO: parse props here
     console.log(fromtokennetworkinput)
     console.log(totokennetworkinput)
   }, [])
@@ -81,11 +86,4 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       <ActionButton {...actionbutton} />
     </div>
   )
-
-  // return (
-  //   <div>
-  //     <ActionButton {...actionbutton} />
-  //     <TextButton {...textbutton}/>
-  //   </div>
-  // )
 }
