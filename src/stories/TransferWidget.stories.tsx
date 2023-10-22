@@ -1,5 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { TransferWidget } from '../components/TransferWidget'
+//example token and network
+import Token from '../../src/icons/network-token-examples/USDC.png'
+import fromNetwork from '../../src/icons/network-token-examples/from-chain.png';
+import toNetwork from '../../src/icons/network-token-examples/to-chain.png';
 
 const meta: Meta<typeof TransferWidget> = {
   component: TransferWidget
@@ -8,6 +12,7 @@ const meta: Meta<typeof TransferWidget> = {
 type Story = StoryObj<typeof TransferWidget>
 
 export default meta
+const defaultStatus = 'default';
 
 export const Primary: Story = {
   args: {
@@ -17,12 +22,18 @@ export const Primary: Story = {
       textColor: 'text-unselected-text'
     },
     fromtokennetworkinput: {
-      status: 'default',
+      status: defaultStatus,
       direction: 'from'
     },
     totokennetworkinput: {
-      status: 'default',
+      status: defaultStatus,
       direction: 'to'
+    }
+    routes : {
+      status: defaultStatus,
+      routeprops: {
+        status: defaultStatus,
+      }
     }
   }
 }
@@ -40,6 +51,8 @@ export const Selected: Story = {
       value: '10',
       tokenName: 'USDC',
       chainName: 'Ethereum',
+      tokenLogo: Token,
+      tokenNetwork: fromNetwork,
       balance: '10'
     },
     totokennetworkinput: {
@@ -48,6 +61,8 @@ export const Selected: Story = {
       value: '9.95',
       tokenName: 'USDC',
       chainName: 'Polygon',
+      tokenLogo: Token,
+      tokenNetwork: toNetwork,
       balance: '4'
     }
   }
