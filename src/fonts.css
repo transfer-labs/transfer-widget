@@ -43,7 +43,7 @@
 @font-face {
   font-family: 'Manrope';
   src: url('./manrope/Manrope-SemiBold.ttf') format('truetype');
-  font-weight: SemiBold;
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
