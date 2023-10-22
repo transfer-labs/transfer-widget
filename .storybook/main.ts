@@ -21,9 +21,18 @@ const config: StorybookConfig = {
               loader: require.resolve("css-loader"),
               options: {
                   
-                  
+                  importLoaders: 1,
               },
-          },
+          },{
+    loader: require.resolve("postcss-loader"),
+    options: {
+    implementation: require.resolve("postcss"),
+    postcssOptions: {
+      // When using postCSS 8
+      implementation: require('postcss'),
+    },
+    },
+    },
       ],
     },],
       }

@@ -1,11 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
-
       fontFamily: {
-        'manrope': ['Manrope', 'sans-serif']
+        manrope: ['Manrope', 'sans-serif']
       },
       colors: {
         'modal-background': '#000000',
@@ -17,12 +16,12 @@ module.exports = {
         'success-green': '#57FFC0',
         'loading-yellow': '#FECE51',
         'failure-red': '#DB6666',
-        'tooltip-green': "#2A4239"
+        'tooltip-green': '#2A4239'
       },
       borderWidth: {
-        '1': '1px'
+        1: '1px'
       }
     }
   },
-  plugins: [],
-};
+  plugins: []
+}
