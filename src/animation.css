@@ -1,0 +1,5 @@
+@keyframes rotate180 {
+    to {
+      transform: rotate(180deg);
+    }
+  }
