@@ -3,6 +3,7 @@ import { Transfer, type SupportedChain } from '@argoplatform/transfer-sdk'
 
 interface TokenNetworkSelectorPageProps {
   name: string
+  supportedChains: SupportedChain[] | null
 }
 const transfer = new Transfer({ apiKey: 'xxx' })
 export const TokenNetworkSelectorPage: FunctionComponent<TokenNetworkSelectorPageProps> = ({ name }): ReactNode => {
