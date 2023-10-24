@@ -4,6 +4,7 @@ import { TransferWidget } from '../components/TransferWidget'
 import Token from '../../src/icons/network-token-examples/USDC.png'
 import fromNetwork from '../../src/icons/network-token-examples/from-chain.png';
 import toNetwork from '../../src/icons/network-token-examples/to-chain.png';
+import Bridge from '../icons/Routes/stargate.png';
 
 const meta: Meta<typeof TransferWidget> = {
   component: TransferWidget
@@ -19,7 +20,8 @@ export const Primary: Story = {
     actionbutton: {
       label: 'Select tokens and networks',
       background: 'bg-component-background',
-      textColor: 'text-unselected-text'
+      textColor: 'text-unselected-text',
+      hover: null,
     },
     fromtokennetworkinput: {
       status: defaultStatus,
@@ -28,12 +30,9 @@ export const Primary: Story = {
     totokennetworkinput: {
       status: defaultStatus,
       direction: 'to'
-    }
-    routes : {
-      status: defaultStatus,
-      routeprops: {
-        status: defaultStatus,
-      }
+    },
+    routes: {
+      status: 'default',
     }
   }
 }
@@ -43,7 +42,8 @@ export const Selected: Story = {
     actionbutton: {
       label: 'Review Bridge',
       background: 'bg-success-green',
-      textColor: 'text-black'
+      textColor: 'text-black',
+      hover: 'hover:bg-hover-green',
     },
     fromtokennetworkinput: {
       status: 'selected',
@@ -64,6 +64,28 @@ export const Selected: Story = {
       tokenLogo: Token,
       tokenNetwork: toNetwork,
       balance: '4'
+    },
+    routes : {
+      status: 'selected',
+      routeprops: {
+        status: defaultStatus,
+        direction: 'from',
+        value: '10',
+        type: 'Bridge',
+        bridge: 'Stargate',
+        bridgeLogo: Bridge,
+        tokenName: 'USDC',
+        chainName: 'Ethereum',
+        tokenLogo: Token,
+        tokenNetwork: fromNetwork,
+        balance: '10',
+        details: {
+          gas: '.073',
+          fees: '.50',
+          time: '5:00',
+          steps: 1,
+        }
+      }
     }
   }
 }
