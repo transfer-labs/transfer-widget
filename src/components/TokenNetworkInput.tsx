@@ -1,7 +1,5 @@
 import React, { type FunctionComponent } from 'react'
 import TokenNetworkImage from './TokenNetworkImage'
-
-
 export interface TokenNetworkInputProps {
   status: 'default' | 'selected'
   direction: 'from' | 'to'
@@ -59,9 +57,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
                   {chainName}
                 </p>
               </div>
-
               <TokenNetworkImage logo={tokenLogo} network={tokenNetwork} />
-              
             </div>
               )}
         </div>
