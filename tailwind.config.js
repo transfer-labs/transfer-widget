@@ -16,7 +16,9 @@ module.exports = {
         'success-green': '#57FFC0',
         'loading-yellow': '#FECE51',
         'failure-red': '#DB6666',
-        'tooltip-green': '#2A4239'
+        'tooltip-green': '#2A4239',
+        'hover-green': '#42CE9A',
+        'hover-red': '#B05353'
       },
       borderWidth: {
         1: '1px'
