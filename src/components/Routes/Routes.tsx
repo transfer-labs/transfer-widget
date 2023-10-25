@@ -3,7 +3,7 @@ import Route, {RouteProps} from './Route';
 
 export interface RoutesProps {
     routeprops: RouteProps
-    status?: 'default' | 'selected'
+    status: 'default' | 'selected' | 'error' | 'gas-error'
 }
 
 const Routes:FunctionComponent<RoutesProps> = ({

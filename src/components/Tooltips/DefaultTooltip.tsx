@@ -21,7 +21,7 @@ export const DefaultTooltip: React.FC<DefaultTooltipProps> = ({ children, label,
             radix-side-right:animate-slide-left-fade 
             radix-side-bottom:animate-slide-up-fade 
             radix-side-left:animate-slide-right-fade 
-            inline-flex items-center rounded-md px-2 py-2 bg-shadow-element border-1"
+            inline-flex items-center rounded-md px-2 py-2 bg-shadow-element border-1 border-border-color"
         >
             <span className="block text-xs leading-none text-accent-color font-manrope">
             {label}
