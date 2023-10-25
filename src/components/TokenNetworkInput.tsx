@@ -5,6 +5,7 @@ import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer
 export interface TokenNetworkInputProps {
   direction: 'from' | 'to';
   estimateTransferValue?: string;
+  amountToBeTransferred?: string;
   chain?: SupportedChain;
   token?: SupportedToken;
   balance?: string;
@@ -12,21 +13,27 @@ export interface TokenNetworkInputProps {
 
 export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
   direction,
+  amountToBeTransferred,
   estimateTransferValue,
   chain,
   token,
   balance,
 }) => {
-  const [amount, setAmount] = useState<string>(direction === 'from' ? '0' : estimateTransferValue ?? '0');
+  const _amount = (): string => {
+    if (direction === 'from' && amountToBeTransferred !== undefined) {
+      return amountToBeTransferred;
+    }
+    if (direction === 'to' && estimateTransferValue !== undefined) {
+      return estimateTransferValue;
+    }
+    return '0';
+  };
+
+  const [amount, setAmount] = useState<string>(_amount());
 
   useEffect(() => {
-    if (direction === 'from' && amount !== '0') {
-      setAmount('0');
-    }
-    if (direction === 'to' && estimateTransferValue !== undefined && estimateTransferValue !== amount) {
-      setAmount(estimateTransferValue);
-    }
-  }, [direction, estimateTransferValue]);
+    setAmount(_amount());
+  }, [direction, amountToBeTransferred, estimateTransferValue]);
 
   return (
     <div className='flex px-4 py-3 flex-col gap-3 w-full border rounded-lg border-border-color bg-component-background'>

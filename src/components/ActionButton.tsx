@@ -23,12 +23,13 @@ const ButtonTypes = {
 export interface ActionButtonProps {
   label: string;
   type?: keyof typeof ButtonTypes;
+  onClick?: () => void;
 }
 
 const BASE_BUTTON_CLASSES =
   'cursor-pointer border-radius-6 rounded border-1 border-border-color font-manrope font-medium py-3 px-4 w-full';
 
-export const ActionButton: React.FunctionComponent<ActionButtonProps> = ({ label, type }) => {
+export const ActionButton: React.FunctionComponent<ActionButtonProps> = ({ label, type, onClick }) => {
   const _type = type ?? 'default';
   const { backgroundColor, textColor, hoverBackgroundColor, disabled } = ButtonTypes[_type];
 
@@ -36,6 +37,7 @@ export const ActionButton: React.FunctionComponent<ActionButtonProps> = ({ label
     <button
       className={`${BASE_BUTTON_CLASSES} ${backgroundColor} ${hoverBackgroundColor} ${textColor}`}
       disabled={disabled}
+      onClick={onClick}
     >
       {label}
     </button>
