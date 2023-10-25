@@ -2,12 +2,14 @@ import React, { useState, type FunctionComponent, useEffect, type ReactNode } fr
 import ActionButton, { type ActionButtonProps } from './ActionButton'
 import TokenNetworkInput, { type TokenNetworkInputProps } from './TokenNetworkInput'
 import Routes, { type RoutesProps} from './Routes/Routes'
+import GasError, { type GasErrorProps } from './Errors/GasError';
 
 export interface TransferWidgetProps {
   actionbutton: ActionButtonProps
   fromtokennetworkinput: TokenNetworkInputProps
   totokennetworkinput: TokenNetworkInputProps
   routes: RoutesProps
+  gaserror: GasErrorProps
   fromTokenAddress?: string
   toTokenAddress?: string
   fromChainId?: number
@@ -43,6 +45,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   fromtokennetworkinput,
   totokennetworkinput,
   routes,
+  gaserror,
 }) => {
   useEffect(() => {
     // TODO: parse props here
@@ -61,6 +64,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
           <TokenNetworkInput {...totokennetworkinput} />
         </div>
       </div>
+      {routes.status === 'gas-error' ? (<GasError {...gaserror}/>) : null}
       <Routes {...routes} />
       <ActionButton {...actionbutton} /> 
     </div>
