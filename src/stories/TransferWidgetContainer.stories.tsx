@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { TransferWidget } from '../components/TransferWidget'
+import { TransferWidgetContainer } from '../components/TransferWidgetContainer'
 // example token and network
 import Token from '../icons/network-token-examples/USDC.png'
 import fromNetwork from '../icons/network-token-examples/from-chain.png'
@@ -19,10 +19,7 @@ export const Primary: Story = {
   args: {
     actionbutton: {
       label: 'Select tokens and networks',
-      background: 'bg-component-background',
-      textColor: 'text-unselected-text',
-      hover: null,
-      disabled: true
+      type: 'disabled'
     },
     fromtokennetworkinput: {
       status: defaultStatus,
@@ -42,12 +39,8 @@ export const Selected: Story = {
   args: {
     actionbutton: {
       label: 'Review Bridge',
-      background: 'bg-success-green',
-      textColor: 'text-black',
-      hover: 'hover:bg-hover-green',
-      disabled: false
     },
-    fromtokennetworkinput: {
+    fromTokenNetworkProps: {
       status: 'selected',
       direction: 'from',
       value: '10',
@@ -57,7 +50,7 @@ export const Selected: Story = {
       tokenNetwork: fromNetwork,
       balance: '10'
     },
-    totokennetworkinput: {
+    toTokenNetworkProps: {
       status: 'selected',
       direction: 'to',
       value: '9.95',
@@ -96,12 +89,9 @@ export const GasError: Story = {
   args: {
     actionbutton: {
       label: 'Error',
-      background: 'bg-failure-red',
-      textColor: 'text-black',
-      hover: 'hover:bg-hover-red',
-      disabled: true
+      type: 'error'
     },
-    fromtokennetworkinput: {
+    fromTokenNetworkProps: {
       status: 'selected',
       direction: 'from',
       value: '10',
@@ -111,7 +101,7 @@ export const GasError: Story = {
       tokenNetwork: fromNetwork,
       balance: '10'
     },
-    totokennetworkinput: {
+    toTokenNetworkProps: {
       status: 'selected',
       direction: 'to',
       value: '9.95',
@@ -153,12 +143,9 @@ export const RouteError: Story = {
   args: {
     actionbutton: {
       label: 'Error',
-      background: 'bg-failure-red',
-      textColor: 'text-black',
-      hover: 'hover:bg-hover-red',
-      disabled: true
+      type: 'error'
     },
-    fromtokennetworkinput: {
+    fromTokenNetworkProps: {
       status: 'selected',
       direction: 'from',
       value: '10',
@@ -168,7 +155,7 @@ export const RouteError: Story = {
       tokenNetwork: fromNetwork,
       balance: '10'
     },
-    totokennetworkinput: {
+    toTokenNetworkProps: {
       status: 'selected',
       direction: 'to',
       value: '9.95',
