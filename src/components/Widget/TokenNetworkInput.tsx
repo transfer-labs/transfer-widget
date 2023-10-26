@@ -9,6 +9,7 @@ export interface TokenNetworkInputProps {
   tokenLogo?: string // the token logo url if 'selected' status
   tokenNetwork?: string // the network url if 'selected' status
   balance?: string // Balance of the token if 'selected' status
+  onAnchorClick?: () => void;
 }
 
 export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
@@ -19,7 +20,8 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
   tokenName,
   tokenLogo,
   tokenNetwork,
-  balance
+  balance,
+  onAnchorClick
 }) => {
   return (
     <div className="flex px-4 py-3 flex-col gap-3 w-full border rounded-lg border-border-color bg-component-background">
@@ -28,7 +30,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
       </p>
       <div className="flex flex-row w-full items-center gap-1 h-10">
         <input
-          className="bg-component-background text-white border-none outline-none text-4xl w-full"
+          className="bg-component-background text-white placeholder-unselected-text font-bold border-none outline-none text-4xl w-full"
           type="text"
           placeholder={status === 'default' ? '0' : value}
         />
@@ -36,7 +38,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
           {status === 'default'
             ? (
             <div className="flex flex-row gap-2 items-center">
-              <a href="#" className="text-unselected-text whitespace-nowrap">
+              <a href="#" className="text-unselected-text whitespace-nowrap" onClick={onAnchorClick}>
                 Select {direction} chain and token
               </a>
               <div className = "w-[53px] h-[50px]">
@@ -48,7 +50,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
             </div>
               )
             : (
-            <div className="flex flex-row gap-1 justify-center items-center">
+            <div className="flex flex-row gap-1 justify-center items-center cursor-pointer" onClick={onAnchorClick}>
               <div className="flex flex-col items-stretch h-full">
                 <p className="text-white font-manrope text-lg">
                   {tokenName}
@@ -57,7 +59,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
                   {chainName}
                 </p>
               </div>
-              <TokenNetworkImage logo={tokenLogo} network={tokenNetwork} />
+              <TokenNetworkImage logo={tokenLogo} networkLogo={tokenNetwork} />
             </div>
               )}
         </div>
