@@ -1,10 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { TransferWidget } from '../components/TransferWidget'
+import { TransferWidget } from '../components/Widget/TransferWidget'
 //example token and network
 import Token from '../../src/icons/network-token-examples/USDC.png'
 import fromNetwork from '../../src/icons/network-token-examples/from-chain.png';
 import toNetwork from '../../src/icons/network-token-examples/to-chain.png';
 import Bridge from '../icons/Routes/stargate.png';
+
+import { Ethereum } from './TokenNetworkSelector.stories'
 
 const meta: Meta<typeof TransferWidget> = {
   component: TransferWidget
@@ -32,11 +34,35 @@ export const Primary: Story = {
       status: defaultStatus,
       direction: 'to'
     },
+    tokennetworkselector:
+    {
+      direction: 'from',
+      network: {
+        network: 'ethereum',
+        chainName: 'ethereum',
+        networkLogo: fromNetwork,
+      },
+      tokens: {
+        token: {
+            tokenName: 'USDC',
+            tokenDescription: 'US Dollar Coin',
+            tokenLogo: Token,
+            balance: '11'
+        },
+        network: {
+            network: 'ethereum',
+            chainName: 'Ethereum',
+            networkLogo: fromNetwork,
+        }
+    }
+    },
     routes: {
       status: 'default',
     }
   }
 }
+
+const defaultNetwork = 'ethereum'
 
 export const Selected: Story = {
   args: {
@@ -66,6 +92,28 @@ export const Selected: Story = {
       tokenLogo: Token,
       tokenNetwork: toNetwork,
       balance: '4'
+    },
+    tokennetworkselector:
+    {
+      direction: 'from',
+      network: {
+        network: 'ethereum',
+        chainName: 'ethereum',
+        networkLogo: fromNetwork,
+      },
+      tokens: {
+        token: {
+            tokenName: 'USDC',
+            tokenDescription: 'US Dollar Coin',
+            tokenLogo: Token,
+            balance: '11'
+        },
+        network: {
+            network: 'ethereum',
+            chainName: 'Ethereum',
+            networkLogo: fromNetwork,
+        }
+    }
     },
     routes : {
       status: 'selected',
