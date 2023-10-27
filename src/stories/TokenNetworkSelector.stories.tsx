@@ -17,26 +17,54 @@ export default meta
 const defaultNetwork = 'ethereum'
 
 
-export const Ethereum: Story = {
+const fromTokenProps = {
+    tokenName: 'USDC',
+    tokenDescription: 'US Dollar Coin',
+    tokenLogo: Token,
+    balance: 11,
+    price: 1,
+  }
+  
+  const fromNetworkProps= {
+    network: "ethereum" as "ethereum" | "polygon" | "arbitrum" | "optimism" | "goerli" | "mumbai",
+    chainName: 'Ethereum',
+    networkLogo: fromNetwork,
+  }
+
+export const From: Story = {
   args: {
     direction: 'from',
-    network: {
-        network: defaultNetwork,
-        chainName: 'Ethereum',
-        networkLogo: fromNetwork,
-    },
+    network: fromNetworkProps,
     tokens: {
-        token: {
-            tokenName: 'USDC',
-            tokenDescription: 'US Dollar Coin',
-            tokenLogo: Token,
-            balance: '11'
-        },
-        network: {
-            network: defaultNetwork,
-            chainName: 'Ethereum',
-            networkLogo: fromNetwork,
-        }
+        token: fromTokenProps,
+        network: fromNetworkProps
     }
   }
 }
+
+const toTokenProps = {
+    tokenName: 'USDC',
+    tokenDescription: 'US Dollar Coin',
+    tokenLogo: Token,
+    balance: 11,
+    price: 1,
+  
+  }
+  
+  const toNetworkProps = {
+    network: "polygon" as "ethereum" | "polygon" | "arbitrum" | "optimism" | "goerli" | "mumbai",
+    chainName: 'Polygon',
+    networkLogo: toNetwork,
+  }
+
+
+export const To: Story = {
+    args: {
+      direction: 'to',
+      network: toNetworkProps,
+      tokens: {
+          token: toTokenProps,
+          network: toNetworkProps
+      }
+    }
+  }

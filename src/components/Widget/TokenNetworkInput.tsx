@@ -1,14 +1,14 @@
 import React, { type FunctionComponent } from 'react'
-import TokenNetworkImage from './TokenNetworkImage'
+import TokenNetworkImage from '../Tokens/TokenNetworkImage'
+import {type SupportedTokenProps, type SupportedNetworkProps, type SupportedTokensProps} from '../Tokens/TokenNetworkProps'
 export interface TokenNetworkInputProps {
   status: 'default' | 'selected'
   direction: 'from' | 'to'
   value?: string // The actual value if 'selected' status
-  chainName?: string // The chain name if 'selected' status
-  tokenName?: string // The token name if 'selected' status
-  tokenLogo?: string // the token logo url if 'selected' status
-  tokenNetwork?: string // the network url if 'selected' status
-  balance?: string // Balance of the token if 'selected' status
+  supportedtokensprops: {
+    token: SupportedTokenProps,
+    network: SupportedNetworkProps,
+  }
   onAnchorClick?: () => void;
 }
 
@@ -16,11 +16,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
   status,
   direction,
   value,
-  chainName,
-  tokenName,
-  tokenLogo,
-  tokenNetwork,
-  balance,
+  supportedtokensprops,
   onAnchorClick
 }) => {
   return (
@@ -33,6 +29,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
           className="bg-component-background text-white placeholder-unselected-text font-bold border-none outline-none text-4xl w-full"
           type="text"
           placeholder={status === 'default' ? '0' : value}
+          disabled={direction === 'to'}
         />
         <div className="flex flex-col">
           {status === 'default'
@@ -53,13 +50,13 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
               <div className="flex flex-row gap-1 justify-center items-center cursor-pointer" onClick={onAnchorClick}>
                 <div className="flex flex-col items-stretch h-full">
                   <p className="text-white font-manrope text-lg">
-                    {tokenName}
+                    {supportedtokensprops.token.tokenName}
                   </p>
                   <p className="text-accent-color font-manrope text-sm">
-                    {chainName}
+                    {supportedtokensprops.network.chainName}
                   </p>
                 </div>
-                <TokenNetworkImage logo={tokenLogo} networkLogo={tokenNetwork} />
+                <TokenNetworkImage logo={supportedtokensprops.token.tokenLogo} networkLogo={supportedtokensprops.network.networkLogo} />
               </div>
             )}
         </div>
@@ -69,7 +66,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
         {status !== 'default' && (
           <div className="flex flex-row gap-1 items-center justify-center">
             <p className="text-unselected-text font-manrope text-sm">
-              Balance: {balance}
+              Balance: {supportedtokensprops.token.balance}
             </p>
             {direction === 'from' && (
               <button className="bg-tooltip-green border-border-color text-sm text-success-green rounded-md py-.25 px-1">

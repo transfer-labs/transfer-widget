@@ -1,65 +1,61 @@
 import React, { type FunctionComponent, useState } from 'react'
 import Best from '../../icons/Routes/best-route.png'
-import TokenNetworkImage from '../Widget/TokenNetworkImage'
-import Expand from '../../icons/Routes/expand-route/expand-close.png'
+import TokenNetworkImage from '../Tokens/TokenNetworkImage'
 import { GasInfo, FeeInfo, TimeInfo, StepsInfo, RouteDetailsProps } from './RouteDetails';
 import {DefaultTooltip} from '../Tooltips/DefaultTooltip'
 import { motion, AnimatePresence } from 'framer-motion';
+import { type SupportedTokenProps, type SupportedNetworkProps, type SupportedTokensProps } from '../Tokens/TokenNetworkProps'
 
+
+interface RouteTokenProps {
+    fromTokenProps: {
+        SupportedTokensProps: {
+            fromToken: SupportedTokenProps,
+            fromNetwork: SupportedNetworkProps
+        }
+    },
+    toTokenProps: {
+        SupportedTokensProps: {
+            toToken: SupportedTokenProps,
+            toNetwork: SupportedNetworkProps
+        }
+    }
+}
 
 export interface RouteProps {
     status: 'default' | 'selected' | 'error' | 'gas-error'
-    direction: 'from' | 'to'
     value?: string // The actual value if 'selected' status
     type?: 'Bridge' | 'Bridge and Swap' | 'Swap' | 'Swap and Bridge'
     bridge?: string //name of the bridge for the swap if 'selected'
     bridgeLogo?: string //bridge logo if 'selected' status
-    chainName?: string // The chain name if 'selected' status
-    tokenName?: string // The token name if 'selected' status
-    tokenLogo?: string // the token logo url if 'selected' status
-    tokenNetwork?: string // the network url if 'selected' status
-    balance?: string // Balance of the token if 'selected' status
+    routetokenprops: RouteTokenProps
     details: RouteDetailsProps // Details of the route if 'selected' status
 }
+
+export const DividerCircle = () => {
+    return (
+        <svg width="5" height="5" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="2.5" cy="2.5" r="2.5" fill="#C4C4C4"/>
+        </svg>
+    )
+}
+
 
 const Route: FunctionComponent<RouteProps> = 
     ({
         status,
-        direction,
         value,
         type,
         bridge,
         bridgeLogo,
-        chainName,
-        tokenName,
-        tokenLogo,
-        tokenNetwork,
-        balance,
+        routetokenprops,
         details,
     }) => {
 
 
-    const DividerCircle = () => {
-        return (
-            <svg width="5" height="5" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="2.5" cy="2.5" r="2.5" fill="#C4C4C4"/>
-            </svg>
-        )
-    }
-
    const [isClicked, setIsClicked] = useState(false);
    const [isHovered, setIsHovered] = useState(false);
    
-   const ExpandedRoute = () => {
-    return (
-        <div className = 'flex flex-col gap-1'>
-            {bridge}
-        </div>
-    )
-   }
-
-
-
     return (
 
         <div className={`flex flex-col gap-4 w-full bg-component-background ${status === 'error' ? 'border border-failure-red' : 'border border-success-green'} rounded-lg py-3 px-4 ${status==='gas-error' ? 'opacity-30' : 'opacity-100'}`}>
@@ -85,14 +81,17 @@ const Route: FunctionComponent<RouteProps> =
                 {/* token, bridge info (unexpanded), and expanded button  */}
                 <div className="relative flex flex-row justify-between w-full items-start sm:items-center">
                     <div className = "flex flex-row gap-1 items-center justify-center">
-                        <TokenNetworkImage logo = {tokenLogo} networkLogo = {tokenNetwork} />
+                        <TokenNetworkImage 
+                        logo = {routetokenprops.toTokenProps.SupportedTokensProps.toToken.tokenLogo} 
+                        networkLogo = {routetokenprops.toTokenProps.SupportedTokensProps.toNetwork.networkLogo} 
+                        />
                         <div className = 'flex flex-col'>
                             <p className={'text-white font-manrope text-xl font-medium'}>
-                                {value} {tokenName}
+                                {value} {routetokenprops.toTokenProps.SupportedTokensProps.toToken.tokenName}
                             </p>
                             <div className = 'flex flex-row gap-1 items-center'>
                                 <p className={'text-accent-color font-manrope text-sm font-medium'}>
-                                    {chainName}
+                                    {routetokenprops.toTokenProps.SupportedTokensProps.toNetwork.chainName}
                                 </p>
                                 <DividerCircle />
                                 <div className = 'flex flex-row gap-.25 items-center'>
@@ -146,42 +145,21 @@ const Route: FunctionComponent<RouteProps> =
                                 </p>
                             </div>
                             <p className="text-accent-color font-manrope text-sm m-0">
-                                {type} into {tokenName} using {bridge}
+                                {type} from {routetokenprops.fromTokenProps.SupportedTokensProps.fromToken.tokenName} to {routetokenprops.toTokenProps.SupportedTokensProps.toToken.tokenName} using {bridge}
                             </p>
         
                         </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
-
-                {/* the expanded route details with slide down animation
-                <div className='relative'>
-                    {isClicked ? (
-                        <div className="transition-transform duration-500 ease-in-out transform translate-y-0 flex flex-col gap-.5">
-                            <div className = 'flex flex-row gap-.25 items-center'>
-                                <img src = {bridgeLogo} className = 'w-5 h-5'/>
-                                <p className={'text-accent-color font-manrope text-lg font-medium'}>
-                                    {bridge}
-                                </p>
-                            </div>
-                        
-                                <p className="text-accent-color font-manrope text-sm m-0">
-                                    {type} into {tokenName} using {bridge}
-                                </p>
-                            
-                        </div>
-                    ) : (
-                        <div className="absolute transition-transform duration-500 ease-in-out transform -translate-y-full opacity-0"/>
-                    )}
-                </div> */}
             </div>
 
                 {/* icons regarding the route details */}
                 <div className = 'flex flex-row justify-between w-full items-center'>
-                    <GasInfo gas = {details.gas}/>
-                    <FeeInfo fees = {details.fees} />
-                    <TimeInfo time = {details.time} />
-                    <StepsInfo steps = {details.steps} />
+                    <GasInfo gas = {details.gas} color = 'unselected-text' side = 'bottom'/>
+                    <FeeInfo fees = {details.fees} color = 'unselected-text' side = 'bottom'/>
+                    <TimeInfo time = {details.time} color = 'unselected-text' side ='bottom'/>
+                    <StepsInfo steps = {details.steps} color = 'unselected-text' side = 'bottom' />
                 </div>
                 </>
         )}

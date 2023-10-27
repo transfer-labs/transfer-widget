@@ -1,5 +1,5 @@
 import React, { useState, type FunctionComponent, useEffect, type ReactNode } from 'react'
-import ActionButton, { type ActionButtonProps } from '../ActionButton'
+import ActionButton, { type ActionButtonProps } from '../Buttons/ActionButton'
 import TokenNetworkInput, { type TokenNetworkInputProps } from './TokenNetworkInput'
 import Routes, { type RoutesProps } from '../Routes/Routes'
 import GasError, { type GasErrorProps } from '../Errors/GasError';

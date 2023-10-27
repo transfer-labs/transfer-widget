@@ -6,7 +6,7 @@ import fromNetwork from '../../src/icons/network-token-examples/from-chain.png';
 import toNetwork from '../../src/icons/network-token-examples/to-chain.png';
 import Bridge from '../icons/Routes/stargate.png';
 
-import { Ethereum } from './TokenNetworkSelector.stories'
+import { From } from './TokenNetworkSelector.stories'
 
 const meta: Meta<typeof TransferWidget> = {
   component: TransferWidget
@@ -64,6 +64,65 @@ export const Primary: Story = {
 
 const defaultNetwork = 'ethereum'
 
+const fromTokenProps = {
+  tokenName: 'USDC',
+  tokenDescription: 'US Dollar Coin',
+  tokenLogo: Token,
+  balance: 11,
+  price: 1,
+}
+
+const fromTokenNetworkProps= {
+  network: "ethereum" as "ethereum" | "polygon" | "arbitrum" | "optimism" | "goerli" | "mumbai",
+  chainName: 'Ethereum',
+  networkLogo: fromNetwork,
+}
+
+const toTokenProps = {
+  tokenName: 'USDC',
+  tokenDescription: 'US Dollar Coin',
+  tokenLogo: Token,
+  balance: 11,
+  price: 1,
+
+}
+
+const toTokenNetworkProps = {
+  network: "polygon" as "ethereum" | "polygon" | "arbitrum" | "optimism" | "goerli" | "mumbai",
+  chainName: 'Polygon',
+  networkLogo: toNetwork,
+}
+
+const RouteDetailProps = {
+  gas: '.073',
+  fees: '.50',
+  time: '5:00',
+  steps: 1,
+}
+
+const RouteProps= {
+  status: 'default' as 'default' | 'selected' | 'error' | 'gas-error',
+  type: 'Bridge' as 'Bridge' | 'Bridge and Swap' | 'Swap' | 'Swap and Bridge',
+  bridge: 'Stargate',
+  bridgeLogo: Bridge,
+  routetokenprops: {
+    fromTokenProps: { 
+      SupportedTokensProps: {
+        fromToken: fromTokenProps,
+        fromNetwork: fromTokenNetworkProps,
+      }
+    },
+    toTokenProps: {
+      SupportedTokensProps: {
+        toToken: toTokenProps,
+        toNetwork: toTokenNetworkProps,
+      }
+    }
+  },
+  details: RouteDetailProps
+}
+
+
 export const Selected: Story = {
   args: {
     actionbutton: {
@@ -77,65 +136,32 @@ export const Selected: Story = {
       status: 'selected',
       direction: 'from',
       value: '10',
-      tokenName: 'USDC',
-      chainName: 'Ethereum',
-      tokenLogo: Token,
-      tokenNetwork: fromNetwork,
-      balance: '10'
+      supportedtokensprops: {
+        token: fromTokenProps,
+        network: fromTokenNetworkProps
+      }
     },
     totokennetworkinput: {
       status: 'selected',
       direction: 'to',
       value: '9.95',
-      tokenName: 'USDC',
-      chainName: 'Polygon',
-      tokenLogo: Token,
-      tokenNetwork: toNetwork,
-      balance: '4'
+      supportedtokensprops: {
+        token: toTokenProps,
+        network: toTokenNetworkProps
+      }
     },
     tokennetworkselector:
     {
-      direction: 'from',
-      network: {
-        network: 'ethereum',
-        chainName: 'ethereum',
-        networkLogo: fromNetwork,
-      },
+      direction: 'to',
+      network: toTokenNetworkProps,
       tokens: {
-        token: {
-            tokenName: 'USDC',
-            tokenDescription: 'US Dollar Coin',
-            tokenLogo: Token,
-            balance: '11'
-        },
-        network: {
-            network: 'ethereum',
-            chainName: 'Ethereum',
-            networkLogo: fromNetwork,
-        }
+        token: toTokenProps,
+        network: toTokenNetworkProps,
     }
     },
     routes : {
       status: 'selected',
-      routeprops: {
-        status: defaultStatus,
-        direction: 'from',
-        value: '10',
-        type: 'Bridge',
-        bridge: 'Stargate',
-        bridgeLogo: Bridge,
-        tokenName: 'USDC',
-        chainName: 'Ethereum',
-        tokenLogo: Token,
-        tokenNetwork: fromNetwork,
-        balance: '10',
-        details: {
-          gas: '.073',
-          fees: '.50',
-          time: '5:00',
-          steps: 1,
-        }
-      }
+      routeprops: RouteProps
     }
   }
 }
@@ -155,44 +181,40 @@ export const GasError: Story = {
       status: 'selected',
       direction: 'from',
       value: '10',
-      tokenName: 'USDC',
-      chainName: 'Ethereum',
-      tokenLogo: Token,
-      tokenNetwork: fromNetwork,
-      balance: '10'
+      supportedtokensprops: {
+        token: fromTokenProps,
+        network: fromTokenNetworkProps
+      }
     },
     totokennetworkinput: {
       status: 'selected',
       direction: 'to',
       value: '9.95',
-      tokenName: 'USDC',
-      chainName: 'Polygon',
-      tokenLogo: Token,
-      tokenNetwork: toNetwork,
-      balance: '4'
+      supportedtokensprops: {
+        token: toTokenProps,
+        network: toTokenNetworkProps
+      }
+    },
+    tokennetworkselector:
+    {
+      direction: 'to',
+      network: toTokenNetworkProps,
+      tokens: {
+        token: toTokenProps,
+        network: toTokenNetworkProps,
+    }
     },
     routes : {
       status: 'gas-error',
       routeprops: {
         status: 'gas-error',
-        direction: 'from',
-        value: '10',
         type: 'Bridge',
         bridge: 'Stargate',
         bridgeLogo: Bridge,
-        tokenName: 'USDC',
-        chainName: 'Ethereum',
-        tokenLogo: Token,
-        tokenNetwork: fromNetwork,
-        balance: '10',
-        details: {
-          gas: '.073',
-          fees: '.50',
-          time: '5:00',
-          steps: 1,
-        }
-      }
-    },
+        routetokenprops: RouteProps.routetokenprops,
+        details: RouteDetailProps,
+        },
+      },
     gaserror: {
       label: "Need ETH for Gas Fees to make successful transaction."
     }
@@ -212,46 +234,30 @@ export const RouteError: Story = {
       status: 'selected',
       direction: 'from',
       value: '10',
-      tokenName: 'USDC',
-      chainName: 'Ethereum',
-      tokenLogo: Token,
-      tokenNetwork: fromNetwork,
-      balance: '10'
+      supportedtokensprops: {
+        token: fromTokenProps,
+        network: fromTokenNetworkProps
+      }
     },
     totokennetworkinput: {
       status: 'selected',
       direction: 'to',
       value: '9.95',
-      tokenName: 'USDC',
-      chainName: 'Polygon',
-      tokenLogo: Token,
-      tokenNetwork: toNetwork,
-      balance: '4'
+      supportedtokensprops: {
+        token: toTokenProps,
+        network: toTokenNetworkProps
+      }
     },
     routes : {
       status: 'error',
       routeprops: {
         status: 'error',
-        direction: 'from',
-        value: '10',
         type: 'Bridge',
         bridge: 'Stargate',
         bridgeLogo: Bridge,
-        tokenName: 'USDC',
-        chainName: 'Ethereum',
-        tokenLogo: Token,
-        tokenNetwork: fromNetwork,
-        balance: '10',
-        details: {
-          gas: '.073',
-          fees: '.50',
-          time: '5:00',
-          steps: 1,
-        }
-      }
-    },
-    gaserror: {
-      label: "Need ETH for Gas Fees to make successful transaction."
-    }
+        routetokenprops: RouteProps.routetokenprops,
+        details: RouteDetailProps,
+        },
+      },
   }
 }
