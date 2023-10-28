@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { TransferWidgetContainer } from '../components/TransferWidgetContainer';
+import { TransferWidgetContainer } from '../components/widget/TransferWidgetContainer';
 // example token and network
 import Token from '../icons/network-token-examples/USDC.png';
 import fromNetwork from '../icons/network-token-examples/from-chain.png';

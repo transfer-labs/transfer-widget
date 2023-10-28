@@ -1,10 +1,12 @@
 import React, { type FunctionComponent, useEffect, type ReactNode, useState } from 'react';
-import { TransferWidgetContainer } from './TransferWidgetContainer';
+import { TransferWidgetContainer } from './widget/TransferWidgetContainer';
 import { TransferConext } from '../context/TransferContext';
 import { Transfer, type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
-import { type RoutesProps } from './Routes/RouteList';
-import { type GasErrorProps } from './Errors/GasError';
+import { type RoutesProps } from './routes/RouteList';
+import { type Direction } from 'models/const';
+import { type ErrorMessageProps } from './errors/ErrorMessage';
+
 export interface TransferWidgetProps {
   fromChainId?: number;
   toChainId?: number;
@@ -13,7 +15,6 @@ export interface TransferWidgetProps {
   amountToBeTransferred?: string;
 
   // TODO: Remove
-  gasErrorProps: GasErrorProps;
   routes: RoutesProps;
 }
 
@@ -27,7 +28,6 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   fromTokenAddress,
   toTokenAddress,
   amountToBeTransferred,
-  gasErrorProps,
   routes,
 }): ReactNode => {
   const [fromChain, setFromChain] = useState<SupportedChain | undefined>(undefined);
@@ -35,12 +35,13 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   const [toChain, setToChain] = useState<SupportedChain | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
   const { supportedChains, getSupportedTokens } = useTransfer({ transfer });
+  // const [error, setError] = useState<ErrorMessageProps | undefined>(undefined);
 
   // Process props
   useEffect(() => {
     async function setSupportedChainAndToken(
       _supportedChains: SupportedChain[],
-      direction: 'from' | 'to',
+      direction: Direction,
       chainId: number,
       tokenAddress?: string,
     ): Promise<void> {
@@ -74,6 +75,24 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     }
   }, [supportedChains, fromChainId, toChainId, fromTokenAddress, toTokenAddress]);
 
+  function handleChainSelect(direction: Direction, chain: SupportedChain): void {
+    // TODO: handle select logic
+    if (direction === 'from') {
+      setFromChain(chain);
+    } else {
+      setToChain(chain);
+    }
+  }
+
+  function handleTokenSelect(direction: Direction, token: SupportedToken): void {
+    // TODO: handle select logic
+    if (direction === 'from') {
+      setFromToken(token);
+    } else {
+      setToToken(token);
+    }
+  }
+
   return (
     <TransferConext.Provider value={transfer}>
       <TransferWidgetContainer
@@ -81,10 +100,12 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         fromToken={fromToken}
         toChain={toChain}
         toToken={toToken}
+        handleChainSelect={handleChainSelect}
+        handleTokenSelect={handleTokenSelect}
         amountToBeTransferred={amountToBeTransferred}
-        gasErrorProps={gasErrorProps}
         routes={routes}
         supportedChains={supportedChains}
+        buttonState={{ type: 'default', label: 'Transfer' }}
       />
     </TransferConext.Provider>
   );

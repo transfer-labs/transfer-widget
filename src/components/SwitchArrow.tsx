@@ -1,11 +1,17 @@
 import React, { type ReactNode, useState } from 'react';
+import { motion } from 'framer-motion';
 
 export const SwitchArrow = (): ReactNode => {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
 
+  const variants = {
+    clicked: { rotate: 180 },
+    notClicked: { rotate: 0 },
+  };
+
   return (
-    <div
+    <motion.div
       className={'absolute top-[43.5%] left-[47%] transform'}
       onMouseEnter={() => {
         setIsHovered(true);
@@ -16,10 +22,9 @@ export const SwitchArrow = (): ReactNode => {
       onClick={() => {
         setIsClicked(!isClicked);
       }}
-      style={{
-        transition: 'transform 0.3s ease-in-out',
-        transform: isClicked ? 'rotate(180deg)' : 'rotate(0deg)',
-      }}
+      variants={variants}
+      animate={isClicked ? 'clicked' : 'notClicked'}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
       <svg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'>
         <rect x='1.5' y='1.5' width='37' height='37' rx='7.5' fill='#111111' />
@@ -35,8 +40,8 @@ export const SwitchArrow = (): ReactNode => {
           d='M24.5 14C24.7761 14 25 14.2239 25 14.5V23.2929L28.1464 20.1465C28.3417 19.9512 28.6583 19.9512 28.8536 20.1465C29.0488 20.3417 29.0488 20.6583 28.8536 20.8535L24.8536 24.8536C24.7598 24.9473 24.6326 25 24.5 25C24.3674 25 24.2402 24.9473 24.1465 24.8536L20.1465 20.8535C19.9512 20.6583 19.9512 20.3417 20.1465 20.1465C20.3417 19.9512 20.6583 19.9512 20.8536 20.1465L24 23.2929V14.5C24 14.2239 24.2239 14 24.5 14Z'
           fill='white'
         />
-        <rect x='1.5' y='1.5' width='37' height='37' rx='7.5' stroke={isHovered ? 'white' : 'black'} strokeWidth='2' />
+        <rect x='1.5' y='1.5' width='37' height='37' rx='7.5' stroke={isHovered ? 'white' : 'black'} strokeWidth='2' />{' '}
       </svg>
-    </div>
+    </motion.div>
   );
 };

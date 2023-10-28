@@ -1,9 +1,10 @@
 import React, { type FunctionComponent, useState, useEffect } from 'react';
-import TokenNetworkImage from './TokenNetworkImage';
+import { TokenNetworkImage } from './TokenNetworkImage';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
+import { type Direction } from 'models/const';
 
 export interface TokenNetworkInputProps {
-  direction: 'from' | 'to';
+  direction: Direction;
   estimateTransferValue?: string;
   amountToBeTransferred?: string;
   chain?: SupportedChain;

@@ -1,9 +1,9 @@
 import React, { type FunctionComponent, useState } from 'react';
 import Best from '../../icons/Routes/best-route.png';
-import TokenNetworkImage from '../Widget/TokenNetworkImage';
+import TokenNetworkImage from '../widget/TokenNetworkImage';
 import Expand from '../../icons/Routes/expand-route/expand-close.png';
-import { GasInfo, FeeInfo, TimeInfo, StepsInfo, RouteDetailsProps } from './RouteDetails';
-import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
+import { GasInfo, FeeInfo, TimeInfo, StepsInfo, type RouteDetailsProps } from './RouteDetails';
+import { DefaultTooltip } from '../tooltips/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export interface RouteProps {
