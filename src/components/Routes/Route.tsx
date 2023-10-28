@@ -1,9 +1,10 @@
 import React, { type FunctionComponent, useState } from 'react';
-import Best from '../../icons/routes/best-route.png';
-import TokenNetworkImage from '../TokenNetworkImage';
-import Expand from '../../icons/routes/expand-route/expand-close.png';
-import { GasInfo, FeeInfo, TimeInfo, StepsInfo, type RouteDetailsProps } from './RouteDetails';
+import Best from '../../icons/Routes/best-route.png';
+import TokenNetworkImage from '../Widget/TokenNetworkImage';
+import Expand from '../../icons/Routes/expand-route/expand-close.png';
+import { GasInfo, FeeInfo, TimeInfo, StepsInfo, RouteDetailsProps } from './RouteDetails';
 import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export interface RouteProps {
   status: 'default' | 'selected' | 'error' | 'gas-error';
@@ -74,7 +75,7 @@ const Route: FunctionComponent<RouteProps> = ({
             {/* token, bridge info (unexpanded), and expanded button  */}
             <div className='relative flex flex-row justify-between w-full items-start sm:items-center'>
               <div className='flex flex-row gap-1 items-center justify-center'>
-                <TokenNetworkImage logo={tokenLogo} network={tokenNetwork} />
+                <TokenNetworkImage logo={tokenLogo} networkLogo={tokenNetwork} />
                 <div className='flex flex-col'>
                   <p className={'text-white font-manrope text-xl font-medium'}>
                     {value} {tokenName}
@@ -121,23 +122,52 @@ const Route: FunctionComponent<RouteProps> = ({
               </div>
             </div>
 
-            {/* the expanded route details with slide down animation */}
-            <div className='relative'>
-              {isClicked ? (
-                <div className='transition-transform duration-500 ease-in-out transform translate-y-0 flex flex-col gap-.5'>
-                  <div className='flex flex-row gap-.25 items-center'>
-                    <img src={bridgeLogo} className='w-5 h-5' />
-                    <p className={'text-accent-color font-manrope text-lg font-medium'}>{bridge}</p>
+            <AnimatePresence initial={false}>
+              {isClicked && (
+                <motion.div
+                  key='content'
+                  initial='collapsed'
+                  animate='open'
+                  exit='collapsed'
+                  variants={{
+                    open: { opacity: 1, height: 'auto' },
+                    collapsed: { opacity: 0, height: 0 },
+                  }}
+                  transition={{ duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] }}
+                >
+                  <div className='flex flex-col gap-.5'>
+                    <div className='flex flex-row gap-.25 items-center'>
+                      <img src={bridgeLogo} className='w-5 h-5' />
+                      <p className={'text-accent-color font-manrope text-lg font-medium'}>{bridge}</p>
+                    </div>
+                    <p className='text-accent-color font-manrope text-sm m-0'>
+                      {type} into {tokenName} using {bridge}
+                    </p>
                   </div>
-
-                  <p className='text-accent-color font-manrope text-sm m-0'>
-                    {type} into {tokenName} using {bridge}
-                  </p>
-                </div>
-              ) : (
-                <div className='absolute transition-transform duration-500 ease-in-out transform -translate-y-full opacity-0' />
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
+
+            {/* the expanded route details with slide down animation
+                <div className='relative'>
+                    {isClicked ? (
+                        <div className="transition-transform duration-500 ease-in-out transform translate-y-0 flex flex-col gap-.5">
+                            <div className = 'flex flex-row gap-.25 items-center'>
+                                <img src = {bridgeLogo} className = 'w-5 h-5'/>
+                                <p className={'text-accent-color font-manrope text-lg font-medium'}>
+                                    {bridge}
+                                </p>
+                            </div>
+                        
+                                <p className="text-accent-color font-manrope text-sm m-0">
+                                    {type} into {tokenName} using {bridge}
+                                </p>
+                            
+                        </div>
+                    ) : (
+                        <div className="absolute transition-transform duration-500 ease-in-out transform -translate-y-full opacity-0"/>
+                    )}
+                </div> */}
           </div>
 
           {/* icons regarding the route details */}

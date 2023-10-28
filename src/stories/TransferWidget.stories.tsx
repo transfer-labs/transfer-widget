@@ -1,19 +1,21 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { TransferWidget } from '../components/TransferWidget'
-// example token and network
-import Token from '../icons/network-token-examples/USDC.png'
-import fromNetwork from '../icons/network-token-examples/from-chain.png'
-import toNetwork from '../icons/network-token-examples/to-chain.png'
-import Bridge from '../icons/routes/stargate.png'
+import type { Meta, StoryObj } from '@storybook/react';
+import { TransferWidget } from '../components/Widget/TransferWidget';
+//example token and network
+import Token from '../../src/icons/network-token-examples/USDC.png';
+import fromNetwork from '../../src/icons/network-token-examples/from-chain.png';
+import toNetwork from '../../src/icons/network-token-examples/to-chain.png';
+import Bridge from '../icons/Routes/stargate.png';
 
-const meta: Meta<typeof TransferWidgetContainer> = {
-  component: TransferWidgetContainer
-}
+import { Ethereum } from './TokenNetworkSelector.stories';
 
-type Story = StoryObj<typeof TransferWidgetContainer>
+const meta: Meta<typeof TransferWidget> = {
+  component: TransferWidget,
+};
 
-export default meta
-const defaultStatus = 'default'
+type Story = StoryObj<typeof TransferWidgetContainer>;
+
+export default meta;
+const defaultStatus = 'default';
 
 export const Primary: Story = {
   args: {
@@ -22,21 +24,44 @@ export const Primary: Story = {
       background: 'bg-component-background',
       textColor: 'text-unselected-text',
       hover: null,
-      disabled: true
+      disabled: true,
     },
     fromtokennetworkinput: {
       status: defaultStatus,
-      direction: 'from'
+      direction: 'from',
     },
     totokennetworkinput: {
       status: defaultStatus,
-      direction: 'to'
+      direction: 'to',
+    },
+    tokennetworkselector: {
+      direction: 'from',
+      network: {
+        network: 'ethereum',
+        chainName: 'ethereum',
+        networkLogo: fromNetwork,
+      },
+      tokens: {
+        token: {
+          tokenName: 'USDC',
+          tokenDescription: 'US Dollar Coin',
+          tokenLogo: Token,
+          balance: '11',
+        },
+        network: {
+          network: 'ethereum',
+          chainName: 'Ethereum',
+          networkLogo: fromNetwork,
+        },
+      },
     },
     routes: {
-      status: 'default'
-    }
-  }
-}
+      status: 'default',
+    },
+  },
+};
+
+const defaultNetwork = 'ethereum';
 
 export const Selected: Story = {
   args: {
@@ -45,7 +70,7 @@ export const Selected: Story = {
       background: 'bg-success-green',
       textColor: 'text-black',
       hover: 'hover:bg-hover-green',
-      disabled: false
+      disabled: false,
     },
     fromtokennetworkinput: {
       status: 'selected',
@@ -55,7 +80,7 @@ export const Selected: Story = {
       chainName: 'Ethereum',
       tokenLogo: Token,
       tokenNetwork: fromNetwork,
-      balance: '10'
+      balance: '10',
     },
     totokennetworkinput: {
       status: 'selected',
@@ -65,7 +90,28 @@ export const Selected: Story = {
       chainName: 'Polygon',
       tokenLogo: Token,
       tokenNetwork: toNetwork,
-      balance: '4'
+      balance: '4',
+    },
+    tokennetworkselector: {
+      direction: 'from',
+      network: {
+        network: 'ethereum',
+        chainName: 'ethereum',
+        networkLogo: fromNetwork,
+      },
+      tokens: {
+        token: {
+          tokenName: 'USDC',
+          tokenDescription: 'US Dollar Coin',
+          tokenLogo: Token,
+          balance: '11',
+        },
+        network: {
+          network: 'ethereum',
+          chainName: 'Ethereum',
+          networkLogo: fromNetwork,
+        },
+      },
     },
     routes: {
       status: 'selected',
@@ -85,12 +131,12 @@ export const Selected: Story = {
           gas: '.073',
           fees: '.50',
           time: '5:00',
-          steps: 1
-        }
-      }
-    }
-  }
-}
+          steps: 1,
+        },
+      },
+    },
+  },
+};
 
 export const GasError: Story = {
   args: {
@@ -99,7 +145,7 @@ export const GasError: Story = {
       background: 'bg-failure-red',
       textColor: 'text-black',
       hover: 'hover:bg-hover-red',
-      disabled: true
+      disabled: true,
     },
     fromtokennetworkinput: {
       status: 'selected',
@@ -109,7 +155,7 @@ export const GasError: Story = {
       chainName: 'Ethereum',
       tokenLogo: Token,
       tokenNetwork: fromNetwork,
-      balance: '10'
+      balance: '10',
     },
     totokennetworkinput: {
       status: 'selected',
@@ -119,7 +165,7 @@ export const GasError: Story = {
       chainName: 'Polygon',
       tokenLogo: Token,
       tokenNetwork: toNetwork,
-      balance: '4'
+      balance: '4',
     },
     routes: {
       status: 'gas-error',
@@ -139,15 +185,15 @@ export const GasError: Story = {
           gas: '.073',
           fees: '.50',
           time: '5:00',
-          steps: 1
-        }
-      }
+          steps: 1,
+        },
+      },
     },
     gaserror: {
-      label: 'Need ETH for Gas Fees to make successful transaction.'
-    }
-  }
-}
+      label: 'Need ETH for Gas Fees to make successful transaction.',
+    },
+  },
+};
 
 export const RouteError: Story = {
   args: {
@@ -156,7 +202,7 @@ export const RouteError: Story = {
       background: 'bg-failure-red',
       textColor: 'text-black',
       hover: 'hover:bg-hover-red',
-      disabled: true
+      disabled: true,
     },
     fromtokennetworkinput: {
       status: 'selected',
@@ -166,7 +212,7 @@ export const RouteError: Story = {
       chainName: 'Ethereum',
       tokenLogo: Token,
       tokenNetwork: fromNetwork,
-      balance: '10'
+      balance: '10',
     },
     totokennetworkinput: {
       status: 'selected',
@@ -176,7 +222,7 @@ export const RouteError: Story = {
       chainName: 'Polygon',
       tokenLogo: Token,
       tokenNetwork: toNetwork,
-      balance: '4'
+      balance: '4',
     },
     routes: {
       status: 'error',
@@ -196,12 +242,12 @@ export const RouteError: Story = {
           gas: '.073',
           fees: '.50',
           time: '5:00',
-          steps: 1
-        }
-      }
+          steps: 1,
+        },
+      },
     },
     gaserror: {
-      label: 'Need ETH for Gas Fees to make successful transaction.'
-    }
-  }
-}
+      label: 'Need ETH for Gas Fees to make successful transaction.',
+    },
+  },
+};

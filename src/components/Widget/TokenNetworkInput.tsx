@@ -9,6 +9,7 @@ export interface TokenNetworkInputProps {
   chain?: SupportedChain;
   token?: SupportedToken;
   balance?: string;
+  onAnchorClick: () => void;
 }
 
 export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
@@ -18,6 +19,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
   chain,
   token,
   balance,
+  onAnchorClick,
 }) => {
   const _amount = (): string => {
     if (direction === 'from' && amountToBeTransferred !== undefined) {
@@ -52,12 +54,12 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
         />
         <div className='flex flex-col'>
           {chain !== undefined && token !== undefined ? (
-            <div className='flex flex-row gap-1 justify-center items-center'>
+            <div className='flex flex-row gap-1 justify-center items-center cursor-pointer' onClick={onAnchorClick}>
               <div className='flex flex-col items-stretch h-full'>
                 <p className='text-white font-manrope text-lg'>{token.name}</p>
                 <p className='text-accent-color font-manrope text-sm'>{chain.name}</p>
               </div>
-              <TokenNetworkImage tokenTogo={token.logoURI} chainLogo={chain.logoURI} />
+              <TokenNetworkImage tokenLogo={token.logoURI} networkLogo={chain.logoURI} />
             </div>
           ) : (
             <div className='flex flex-row gap-2 items-center'>
