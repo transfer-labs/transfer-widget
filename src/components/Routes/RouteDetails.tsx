@@ -1,5 +1,5 @@
 import React, { type FunctionComponent } from 'react';
-import { DefaultTooltip } from '../tooltips/DefaultTooltip';
+import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
 // import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
 export interface RouteDetailsProps {

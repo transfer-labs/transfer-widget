@@ -1,6 +1,6 @@
 import React, { type FunctionComponent, type ReactNode, useState } from 'react';
 import { TokenNetworkInput } from './TokenNetworkInput';
-import { type RoutesProps } from '../routes/RouteList';
+import { type RoutesProps } from '../Routes/RouteList';
 import { ErrorMessage, type ErrorMessageProps } from '../errors/ErrorMessage';
 import { SwitchArrow } from '../SwitchArrow';
 import { ActionButton, type ActionButtonProps } from '../ActionButton';
@@ -51,7 +51,6 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
     handleTokenSelect('from', toToken);
     handleChainSelect('to', tempChain);
     handleTokenSelect('to', tempToken);
-    setAmountToBeTransferred('0');
   }
 
   return (
