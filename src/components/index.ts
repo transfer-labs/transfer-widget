@@ -1,1 +1,1 @@
-export { TransferWidget } from "./Widget/TransferWidget";
+export { TransferWidget } from './widget/TransferWidget';

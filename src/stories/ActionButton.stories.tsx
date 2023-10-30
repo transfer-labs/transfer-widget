@@ -1,8 +1,6 @@
-import React from "react";
+import type { Meta, StoryObj } from '@storybook/react';
 
-import type { Meta, StoryObj } from "@storybook/react";
-
-import ActionButton from "../components/ActionButton";
+import { ActionButton } from '../components/ActionButton';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
@@ -14,24 +12,20 @@ export default meta;
 
 export const Default: Story = {
   args: {
-    label: "Select Tokens",
-    textColor: "white",
-    background: "bg-component-background",
+    label: 'Click me',
   },
 };
 
-export const Primary: Story = {
+export const Disabled: Story = {
   args: {
-    label: "Bridge",
-    textColor: "black",
-    background: "bg-success-green",
+    label: 'Select tokens',
+    type: 'disabled',
   },
 };
 
-export const Warning: Story = {
+export const Error: Story = {
   args: {
-    label: "Warning",
-    textColor: "black",
-    background: "bg-failure-red",
+    label: 'Error',
+    type: 'error',
   },
 };

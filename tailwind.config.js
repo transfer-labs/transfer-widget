@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        manrope: ['Manrope', 'sans-serif']
+        manrope: ['Manrope', 'sans-serif'],
       },
       colors: {
         'modal-background': '#000000',
@@ -18,15 +18,15 @@ module.exports = {
         'failure-red': '#DB6666',
         'tooltip-green': '#2A4239',
         'hover-green': '#42CE9A',
-        'hover-red': '#B05353'
+        'hover-red': '#B05353',
       },
       borderWidth: {
-        1: '1px'
-      }
-    }
+        1: '1px',
+      },
+    },
   },
   plugins: [
-		require("tailwindcss-animate"),
-		// ...
-	],
-}
+    require('tailwindcss-animate'),
+    // ...
+  ],
+};
