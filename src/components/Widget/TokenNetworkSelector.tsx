@@ -1,5 +1,5 @@
 import React, { type FunctionComponent } from 'react';
-import { DefaultTooltip } from '../tooltips/DefaultTooltip';
+import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
 import { motion } from 'framer-motion';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type Direction } from 'models/const';
@@ -38,7 +38,7 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selected
         className='bg-component-background border-1 border-border-color py-4 rounded-lg px-2 text-white placeholder-unselected-text font-Manrope'
         placeholder='Search by name or address'
       />
-      <div className='flex bg-component-background rounded-lg border-1 border-border-color px-2 py-4 flex-col w-full gap-3 max-h-[300px] overflow-y-auto'>
+      <div className='flex bg-component-background rounded-lg border-1 border-border-color px-2 py-4 flex-col w-full gap-3 max-h-[300px] min-h-[300px] overflow-y-auto'>
         {tokens?.map((token) => {
           return (
             <div

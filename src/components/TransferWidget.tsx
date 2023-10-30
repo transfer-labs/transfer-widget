@@ -1,6 +1,6 @@
 import React, { type FunctionComponent, useEffect, type ReactNode, useState } from 'react';
-import { TransferWidgetContainer } from './widget/TransferWidgetContainer';
-import { TransferConext } from '../context/TransferContext';
+import { TransferWidgetContainer } from './Widget/TransferWidgetContainer';
+import { TransferContext } from '../context/TransferContext';
 import { Transfer, type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
 import { type Direction } from 'models/const';
@@ -10,6 +10,8 @@ import { type ActionButtonProps } from './ActionButton';
 export interface TransferWidgetProps {
   fromChainId?: number;
   toChainId?: number;
+  fromToken?: SupportedToken,
+  toToken?: SupportedToken,
   fromTokenAddress?: string;
   toTokenAddress?: string;
   amountToBeTransferred?: string;
@@ -22,14 +24,14 @@ const transfer = new Transfer({
 export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   fromChainId,
   toChainId,
+  fromToken,
+  toToken,
   fromTokenAddress,
   toTokenAddress,
   amountToBeTransferred,
 }): ReactNode => {
   const [fromChain, setFromChain] = useState<SupportedChain | undefined>(undefined);
-  const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toChain, setToChain] = useState<SupportedChain | undefined>(undefined);
-  const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
   const [_amountToBeTransferred, setAmountToBeTransferred] = useState<string | undefined>(amountToBeTransferred);
   const { supportedChains, getSupportedTokens } = useTransfer({ transfer });
   const [error, setError] = useState<ErrorMessageProps | undefined>(undefined);
@@ -151,7 +153,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   }
 
   return (
-    <TransferConext.Provider value={transfer}>
+    <TransferContext.Provider value={transfer}>
       <TransferWidgetContainer
         fromChain={fromChain}
         fromToken={fromToken}
@@ -165,6 +167,6 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         buttonState={buttonState}
         error={error}
       />
-    </TransferConext.Provider>
+    </TransferContext.Provider>
   );
 };

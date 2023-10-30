@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { TokenNetworkInput } from '../components/widget/TokenNetworkInput';
+import { TokenNetworkInput } from '../components/Widget/TokenNetworkInput';
 import { SupportedChains, SupportedTokens } from '../models/dummy';
 const meta: Meta<typeof TokenNetworkInput> = {
   component: TokenNetworkInput,

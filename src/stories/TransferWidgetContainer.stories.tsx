@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { TransferWidgetContainer } from '../components/widget/TransferWidgetContainer';
+import { TransferWidgetContainer } from '../components/Widget/TransferWidgetContainer';
 
 const meta: Meta<typeof TransferWidgetContainer> = {
   component: TransferWidgetContainer,

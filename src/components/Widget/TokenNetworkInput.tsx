@@ -35,18 +35,19 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
       </p>
       <div className='flex flex-row w-full items-center gap-1 h-10'>
         <input
-          className='bg-component-background text-white border-none outline-none text-4xl w-full'
+          className={`bg-component-background border-none outline-none font-bold text-3xl w-full ${amount ? 'text-white' : 'text-unselected-text'}`}
           type='text'
           value={amount}
-          disabled={direction === 'to'}
+          placeholder='0'
+          // disabled={direction === 'to'}
           onChange={handleAmountChange}
         />
         <div className='flex flex-col'>
           {chain !== undefined && token !== undefined ? (
             <div className='flex flex-row gap-1 justify-center items-center cursor-pointer' onClick={onAnchorClick}>
               <div className='flex flex-col items-stretch h-full'>
-                <p className='text-white font-manrope text-lg'>{token.name}</p>
-                <p className='text-accent-color font-manrope text-sm'>{chain.name}</p>
+                <p className='text-white font-manrope text-lg'>{token.symbol}</p>
+                <p className='text-accent-color font-manrope text-sm'>{chain.name.split(' ')[0]}</p>
               </div>
               <TokenNetworkImage tokenLogo={token.logoURI} networkLogo={chain.logoURI} />
             </div>

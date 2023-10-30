@@ -1,8 +1,8 @@
 import React, { type FunctionComponent, useState, type ReactNode } from 'react';
 import Best from '../../icons/routes/best-route.png';
-import { TokenNetworkImage } from '../widget/TokenNetworkImage';
+import { TokenNetworkImage } from '../Widget/TokenNetworkImage';
 import { RouteDetails, type RouteDetailsProps } from './RouteDetails';
-import { DefaultTooltip } from '../tooltips/DefaultTooltip';
+import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export interface RouteProps {
@@ -44,10 +44,6 @@ const Route: FunctionComponent<RouteProps> = ({
 }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-
-  // const ExpandedRoute = () => {
-  //   return <div className='flex flex-col gap-1'>{bridge}</div>;
-  // };
 
   return (
     <div
