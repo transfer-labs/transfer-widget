@@ -1,8 +1,7 @@
-import React, { type FunctionComponent, useState } from 'react';
-import Best from '../../icons/Routes/best-route.png';
-import TokenNetworkImage from '../widget/TokenNetworkImage';
-import Expand from '../../icons/Routes/expand-route/expand-close.png';
-import { GasInfo, FeeInfo, TimeInfo, StepsInfo, type RouteDetailsProps } from './RouteDetails';
+import React, { type FunctionComponent, useState, type ReactNode } from 'react';
+import Best from '../../icons/routes/best-route.png';
+import { TokenNetworkImage } from '../widget/TokenNetworkImage';
+import { RouteDetails, type RouteDetailsProps } from './RouteDetails';
 import { DefaultTooltip } from '../tooltips/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -21,6 +20,14 @@ export interface RouteProps {
   details: RouteDetailsProps; // Details of the route if 'selected' status
 }
 
+const DividerCircle = (): ReactNode => {
+  return (
+    <svg width='5' height='5' viewBox='0 0 5 5' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <circle cx='2.5' cy='2.5' r='2.5' fill='#C4C4C4' />
+    </svg>
+  );
+};
+
 const Route: FunctionComponent<RouteProps> = ({
   status,
   direction,
@@ -35,20 +42,12 @@ const Route: FunctionComponent<RouteProps> = ({
   balance,
   details,
 }) => {
-  const DividerCircle = () => {
-    return (
-      <svg width='5' height='5' viewBox='0 0 5 5' fill='none' xmlns='http://www.w3.org/2000/svg'>
-        <circle cx='2.5' cy='2.5' r='2.5' fill='#C4C4C4' />
-      </svg>
-    );
-  };
-
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const ExpandedRoute = () => {
-    return <div className='flex flex-col gap-1'>{bridge}</div>;
-  };
+  // const ExpandedRoute = () => {
+  //   return <div className='flex flex-col gap-1'>{bridge}</div>;
+  // };
 
   return (
     <div
@@ -75,7 +74,7 @@ const Route: FunctionComponent<RouteProps> = ({
             {/* token, bridge info (unexpanded), and expanded button  */}
             <div className='relative flex flex-row justify-between w-full items-start sm:items-center'>
               <div className='flex flex-row gap-1 items-center justify-center'>
-                <TokenNetworkImage logo={tokenLogo} networkLogo={tokenNetwork} />
+                <TokenNetworkImage tokenLogo={tokenLogo} networkLogo={tokenNetwork} />
                 <div className='flex flex-col'>
                   <p className={'text-white font-manrope text-xl font-medium'}>
                     {value} {tokenName}
@@ -171,12 +170,7 @@ const Route: FunctionComponent<RouteProps> = ({
           </div>
 
           {/* icons regarding the route details */}
-          <div className='flex flex-row justify-between w-full items-center'>
-            <GasInfo gas={details.gas} />
-            <FeeInfo fees={details.fees} />
-            <TimeInfo time={details.time} />
-            <StepsInfo steps={details.steps} />
-          </div>
+          <RouteDetails {...details} />
         </>
       )}
     </div>

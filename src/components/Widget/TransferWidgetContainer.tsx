@@ -17,10 +17,12 @@ export interface TransferWidgetContainerProps {
   fromToken?: SupportedToken;
   toChain?: SupportedChain;
   toToken?: SupportedToken;
-  handleChainSelect: (direction: Direction, chain: SupportedChain) => void;
-  handleTokenSelect: (direction: Direction, token: SupportedToken) => void;
+  handleChainSelect: (direction: Direction, chain?: SupportedChain) => void;
+  handleTokenSelect: (direction: Direction, token?: SupportedToken) => void;
+  setAmountToBeTransferred: (amount: string) => void;
   amountToBeTransferred?: string;
   buttonState: ActionButtonProps;
+  estimateTransferValue?: string;
   error?: ErrorMessageProps;
 }
 
@@ -34,16 +36,32 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   toToken,
   buttonState,
   error,
+  estimateTransferValue,
+  amountToBeTransferred,
   handleChainSelect,
   handleTokenSelect,
+  setAmountToBeTransferred,
 }): ReactNode => {
   const [tokenNetworkSelectorDirection, setTokenNetworkSelectorDirection] = useState<Direction | undefined>(undefined);
+
+  function handleChainTokenSwitch(): void {
+    const tempChain = fromChain;
+    const tempToken = fromToken;
+    handleChainSelect('from', toChain);
+    handleTokenSelect('from', toToken);
+    handleChainSelect('to', tempChain);
+    handleTokenSelect('to', tempToken);
+    setAmountToBeTransferred('0');
+  }
+
   return (
     <AnimatePresence>
       {tokenNetworkSelectorDirection !== undefined ? (
         <TokenNetworkSelector
           chains={supportedChains}
           tokens={supportedTokens}
+          selectedChain={tokenNetworkSelectorDirection === 'from' ? fromChain : toChain}
+          selectedToken={tokenNetworkSelectorDirection === 'from' ? fromToken : toToken}
           handleChainSelect={handleChainSelect}
           handleTokenSelect={handleTokenSelect}
           direction={tokenNetworkSelectorDirection}
@@ -74,7 +92,9 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                     chain={fromChain}
                     token={fromToken}
                     direction='from'
-                    balance='0.0'
+                    setAmount={setAmountToBeTransferred}
+                    amount={amountToBeTransferred}
+                    // balance='0.0'
                     onAnchorClick={() => {
                       setTokenNetworkSelectorDirection('from');
                     }}
@@ -87,7 +107,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.8, duration: 0.5, type: 'spring', bounce: 0.3 }}
                 >
-                  <SwitchArrow />
+                  <SwitchArrow onClick={handleChainTokenSwitch} />
                 </motion.div>
 
                 {/* animate in the individual selectors */}
@@ -100,8 +120,8 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                     chain={toChain}
                     token={toToken}
                     direction='to'
-                    balance='0.0'
-                    estimateTransferValue='1'
+                    // balance='0.0'
+                    amount={estimateTransferValue}
                     onAnchorClick={() => {
                       setTokenNetworkSelectorDirection('to');
                     }}

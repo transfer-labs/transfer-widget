@@ -15,11 +15,20 @@ export const Primary: Story = {
   },
 };
 
-export const Selected: Story = {
+export const SelectedTo: Story = {
   args: {
     direction: 'to',
     estimateTransferValue: '1.7',
     chain: SupportedChains[0],
     token: SupportedTokens[0],
+  },
+};
+
+export const SelectedFrom: Story = {
+  args: {
+    direction: 'to',
+    estimateTransferValue: '1.7',
+    chain: SupportedChains[1],
+    token: SupportedTokens[1],
   },
 };

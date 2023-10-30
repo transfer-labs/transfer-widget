@@ -5,38 +5,28 @@ import { type Direction } from 'models/const';
 
 export interface TokenNetworkInputProps {
   direction: Direction;
-  estimateTransferValue?: string;
-  amountToBeTransferred?: string;
+  amount?: string;
   chain?: SupportedChain;
   token?: SupportedToken;
   balance?: string;
   onAnchorClick: () => void;
+  setAmount?: (amount: string) => void;
 }
 
 export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
   direction,
-  amountToBeTransferred,
-  estimateTransferValue,
+  amount,
   chain,
   token,
   balance,
+  setAmount,
   onAnchorClick,
 }) => {
-  const _amount = (): string => {
-    if (direction === 'from' && amountToBeTransferred !== undefined) {
-      return amountToBeTransferred;
+  function handleAmountChange(e: React.ChangeEvent<HTMLInputElement>): void {
+    if (setAmount !== undefined && direction === 'from') {
+      setAmount(e.target.value);
     }
-    if (direction === 'to' && estimateTransferValue !== undefined) {
-      return estimateTransferValue;
-    }
-    return '0';
-  };
-
-  const [amount, setAmount] = useState<string>(_amount());
-
-  useEffect(() => {
-    setAmount(_amount());
-  }, [direction, amountToBeTransferred, estimateTransferValue]);
+  }
 
   return (
     <div className='flex px-4 py-3 flex-col gap-3 w-full border rounded-lg border-border-color bg-component-background'>
@@ -49,9 +39,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
           type='text'
           value={amount}
           disabled={direction === 'to'}
-          onChange={(e) => {
-            setAmount(e.target.value);
-          }}
+          onChange={handleAmountChange}
         />
         <div className='flex flex-col'>
           {chain !== undefined && token !== undefined ? (
@@ -63,7 +51,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
               <TokenNetworkImage tokenLogo={token.logoURI} networkLogo={chain.logoURI} />
             </div>
           ) : (
-            <div className='flex flex-row gap-2 items-center'>
+            <div className='flex flex-row gap-2 items-center' onClick={onAnchorClick}>
               <a href='#' className='text-unselected-text whitespace-nowrap'>
                 Select {direction} chain and token
               </a>

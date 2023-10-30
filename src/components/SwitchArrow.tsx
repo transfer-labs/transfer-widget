@@ -1,7 +1,11 @@
-import React, { type ReactNode, useState } from 'react';
+import React, { type ReactNode, useState, type FunctionComponent } from 'react';
 import { motion } from 'framer-motion';
 
-export const SwitchArrow = (): ReactNode => {
+interface SwitchArrowProps {
+  onClick: () => void;
+}
+
+export const SwitchArrow: FunctionComponent<SwitchArrowProps> = ({ onClick }): ReactNode => {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
 
@@ -20,6 +24,7 @@ export const SwitchArrow = (): ReactNode => {
         setIsHovered(false);
       }}
       onClick={() => {
+        onClick();
         setIsClicked(!isClicked);
       }}
       variants={variants}

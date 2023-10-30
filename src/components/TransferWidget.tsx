@@ -3,9 +3,9 @@ import { TransferWidgetContainer } from './widget/TransferWidgetContainer';
 import { TransferConext } from '../context/TransferContext';
 import { Transfer, type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
-import { type RoutesProps } from './routes/RouteList';
 import { type Direction } from 'models/const';
 import { type ErrorMessageProps } from './errors/ErrorMessage';
+import { type ActionButtonProps } from './ActionButton';
 
 export interface TransferWidgetProps {
   fromChainId?: number;
@@ -13,9 +13,6 @@ export interface TransferWidgetProps {
   fromTokenAddress?: string;
   toTokenAddress?: string;
   amountToBeTransferred?: string;
-
-  // TODO: Remove
-  routes: RoutesProps;
 }
 
 const transfer = new Transfer({
@@ -28,14 +25,74 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   fromTokenAddress,
   toTokenAddress,
   amountToBeTransferred,
-  routes,
 }): ReactNode => {
   const [fromChain, setFromChain] = useState<SupportedChain | undefined>(undefined);
   const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toChain, setToChain] = useState<SupportedChain | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
+  const [_amountToBeTransferred, setAmountToBeTransferred] = useState<string | undefined>(amountToBeTransferred);
   const { supportedChains, getSupportedTokens } = useTransfer({ transfer });
-  // const [error, setError] = useState<ErrorMessageProps | undefined>(undefined);
+  const [error, setError] = useState<ErrorMessageProps | undefined>(undefined);
+  const [buttonState, setButtonState] = useState<ActionButtonProps>({
+    type: 'disabled',
+    label: 'Select tokens',
+  });
+
+  function handleBridgeQuote(): void {
+    if (
+      fromChain !== undefined &&
+      fromToken !== undefined &&
+      toChain !== undefined &&
+      toToken !== undefined &&
+      _amountToBeTransferred !== undefined &&
+      +_amountToBeTransferred > 0
+    ) {
+      const quoteBody = {
+        srcChainId: fromChain.chainId,
+        dstChainId: toChain.chainId,
+        srcChainTokenAddress: fromToken.address,
+        dstChainTokenAddress: toToken.address,
+        qty: +_amountToBeTransferred,
+        fromAddress: '0x000000', // TODO: get from address
+        toAddress: '0x000000', // TODO: get to address
+      };
+      console.log(quoteBody);
+
+      // void transfer
+      //   .quoteBridge(quoteBody)
+      //   .then((result) => {
+      //     console.log(result);
+      //   })
+      //   .catch((error) => {
+      //     console.error(error);
+      //     setError({
+      //       label: error.message,
+      //     });
+      //   });
+    }
+  }
+
+  useEffect(() => {
+    if (
+      fromChain !== undefined &&
+      fromToken !== undefined &&
+      toChain !== undefined &&
+      toToken !== undefined &&
+      _amountToBeTransferred !== undefined &&
+      +_amountToBeTransferred > 0
+    ) {
+      setButtonState({
+        type: 'default',
+        label: 'Transfer',
+        onClick: handleBridgeQuote,
+      });
+    } else {
+      setButtonState({
+        type: 'disabled',
+        label: 'Select tokens',
+      });
+    }
+  }, [fromChain, fromToken, toChain, toToken, _amountToBeTransferred]);
 
   // Process props
   useEffect(() => {
@@ -55,7 +112,6 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       if (tokenAddress !== undefined && chain !== undefined) {
         const tokens = await getSupportedTokens(chainId);
         if (tokens !== undefined) {
-          // TODO: Handle error
           const token = tokens.find((token) => token.address === tokenAddress);
           if (direction === 'from') {
             setFromToken(token);
@@ -69,13 +125,14 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     if (supportedChains !== undefined && supportedChains.length > 0) {
       if (fromChainId !== undefined) {
         void setSupportedChainAndToken(supportedChains, 'from', fromChainId, fromTokenAddress);
-      } else if (toChainId !== undefined) {
-        void setSupportedChainAndToken(supportedChains, 'from', toChainId, fromTokenAddress);
+      }
+      if (toChainId !== undefined) {
+        void setSupportedChainAndToken(supportedChains, 'to', toChainId, toTokenAddress);
       }
     }
   }, [supportedChains, fromChainId, toChainId, fromTokenAddress, toTokenAddress]);
 
-  function handleChainSelect(direction: Direction, chain: SupportedChain): void {
+  function handleChainSelect(direction: Direction, chain?: SupportedChain): void {
     // TODO: handle select logic
     if (direction === 'from') {
       setFromChain(chain);
@@ -84,7 +141,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     }
   }
 
-  function handleTokenSelect(direction: Direction, token: SupportedToken): void {
+  function handleTokenSelect(direction: Direction, token?: SupportedToken): void {
     // TODO: handle select logic
     if (direction === 'from') {
       setFromToken(token);
@@ -102,10 +159,11 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         toToken={toToken}
         handleChainSelect={handleChainSelect}
         handleTokenSelect={handleTokenSelect}
-        amountToBeTransferred={amountToBeTransferred}
-        routes={routes}
+        amountToBeTransferred={_amountToBeTransferred}
+        setAmountToBeTransferred={setAmountToBeTransferred}
         supportedChains={supportedChains}
-        buttonState={{ type: 'default', label: 'Transfer' }}
+        buttonState={buttonState}
+        error={error}
       />
     </TransferConext.Provider>
   );

@@ -1,6 +1,6 @@
 import React, { type FunctionComponent } from 'react';
 import { DefaultTooltip } from '../tooltips/DefaultTooltip';
-import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+// import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
 export interface RouteDetailsProps {
   gas: string; // Estimated gas fee for the route if 'selected' status
@@ -9,7 +9,7 @@ export interface RouteDetailsProps {
   steps: number; // Estimated number of steps a route has to take if 'selected' status
 }
 
-export const GasInfo: React.FC<{ gas: string }> = ({ gas }) => {
+const GasInfo: FunctionComponent<{ gas: string }> = ({ gas }) => {
   return (
     <>
       <DefaultTooltip label='Estimated gas price' side='bottom'>
@@ -35,7 +35,7 @@ export const GasInfo: React.FC<{ gas: string }> = ({ gas }) => {
   );
 };
 
-export const FeeInfo: React.FC<{ fees: string }> = ({ fees }) => {
+const FeeInfo: FunctionComponent<{ fees: string }> = ({ fees }) => {
   return (
     <>
       <DefaultTooltip label='Fee from route providers' side='bottom'>
@@ -56,7 +56,7 @@ export const FeeInfo: React.FC<{ fees: string }> = ({ fees }) => {
   );
 };
 
-export const TimeInfo: React.FC<{ time: string }> = ({ time }) => {
+const TimeInfo: FunctionComponent<{ time: string }> = ({ time }) => {
   return (
     <>
       <DefaultTooltip label='Estimated time for transaction' side='bottom'>
@@ -82,7 +82,7 @@ export const TimeInfo: React.FC<{ time: string }> = ({ time }) => {
   );
 };
 
-export const StepsInfo: React.FC<{ steps: number }> = ({ steps }) => {
+const StepsInfo: FunctionComponent<{ steps: number }> = ({ steps }) => {
   return (
     <>
       <DefaultTooltip label='# of steps in route' side='bottom'>
@@ -98,5 +98,16 @@ export const StepsInfo: React.FC<{ steps: number }> = ({ steps }) => {
         </div>
       </DefaultTooltip>
     </>
+  );
+};
+
+export const RouteDetails: FunctionComponent<RouteDetailsProps> = ({ gas, fees, time, steps }) => {
+  return (
+    <div className='flex flex-row justify-between w-full items-center'>
+      <GasInfo gas={gas} />
+      <FeeInfo fees={fees} />
+      <TimeInfo time={time} />
+      <StepsInfo steps={steps} />
+    </div>
   );
 };
