@@ -11,14 +11,11 @@ type Story = StoryObj<typeof ErrorMessage>;
 export default meta;
 
 export const Default: Story = {
-  args: {
-    label: 'Something went wrong',
-  },
+  args: {},
 };
 
 export const GasError: Story = {
   args: {
-    label: "You don't have enough gas",
     type: 'gas',
   },
 };

@@ -1,18 +1,19 @@
 import React, { type FunctionComponent, type ReactNode, useState } from 'react';
 import { TokenNetworkInput } from './TokenNetworkInput';
-import { type RoutesProps } from '../Routes/RouteList';
-import { ErrorMessage, type ErrorMessageProps } from '../errors/ErrorMessage';
+import { RouteContainer } from '../routes/RouteContainer';
+import { ErrorMessage } from '../errors/ErrorMessage';
 import { SwitchArrow } from '../SwitchArrow';
 import { ActionButton, type ActionButtonProps } from '../ActionButton';
-import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
+import { type SupportedChain, type SupportedToken, type Route } from '@argoplatform/transfer-sdk';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TokenNetworkSelector } from './TokenNetworkSelector';
 import { type Direction } from 'models/const';
+import { type ErrorType } from '../../models/const';
 
 export interface TransferWidgetContainerProps {
-  routes?: RoutesProps;
   supportedChains?: SupportedChain[];
   supportedTokens?: SupportedToken[];
+  routes?: Route[];
   fromChain?: SupportedChain;
   fromToken?: SupportedToken;
   toChain?: SupportedChain;
@@ -23,11 +24,10 @@ export interface TransferWidgetContainerProps {
   amountToBeTransferred?: string;
   buttonState: ActionButtonProps;
   estimateTransferValue?: string;
-  error?: ErrorMessageProps;
+  error?: ErrorType;
 }
 
 export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerProps> = ({
-  routes,
   supportedChains,
   supportedTokens,
   fromChain,
@@ -38,6 +38,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   error,
   estimateTransferValue,
   amountToBeTransferred,
+  routes,
   handleChainSelect,
   handleTokenSelect,
   setAmountToBeTransferred,
@@ -129,16 +130,24 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
               </div>
             </div>
             {/* if the user doesn't have enough gas to make a valid transaction, display this error */}
-            {error !== undefined ? <ErrorMessage {...error} /> : null}
+            {error !== undefined ? <ErrorMessage errorType={error} /> : null}
 
             {/* if both the paramaters are fufilled animate in the routes component */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
-            >
-              {/* <Routes {...routes} /> */}
-            </motion.div>
+            {routes !== undefined && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
+              >
+                <RouteContainer
+                  routes={routes}
+                  fromChain={fromChain}
+                  toChain={toChain}
+                  fromToken={fromToken}
+                  toToken={toToken}
+                />
+              </motion.div>
+            )}
 
             {/* animate in the button */}
             <motion.div

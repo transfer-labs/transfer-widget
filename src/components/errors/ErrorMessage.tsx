@@ -1,8 +1,7 @@
 import React, { type ReactNode, type FunctionComponent } from 'react';
-
+import { type ErrorType, Error } from '../../models/const';
 export interface ErrorMessageProps {
-  type?: 'default' | 'gas';
-  label: string;
+  errorType?: ErrorType;
 }
 
 const GasIcon = (): ReactNode => {
@@ -23,11 +22,11 @@ const GasIcon = (): ReactNode => {
   );
 };
 
-export const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({ label, type }) => {
+export const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({ errorType = 'default' }) => {
   return (
     <div className='flex flex-row justify-center items-center bg-component-bg border-1 border-border-color rounded-lg px-2 py-2 gap-1'>
-      {type === 'gas' ? <GasIcon /> : null}
-      <p className='font-manrope text-sm text-failure-red'>{label}</p>
+      {errorType === 'gas' ? <GasIcon /> : null}
+      <p className='font-manrope text-sm text-failure-red'>{Error[errorType].description}</p>
     </div>
   );
 };

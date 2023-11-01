@@ -1,4 +1,4 @@
-import React, { type FunctionComponent, useState, useEffect } from 'react';
+import React, { type FunctionComponent } from 'react';
 import { TokenNetworkImage } from './TokenNetworkImage';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type Direction } from 'models/const';
@@ -35,11 +35,13 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
       </p>
       <div className='flex flex-row w-full items-center gap-1 h-10'>
         <input
-          className={`bg-component-background border-none outline-none font-bold text-3xl w-full ${amount ? 'text-white' : 'text-unselected-text'}`}
+          className={`bg-component-background border-none outline-none font-bold text-3xl w-full ${
+            amount !== undefined && +amount > 0 ? 'text-white' : 'text-unselected-text'
+          }`}
           type='text'
           value={amount}
           placeholder='0'
-          // disabled={direction === 'to'}
+          disabled={direction === 'to'}
           onChange={handleAmountChange}
         />
         <div className='flex flex-col'>

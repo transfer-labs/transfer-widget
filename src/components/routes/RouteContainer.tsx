@@ -1,12 +1,17 @@
 import React, { type FunctionComponent } from 'react';
-import Route, { type RouteProps } from './Route';
+import { type SupportedChain, type Route as RouteType, type SupportedToken } from '@argoplatform/transfer-sdk';
+import { Route } from './Route';
 
-export interface RoutesProps {
-  routeprops: RouteProps;
-  status: 'default' | 'selected' | 'error' | 'gas-error';
+export interface RouteContainerProps {
+  routes?: RouteType[];
+  fromChain?: SupportedChain;
+  toChain?: SupportedChain;
+  fromToken?: SupportedToken;
+  toToken?: SupportedToken;
+  status?: 'default' | 'selected' | 'error' | 'gas-error';
 }
 
-export const RouteList: FunctionComponent<RoutesProps> = ({ routeprops, status }) => {
+export const RouteContainer: FunctionComponent<RouteContainerProps> = ({ routes, status }) => {
   if (status === 'default') {
     return null;
   } else {
@@ -18,7 +23,7 @@ export const RouteList: FunctionComponent<RoutesProps> = ({ routeprops, status }
             <p className={'text-accent-color font-manrope text-sm font-medium'}>View Additional</p>
           </a>
         </div>
-        <Route {...routeprops} />
+        <Route />
       </div>
     );
   }

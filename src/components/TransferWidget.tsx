@@ -1,17 +1,14 @@
 import React, { type FunctionComponent, useEffect, type ReactNode, useState } from 'react';
 import { TransferWidgetContainer } from './Widget/TransferWidgetContainer';
 import { TransferContext } from '../context/TransferContext';
-import { Transfer, type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
+import { Transfer, type SupportedChain, type SupportedToken, type Route } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
-import { type Direction } from 'models/const';
-import { type ErrorMessageProps } from './errors/ErrorMessage';
+import { type ErrorType, type Direction } from 'models/const';
 import { type ActionButtonProps } from './ActionButton';
 
 export interface TransferWidgetProps {
   fromChainId?: number;
   toChainId?: number;
-  fromToken?: SupportedToken,
-  toToken?: SupportedToken,
   fromTokenAddress?: string;
   toTokenAddress?: string;
   amountToBeTransferred?: string;
@@ -24,8 +21,6 @@ const transfer = new Transfer({
 export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   fromChainId,
   toChainId,
-  fromToken,
-  toToken,
   fromTokenAddress,
   toTokenAddress,
   amountToBeTransferred,
@@ -34,13 +29,16 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   const [toChain, setToChain] = useState<SupportedChain | undefined>(undefined);
   const [_amountToBeTransferred, setAmountToBeTransferred] = useState<string | undefined>(amountToBeTransferred);
   const { supportedChains, getSupportedTokens } = useTransfer({ transfer });
-  const [error, setError] = useState<ErrorMessageProps | undefined>(undefined);
+  const [error, setError] = useState<ErrorType | undefined>(undefined);
+  const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
+  const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
+  const [routes, setRoutes] = useState<Route[] | undefined>(undefined);
   const [buttonState, setButtonState] = useState<ActionButtonProps>({
     type: 'disabled',
     label: 'Select tokens',
   });
 
-  function handleBridgeQuote(): void {
+  function handleBridge(): void {
     if (
       fromChain !== undefined &&
       fromToken !== undefined &&
@@ -49,7 +47,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       _amountToBeTransferred !== undefined &&
       +_amountToBeTransferred > 0
     ) {
-      const quoteBody = {
+      const bridgeBody = {
         srcChainId: fromChain.chainId,
         dstChainId: toChain.chainId,
         srcChainTokenAddress: fromToken.address,
@@ -58,19 +56,17 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         fromAddress: '0x000000', // TODO: get from address
         toAddress: '0x000000', // TODO: get to address
       };
-      console.log(quoteBody);
+      console.log(bridgeBody);
 
-      // void transfer
-      //   .quoteBridge(quoteBody)
-      //   .then((result) => {
-      //     console.log(result);
-      //   })
-      //   .catch((error) => {
-      //     console.error(error);
-      //     setError({
-      //       label: error.message,
-      //     });
-      //   });
+      void transfer
+        .bridge(bridgeBody)
+        .then((result) => {
+          setRoutes([result.bestRoute, ...result.alternateRoutes]);
+        })
+        .catch((error) => {
+          console.error(error);
+          setError('retrieving_bridge_routes');
+        });
     }
   }
 
@@ -86,7 +82,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       setButtonState({
         type: 'default',
         label: 'Transfer',
-        onClick: handleBridgeQuote,
+        onClick: handleBridge,
       });
     } else {
       setButtonState({
@@ -159,6 +155,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         fromToken={fromToken}
         toChain={toChain}
         toToken={toToken}
+        routes={routes}
         handleChainSelect={handleChainSelect}
         handleTokenSelect={handleTokenSelect}
         amountToBeTransferred={_amountToBeTransferred}
