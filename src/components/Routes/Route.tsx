@@ -1,26 +1,35 @@
 import React, { type FunctionComponent, useState, type ReactNode } from 'react';
 import Best from '../../icons/routes/best-route.png';
 import { TokenNetworkImage } from '../Widget/TokenNetworkImage';
-import { RouteDetails, type RouteDetailsProps } from './RouteDetails';
-import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
+import { RouteDetails } from './RouteDetails';
+import { DefaultTooltip } from '../tooltips/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
+import { type SupportedChain, type Route as RouteType, type SupportedToken } from '@argoplatform/transfer-sdk';
+import { type ErrorType } from 'models/const';
 
 export interface RouteProps {
-  status: 'default' | 'selected' | 'error' | 'gas-error';
-  direction: 'from' | 'to';
-  value?: string; // The actual value if 'selected' status
-  type?: 'Bridge' | 'Bridge and Swap' | 'Swap' | 'Swap and Bridge';
-  bridge?: string; // name of the bridge for the swap if 'selected'
-  bridgeLogo?: string; // bridge logo if 'selected' status
-  chainName?: string; // The chain name if 'selected' status
-  tokenName?: string; // The token name if 'selected' status
-  tokenLogo?: string; // the token logo url if 'selected' status
-  tokenNetwork?: string; // the network url if 'selected' status
-  balance?: string; // Balance of the token if 'selected' status
-  details: RouteDetailsProps; // Details of the route if 'selected' status
+  // status: 'default' | 'selected' | 'error' | 'gas-error';
+  // direction: 'from' | 'to';
+  // value?: string; // The actual value if 'selected' status
+  // type?: 'Bridge' | 'Bridge and Swap' | 'Swap' | 'Swap and Bridge';
+  // bridge?: string; // name of the bridge for the swap if 'selected'
+  // bridgeLogo?: string; // bridge logo if 'selected' status
+  // chainName?: string; // The chain name if 'selected' status
+  // tokenName?: string; // The token name if 'selected' status
+  // tokenLogo?: string; // the token logo url if 'selected' status
+  // tokenNetwork?: string; // the network url if 'selected' status
+  // balance?: string; // Balance of the token if 'selected' status
+  // details: RouteDetailsProps; // Details of the route if 'selected' status
+  route?: RouteType;
+  toToken?: SupportedToken;
+  toChain?: SupportedChain;
+  fromToken?: SupportedToken;
+  fromChain?: SupportedChain;
+  estimateTransferValue?: string;
+  error?: ErrorType;
 }
 
-const DividerCircle = (): ReactNode => {
+export const DividerCircle = (): ReactNode => {
   return (
     <svg width='5' height='5' viewBox='0 0 5 5' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <circle cx='2.5' cy='2.5' r='2.5' fill='#C4C4C4' />
@@ -29,18 +38,13 @@ const DividerCircle = (): ReactNode => {
 };
 
 export const Route: FunctionComponent<RouteProps> = ({
-  status,
-  direction,
-  value,
-  type,
-  bridge,
-  bridgeLogo,
-  chainName,
-  tokenName,
-  tokenLogo,
-  tokenNetwork,
-  balance,
-  details,
+  route,
+  toToken,
+  toChain,
+  estimateTransferValue,
+  fromChain,
+  fromToken,
+  error,
 }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -48,10 +52,10 @@ export const Route: FunctionComponent<RouteProps> = ({
   return (
     <div
       className={`flex flex-col gap-4 w-full bg-component-background ${
-        status === 'error' ? 'border border-failure-red' : 'border border-success-green'
-      } rounded-lg py-3 px-4 ${status === 'gas-error' ? 'opacity-30' : 'opacity-100'}`}
+        error !== undefined ? 'border border-failure-red' : 'border border-success-green'
+      } rounded-lg py-3 px-4`}
     >
-      {status === 'error' ? (
+      {error !== undefined ? (
         <p className={'text-failure-red font-manrope text-md font-medium text-center'}>
           Unable to find successful route
         </p>
@@ -59,7 +63,7 @@ export const Route: FunctionComponent<RouteProps> = ({
         <>
           {/* top routes and best icon (if route is the best) */}
           <div className='flex flex-row justify-between w-full'>
-            <p className={'text-white font-manrope text-md font-semibold'}>{type}</p>
+            <p className={'text-white font-manrope text-md font-semibold'}>Bridge</p>
 
             <DefaultTooltip label='Best route based on price, speed, and slippage' side='left'>
               <img src={Best} className='w-[45px]' />
@@ -70,17 +74,17 @@ export const Route: FunctionComponent<RouteProps> = ({
             {/* token, bridge info (unexpanded), and expanded button  */}
             <div className='relative flex flex-row justify-between w-full items-start sm:items-center'>
               <div className='flex flex-row gap-1 items-center justify-center'>
-                <TokenNetworkImage tokenLogo={tokenLogo} networkLogo={tokenNetwork} />
+                <TokenNetworkImage tokenLogo={toToken?.logoURI} networkLogo={toChain?.logoURI} />
                 <div className='flex flex-col'>
                   <p className={'text-white font-manrope text-xl font-medium'}>
-                    {value} {tokenName}
+                    {estimateTransferValue} {toToken?.name}
                   </p>
                   <div className='flex flex-row gap-1 items-center'>
-                    <p className={'text-accent-color font-manrope text-sm font-medium'}>{chainName}</p>
+                    <p className={'text-accent-color font-manrope text-sm font-medium'}>{toChain?.name}</p>
                     <DividerCircle />
                     <div className='flex flex-row gap-.25 items-center'>
-                      <img src={bridgeLogo} className='w-4 h-4' />
-                      <p className={'text-accent-color font-manrope text-sm font-medium'}>{bridge}</p>
+                      <img src={route?.bridgeInfo.logoURI} className='w-4 h-4' />
+                      <p className={'text-accent-color font-manrope text-sm font-medium'}>{route?.bridgeInfo.name}</p>
                     </div>
                   </div>
                 </div>
@@ -132,11 +136,12 @@ export const Route: FunctionComponent<RouteProps> = ({
                 >
                   <div className='flex flex-col gap-.5'>
                     <div className='flex flex-row gap-.25 items-center'>
-                      <img src={bridgeLogo} className='w-5 h-5' />
-                      <p className={'text-accent-color font-manrope text-lg font-medium'}>{bridge}</p>
+                      <img src={route?.bridgeInfo.logoURI} className='w-5 h-5' />
+                      <p className={'text-accent-color font-manrope text-lg font-medium'}>{route?.bridgeInfo.name}</p>
                     </div>
                     <p className='text-accent-color font-manrope text-sm m-0'>
-                      {type} into {tokenName} using {bridge}
+                      Bridge from {fromToken?.symbol} on {fromChain?.name} to {toToken?.symbol} on {toChain?.name} using
+                      {route?.bridgeInfo.name}
                     </p>
                   </div>
                 </motion.div>
@@ -166,7 +171,12 @@ export const Route: FunctionComponent<RouteProps> = ({
           </div>
 
           {/* icons regarding the route details */}
-          <RouteDetails {...details} />
+          <RouteDetails
+            gas={route?.transactionRequest.gasPrice?.toString()}
+            fees={'0.01'} // TODO: calculate fees
+            time={route?.timeEstimate}
+            steps={(route?.dstChainSwapDexs.length ?? 0) + (route?.srcChainSwapDexs.length ?? 0)}
+          />
         </>
       )}
     </div>

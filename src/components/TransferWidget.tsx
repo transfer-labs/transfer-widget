@@ -1,7 +1,7 @@
 import React, { type FunctionComponent, useEffect, type ReactNode, useState } from 'react';
 import { TransferWidgetContainer } from './Widget/TransferWidgetContainer';
 import { TransferContext } from '../context/TransferContext';
-import { Transfer, type SupportedChain, type SupportedToken, type Route } from '@argoplatform/transfer-sdk';
+import { Transfer, type SupportedChain, type SupportedToken, type BridgeResult } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
 import { type ErrorType, type Direction } from 'models/const';
 import { type ActionButtonProps } from './ActionButton';
@@ -27,25 +27,28 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
 }): ReactNode => {
   const [fromChain, setFromChain] = useState<SupportedChain | undefined>(undefined);
   const [toChain, setToChain] = useState<SupportedChain | undefined>(undefined);
-  const [_amountToBeTransferred, setAmountToBeTransferred] = useState<string | undefined>(amountToBeTransferred);
-  const { supportedChains, getSupportedTokens } = useTransfer({ transfer });
+  const [_amountToBeTransferred, setAmountToBeTransferred] = useState<string>(amountToBeTransferred ?? '');
+  const [estimateTransferValue, setEstimateTransferValue] = useState<string>('');
+  const { supportedChains, getSupportedTokens, supportedTokens } = useTransfer({ transfer });
   const [error, setError] = useState<ErrorType | undefined>(undefined);
   const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
-  const [routes, setRoutes] = useState<Route[] | undefined>(undefined);
+  const [bridgeResult, setBridgeResult] = useState<BridgeResult | undefined>(undefined);
   const [buttonState, setButtonState] = useState<ActionButtonProps>({
     type: 'disabled',
     label: 'Select tokens',
   });
 
   function handleBridge(): void {
+    console.log('HEREE');
     if (
       fromChain !== undefined &&
       fromToken !== undefined &&
       toChain !== undefined &&
       toToken !== undefined &&
       _amountToBeTransferred !== undefined &&
-      +_amountToBeTransferred > 0
+      +_amountToBeTransferred > 0 &&
+      error === undefined
     ) {
       const bridgeBody = {
         srcChainId: fromChain.chainId,
@@ -53,15 +56,15 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         srcChainTokenAddress: fromToken.address,
         dstChainTokenAddress: toToken.address,
         qty: +_amountToBeTransferred,
-        fromAddress: '0x000000', // TODO: get from address
-        toAddress: '0x000000', // TODO: get to address
+        fromAddress: '0x968961A3A78bCeb7F91323054eCB332b19887fBf', // TODO: get from address
+        toAddress: '0x968961A3A78bCeb7F91323054eCB332b19887fBf', // TODO: get to address
       };
       console.log(bridgeBody);
 
       void transfer
         .bridge(bridgeBody)
         .then((result) => {
-          setRoutes([result.bestRoute, ...result.alternateRoutes]);
+          setBridgeResult(result);
         })
         .catch((error) => {
           console.error(error);
@@ -79,11 +82,36 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       _amountToBeTransferred !== undefined &&
       +_amountToBeTransferred > 0
     ) {
-      setButtonState({
-        type: 'default',
-        label: 'Transfer',
-        onClick: handleBridge,
-      });
+      // Ready to be bridged\
+      const bridgeBody = {
+        srcChainId: fromChain.chainId,
+        dstChainId: toChain.chainId,
+        srcChainTokenAddress: fromToken.address,
+        dstChainTokenAddress: toToken.address,
+        qty: +_amountToBeTransferred,
+        fromAddress: '0x968961A3A78bCeb7F91323054eCB332b19887fBf', // TODO: get from address
+        toAddress: '0x968961A3A78bCeb7F91323054eCB332b19887fBf', // TODO: get to address
+      };
+
+      void transfer
+        .quoteBridge(bridgeBody)
+        .then((result) => {
+          setEstimateTransferValue(result.bestRoute.dstAmountEstimate.toString());
+          setButtonState({
+            type: 'default',
+            label: 'Transfer',
+            onClick: handleBridge,
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          setError('retrieving_bridge_routes');
+          setButtonState({
+            type: 'error',
+            label: 'Error',
+            onClick: undefined,
+          });
+        });
     } else {
       setButtonState({
         type: 'disabled',
@@ -92,7 +120,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     }
   }, [fromChain, fromToken, toChain, toToken, _amountToBeTransferred]);
 
-  // Process props
+  // Process initial props
   useEffect(() => {
     async function setSupportedChainAndToken(
       _supportedChains: SupportedChain[],
@@ -109,6 +137,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
 
       if (tokenAddress !== undefined && chain !== undefined) {
         const tokens = await getSupportedTokens(chainId);
+        console.log(tokens);
         if (tokens !== undefined) {
           const token = tokens.find((token) => token.address === tokenAddress);
           if (direction === 'from') {
@@ -119,7 +148,6 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         }
       }
     }
-
     if (supportedChains !== undefined && supportedChains.length > 0) {
       if (fromChainId !== undefined) {
         void setSupportedChainAndToken(supportedChains, 'from', fromChainId, fromTokenAddress);
@@ -131,6 +159,10 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   }, [supportedChains, fromChainId, toChainId, fromTokenAddress, toTokenAddress]);
 
   function handleChainSelect(direction: Direction, chain?: SupportedChain): void {
+    if (chain !== undefined) {
+      void getSupportedTokens(chain?.chainId); // TODO: cache?
+    }
+
     // TODO: handle select logic
     if (direction === 'from') {
       setFromChain(chain);
@@ -155,12 +187,14 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         fromToken={fromToken}
         toChain={toChain}
         toToken={toToken}
-        routes={routes}
+        bridgeResult={bridgeResult}
         handleChainSelect={handleChainSelect}
         handleTokenSelect={handleTokenSelect}
         amountToBeTransferred={_amountToBeTransferred}
+        estimateTransferValue={estimateTransferValue}
         setAmountToBeTransferred={setAmountToBeTransferred}
         supportedChains={supportedChains}
+        supportedTokens={supportedTokens}
         buttonState={buttonState}
         error={error}
       />

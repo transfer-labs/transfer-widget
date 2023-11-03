@@ -1,88 +1,86 @@
 import React, { type FunctionComponent } from 'react';
-import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
-// import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import { DefaultTooltip } from '../tooltips/DefaultTooltip';
+import { ClockIcon } from '@radix-ui/react-icons';
 
 export interface RouteDetailsProps {
-  gas: string; // Estimated gas fee for the route if 'selected' status
-  fees: string; // Estimated fee for the the route if 'selected' status
-  time: string; // Estimated time for the route if 'selected' status
-  steps: number; // Estimated number of steps a route has to take if 'selected' status
+  gas?: string; // Estimated gas fee for the route if 'selected' status
+  fees?: string; // Estimated fee for the the route if 'selected' status
+  time?: string; // Estimated time for the route if 'selected' status
+  steps?: number; // Estimated number of steps a route has to take if 'selected' status
 }
 
-const GasInfo: FunctionComponent<{ gas: string }> = ({ gas }) => {
+interface InfoProps {
+  value?: string | number;
+  side?: 'left' | 'right' | 'top' | 'bottom';
+  color?: string;
+}
+
+export const GasInfo: FunctionComponent<InfoProps> = ({
+  value = '0.0',
+  side = 'bottom',
+  color = 'unselected-text',
+}) => {
   return (
     <>
-      <DefaultTooltip label='Estimated gas price' side='bottom'>
+      <DefaultTooltip label='Estimated gas price' side={side}>
         <div className='flex flex-row gap-1 items-center justify-center'>
-          <svg width='14' height='14' viewBox='0 0 64 64' fill='none' xmlns='http://www.w3.org/2000/svg'>
-            <g clipPath='url(#clip0_1650_15453)'>
-              <path
-                d='M58.276 8.89062L52.9426 3.55725C52.4218 3.03638 51.578 3.03638 51.0573 3.55725C50.5364 4.07812 50.5364 4.92188 51.0573 5.44263L55.4479 9.83325L51.0573 14.2239C50.8073 14.4739 50.6666 14.8124 50.6666 15.1666V19.1666C50.6666 22.1081 53.0586 24.5 56 24.5V47.1666C56 47.9023 55.4024 48.5 54.6666 48.5C53.931 48.5 53.3333 47.9024 53.3333 47.1666V44.5C53.3333 42.2943 51.539 40.5 49.3333 40.5H48V5.83337C48 2.89188 45.6081 0.5 42.6666 0.5H16C13.0586 0.5 10.6666 2.89188 10.6666 5.83337V53.8334C7.72525 53.8334 5.33325 56.2253 5.33325 59.1668V63.1668C5.33325 63.9038 5.92963 64.5001 6.66663 64.5001H52C52.737 64.5001 53.3334 63.9038 53.3334 63.1668V59.1668C53.3334 56.2254 50.9415 53.8334 48 53.8334V43.1668H49.3334C50.069 43.1668 50.6668 43.7644 50.6668 44.5001V47.1668C50.6668 49.3725 52.461 51.1668 54.6668 51.1668C56.8725 51.1668 58.6668 49.3725 58.6668 47.1668V9.83337C58.6666 9.47913 58.526 9.14062 58.276 8.89062ZM42.6666 23.1914C42.6666 23.9284 42.0703 24.5247 41.3333 24.5247H17.3333C16.5963 24.5247 15.9999 23.9284 15.9999 23.1914V7.16663C15.9999 6.42963 16.5963 5.83325 17.3333 5.83325H41.3333C42.0703 5.83325 42.6666 6.42963 42.6666 7.16663V23.1914Z'
-                fill='#746F6F'
-              />
+          <svg width='12' height='12' className={`text-${color} fill-current`}>
+            <g clipPath='url(#a)'>
+              <path d='m10.927 1.573-1-1a.25.25 0 1 0-.354.354l.823.823-.823.823a.25.25 0 0 0-.073.177v.75c0 .552.449 1 1 1v4.25a.25.25 0 0 1-.5 0v-.5a.75.75 0 0 0-.75-.75H9V1c0-.552-.448-1-1-1H3c-.551 0-1 .448-1 1v9c-.552 0-1 .448-1 1v.75c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V11c0-.552-.448-1-1-1V8h.25a.25.25 0 0 1 .25.25v.5a.75.75 0 0 0 1.5 0v-7a.25.25 0 0 0-.073-.177ZM8 4.255a.25.25 0 0 1-.25.25h-4.5a.25.25 0 0 1-.25-.25V1.25A.25.25 0 0 1 3.25 1h4.5a.25.25 0 0 1 .25.25v3.005Z' />
             </g>
             <defs>
-              <clipPath id='clip0_1650_15453'>
-                <rect width='64' height='64' fill='white' transform='translate(0 0.5)' />
+              <clipPath id='a'>
+                <path fill='#fff' d='M0 0h12v12H0z' />
               </clipPath>
             </defs>
           </svg>
-
-          <p className={'text-unselected-text font-manrope text-sm font-small'}>${gas}</p>
+          <p className={'text-unselected-text font-manrope text-sm font-small'}>${value}</p>
         </div>
       </DefaultTooltip>
     </>
   );
 };
 
-const FeeInfo: FunctionComponent<{ fees: string }> = ({ fees }) => {
+export const FeeInfo: FunctionComponent<InfoProps> = ({
+  value = '0.0',
+  side = 'bottom',
+  color = 'unselected-text',
+}) => {
   return (
     <>
-      <DefaultTooltip label='Fee from route providers' side='bottom'>
-        <div className='flex flex-row gap-1 items-center justify-center'>
-          <svg width='12' height='13' viewBox='0 0 12 13' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <DefaultTooltip label='Fee from route providers' side={side}>
+        <div className={`flex flex-row gap-1 items-center justify-center text-${color}`}>
+          <svg xmlns='http://www.w3.org/2000/svg' width='12' height='13' className={`text-${color} fill-current`}>
             <path
               fillRule='evenodd'
+              d='M6 12.5a6 6 0 1 0 0-12 6 6 0 0 0 0 12Zm-.292-3.936v.533h.627v-.523c.2-.024.38-.073.543-.149.236-.112.42-.266.55-.462a1.22 1.22 0 0 0 .197-.693c0-.302-.08-.544-.243-.726-.162-.182-.425-.327-.789-.435l-.795-.231c-.22-.066-.38-.145-.483-.237a.436.436 0 0 1-.153-.336c0-.12.036-.227.108-.321a.715.715 0 0 1 .297-.222c.126-.054.268-.079.426-.075.168.002.32.036.453.102a.94.94 0 0 1 .513.684l.64-.114a1.644 1.644 0 0 0-.304-.678 1.413 1.413 0 0 0-.546-.432 1.668 1.668 0 0 0-.414-.126v-.54h-.627v.528a1.642 1.642 0 0 0-.48.135 1.2 1.2 0 0 0-.513.432c-.12.186-.18.405-.18.657 0 .534.3.894.9 1.08l1.014.312c.196.062.337.138.423.228a.48.48 0 0 1 .132.351.599.599 0 0 1-.258.498c-.17.13-.39.195-.663.195-.274 0-.509-.075-.705-.225a1.052 1.052 0 0 1-.384-.612l-.62.099c.045.272.143.508.293.708.152.198.346.351.582.459.142.065.295.11.46.136Z'
               clipRule='evenodd'
-              d='M6 12.5C9.31371 12.5 12 9.81371 12 6.5C12 3.18629 9.31371 0.5 6 0.5C2.68629 0.5 0 3.18629 0 6.5C0 9.81371 2.68629 12.5 6 12.5ZM5.7083 8.56402V9.097H6.3353V8.574C6.53479 8.55041 6.71579 8.50074 6.8783 8.425C7.1143 8.313 7.2973 8.159 7.4273 7.963C7.5593 7.765 7.6253 7.534 7.6253 7.27C7.6253 6.968 7.5443 6.726 7.3823 6.544C7.2203 6.362 6.9573 6.217 6.5933 6.109L5.7983 5.878C5.5783 5.812 5.4173 5.733 5.3153 5.641C5.2133 5.549 5.1623 5.437 5.1623 5.305C5.1623 5.185 5.1983 5.078 5.2703 4.984C5.3443 4.888 5.4433 4.814 5.5673 4.762C5.6933 4.708 5.8353 4.683 5.9933 4.687C6.1613 4.689 6.3123 4.723 6.4463 4.789C6.5823 4.855 6.6943 4.947 6.7823 5.065C6.8723 5.183 6.9313 5.319 6.9593 5.473L7.5983 5.359C7.5423 5.095 7.4413 4.869 7.2953 4.681C7.1513 4.493 6.9693 4.349 6.7493 4.249C6.62218 4.19069 6.48418 4.1487 6.3353 4.12303V3.583H5.7083V4.1112C5.53242 4.13425 5.37242 4.17918 5.2283 4.246C5.0083 4.348 4.8373 4.492 4.7153 4.678C4.5953 4.864 4.5353 5.083 4.5353 5.335C4.5353 5.869 4.8353 6.229 5.4353 6.415L6.4493 6.727C6.6453 6.789 6.7863 6.865 6.8723 6.955C6.9603 7.045 7.0043 7.162 7.0043 7.306C7.0043 7.508 6.9183 7.674 6.7463 7.804C6.5763 7.934 6.3553 7.999 6.0833 7.999C5.8093 7.999 5.5743 7.924 5.3783 7.774C5.1823 7.622 5.0543 7.418 4.9943 7.162L4.3733 7.261C4.4193 7.533 4.5173 7.769 4.6673 7.969C4.8193 8.167 5.0133 8.32 5.2493 8.428C5.39079 8.49275 5.54379 8.53809 5.7083 8.56402Z'
-              fill='#746F6F'
             />
           </svg>
 
-          <p className={'text-unselected-text font-manrope text-sm font-small'}>${fees}</p>
+          <p className={`text-${color} font-manrope text-sm font-small`}>${value}</p>
         </div>
       </DefaultTooltip>
     </>
   );
 };
 
-const TimeInfo: FunctionComponent<{ time: string }> = ({ time }) => {
+export const TimeInfo: FunctionComponent<InfoProps> = ({ value = '0', side = 'bottom', color = 'unselected-text' }) => {
   return (
     <>
-      <DefaultTooltip label='Estimated time for transaction' side='bottom'>
+      <DefaultTooltip label='Estimated time for transaction' side={side}>
         <div className='flex flex-row gap-1 items-center justify-center'>
-          <svg width='14' height='14' viewBox='0 0 64 65' fill='none' xmlns='http://www.w3.org/2000/svg'>
-            <g clipPath='url(#clip0_1650_15475)'>
-              <path
-                d='M32 64.5C49.6686 64.5 64 50.1686 64 32.5C64 14.8314 49.6686 0.5 32 0.5C14.3314 0.5 0 14.8314 0 32.5C0 50.1686 14.3314 64.5 32 64.5ZM29.7142 14.2143C29.7142 12.9571 30.7428 11.9285 32 11.9285C33.2572 11.9285 34.2858 12.9571 34.2858 14.2143V31.4029L44.8572 39.86C45.8401 40.6486 46 42.0885 45.2114 43.0714C44.7657 43.6314 44.1029 43.9285 43.4285 43.9285C42.9257 43.9285 42.4228 43.7685 42 43.4257L30.5715 34.2829C30.0344 33.8486 29.7144 33.1972 29.7144 32.5V14.2143H29.7142Z'
-                fill='#746F6F'
-              />
-            </g>
-            <defs>
-              <clipPath id='clip0_1650_15475'>
-                <rect width='64' height='64' fill='white' transform='translate(0 0.5)' />
-              </clipPath>
-            </defs>
-          </svg>
-
-          <p className={'text-unselected-text font-manrope text-sm font-small'}>{time}</p>
+          <div className={`text-${color}`}>
+            <ClockIcon />
+          </div>
+          <p className={`text-${color} font-manrope text-sm font-small`}>{value}</p>
         </div>
       </DefaultTooltip>
     </>
   );
 };
 
-const StepsInfo: FunctionComponent<{ steps: number }> = ({ steps }) => {
+const StepsInfo: FunctionComponent<InfoProps> = ({ value = '0', side = 'bottom', color = 'unselected-text' }) => {
   return (
     <>
       <DefaultTooltip label='# of steps in route' side='bottom'>
@@ -94,7 +92,7 @@ const StepsInfo: FunctionComponent<{ steps: number }> = ({ steps }) => {
             />
           </svg>
 
-          <p className={'text-unselected-text font-manrope text-sm font-small'}>{steps}</p>
+          <p className={'text-unselected-text font-manrope text-sm font-small'}>{value}</p>
         </div>
       </DefaultTooltip>
     </>
@@ -104,10 +102,10 @@ const StepsInfo: FunctionComponent<{ steps: number }> = ({ steps }) => {
 export const RouteDetails: FunctionComponent<RouteDetailsProps> = ({ gas, fees, time, steps }) => {
   return (
     <div className='flex flex-row justify-between w-full items-center'>
-      <GasInfo gas={gas} />
-      <FeeInfo fees={fees} />
-      <TimeInfo time={time} />
-      <StepsInfo steps={steps} />
+      <GasInfo value={gas} />
+      <FeeInfo value={fees} />
+      <TimeInfo value={time} />
+      <StepsInfo value={steps} />
     </div>
   );
 };

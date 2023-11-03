@@ -7,12 +7,13 @@ interface Props {
 
 interface UseTransfer {
   supportedChains: SupportedChain[] | undefined;
+  supportedTokens: SupportedToken[] | undefined;
   getSupportedTokens: (chainId: number) => Promise<SupportedToken[] | undefined>;
 }
 
 export function useTransfer({ transfer }: Props): UseTransfer {
   const [supportedChains, setSupportedChains] = useState<SupportedChain[] | undefined>(undefined);
-
+  const [supportedTokens, setSupportedTokens] = useState<SupportedToken[] | undefined>(undefined);
   useEffect(() => {
     async function _setSupportedChains(): Promise<void> {
       try {
@@ -32,6 +33,7 @@ export function useTransfer({ transfer }: Props): UseTransfer {
   async function getSupportedTokens(chainId: number): Promise<SupportedToken[] | undefined> {
     try {
       const tokens = await transfer.getSupportedTokens(chainId);
+      setSupportedTokens(tokens);
       return tokens;
     } catch (e) {
       console.error(e);
@@ -42,5 +44,6 @@ export function useTransfer({ transfer }: Props): UseTransfer {
   return {
     supportedChains,
     getSupportedTokens,
+    supportedTokens,
   };
 }
