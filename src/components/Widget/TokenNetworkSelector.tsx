@@ -1,22 +1,33 @@
 import React, { type FunctionComponent } from 'react';
-import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
+import { DefaultTooltip } from '../tooltips/DefaultTooltip';
 import { motion } from 'framer-motion';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type Direction } from 'models/const';
 
 interface ChainSelectorProps {
   chains?: SupportedChain[];
+  handleChainSelect: (chain: SupportedChain) => void;
   selectedChain?: SupportedChain;
 }
-const ChainSelector: FunctionComponent<ChainSelectorProps> = ({ chains, selectedChain }) => {
+const ChainSelector: FunctionComponent<ChainSelectorProps> = ({ chains, selectedChain, handleChainSelect }) => {
   return (
     <div className='flex flex-col w-full gap-3 bg-component-background py-3 px-2 rounded-lg border-border-color border-1'>
       <div className='flex flex-row justify-between items-center w-full'>
         {chains?.map((chain) => {
           return (
-            <DefaultTooltip key={chain.chainId} label={chain.name} side='top'>
-              <img src={chain.logoURI} className='w-12 h-12' />
-            </DefaultTooltip>
+            <div
+              key={chain.chainId}
+              className={`hover:cursor-pointer ${
+                selectedChain?.chainId === chain.chainId ? 'border-success-green border-4 rounded-[13px]' : ''
+              }`}
+              onClick={() => {
+                handleChainSelect(chain);
+              }}
+            >
+              <DefaultTooltip label={chain.name} side='top'>
+                <img src={chain.logoURI} className='w-12 h-12' />
+              </DefaultTooltip>
+            </div>
           );
         })}
       </div>
@@ -29,9 +40,10 @@ const ChainSelector: FunctionComponent<ChainSelectorProps> = ({ chains, selected
 
 export interface TokenSelectorProps {
   tokens?: SupportedToken[];
+  handleTokenSelect: (token: SupportedToken) => void;
   selectedToken?: SupportedToken;
 }
-const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selectedToken }) => {
+const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selectedToken, handleTokenSelect }) => {
   return (
     <div className='flex flex-col gap-2'>
       <input
@@ -43,7 +55,12 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selected
           return (
             <div
               key={token.address}
-              className='flex w-full flex-row justify-between items-center hover:bg-shadow-element cursor-pointer hover:rounded-lg'
+              className={`flex w-full flex-row justify-between items-center hover:bg-shadow-element cursor-pointer hover:rounded-lg ${
+                selectedToken?.address === token.address ? 'border-success-green border-1 rounded-lg' : ''
+              }`}
+              onClick={() => {
+                handleTokenSelect(token);
+              }}
             >
               <div className='flex flex-row gap-1 items-center'>
                 <img className='w-12 h-12' src={token.logoURI} />
@@ -67,8 +84,8 @@ export interface TokenNetworkSelectorProps {
   tokens?: SupportedToken[];
   selectedChain?: SupportedChain;
   selectedToken?: SupportedToken;
-  handleChainSelect: (direction: Direction, chain: SupportedChain) => void;
-  handleTokenSelect: (direction: Direction, token: SupportedToken) => void;
+  handleChainSelect: (direction: Direction, chain?: SupportedChain) => void;
+  handleTokenSelect: (direction: Direction, token?: SupportedToken) => void;
   onClose?: () => void;
 }
 
@@ -78,6 +95,8 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
   tokens,
   selectedChain,
   selectedToken,
+  handleChainSelect,
+  handleTokenSelect,
   onClose,
 }) => {
   return (
@@ -116,7 +135,14 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
           >
-            <ChainSelector chains={chains} selectedChain={selectedChain} />
+            <ChainSelector
+              chains={chains}
+              selectedChain={selectedChain}
+              handleChainSelect={(chain) => {
+                handleTokenSelect(direction, undefined);
+                handleChainSelect(direction, chain);
+              }}
+            />
           </motion.div>
         </div>
 
@@ -135,7 +161,13 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
           >
-            <TokenSelector tokens={tokens} selectedToken={selectedToken} />
+            <TokenSelector
+              tokens={tokens}
+              selectedToken={selectedToken}
+              handleTokenSelect={(token) => {
+                handleTokenSelect(direction, token);
+              }}
+            />
           </motion.div>
         </div>
       </div>
