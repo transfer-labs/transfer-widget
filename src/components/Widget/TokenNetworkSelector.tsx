@@ -1,5 +1,5 @@
 import React, { type FunctionComponent } from 'react';
-import { DefaultTooltip } from '../tooltips/DefaultTooltip';
+import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
 import { motion } from 'framer-motion';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type Direction } from 'models/const';

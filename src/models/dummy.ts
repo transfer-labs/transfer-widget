@@ -2,7 +2,7 @@ import USDC from '../../src/icons/network-token-examples/USDC.png';
 import Ether from '../../src/icons/network-token-examples/token.png';
 import fromNetwork from '../../src/icons/network-token-examples/from-chain.png';
 import toNetwork from '../../src/icons/network-token-examples/to-chain.png';
-import Bridge from '../icons/routes/stargate.png';
+import Bridge from '../icons/Routes/stargate.png';
 import { type SupportedToken, type SupportedChain } from '@argoplatform/transfer-sdk';
 
 export const SupportedChains: SupportedChain[] = [

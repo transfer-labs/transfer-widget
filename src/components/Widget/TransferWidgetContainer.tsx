@@ -1,6 +1,6 @@
 import React, { type FunctionComponent, type ReactNode, useState } from 'react';
 import { TokenNetworkInput } from './TokenNetworkInput';
-import { RouteContainer } from '../routes/RouteContainer';
+import { RouteContainer } from '../Routes/RouteContainer';
 import { ErrorMessage } from '../errors/ErrorMessage';
 import { SwitchArrow } from '../SwitchArrow';
 import { ActionButton, type ActionButtonProps } from '../ActionButton';
