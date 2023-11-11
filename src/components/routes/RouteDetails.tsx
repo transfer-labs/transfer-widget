@@ -1,5 +1,5 @@
 import React, { type FunctionComponent } from 'react';
-import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
+import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { ClockIcon } from '@radix-ui/react-icons';
 
 export interface RouteDetailsProps {
@@ -111,18 +111,20 @@ export const RouteDetails: FunctionComponent<RouteDetailsProps> = ({ gas, fees, 
 };
 
 interface LoadingIndicatorProps {
-  status: String
+  status: string;
 }
 
-export const LoadingIndicator: FunctionComponent<LoadingIndicatorProps> = ({status}) => {
+export const LoadingIndicator: FunctionComponent<LoadingIndicatorProps> = ({ status }) => {
   let color = 'loading-yellow';
   if (status === 'error') color = 'failure-red';
   if (status === 'success') color = 'success-green';
 
   return (
     <div className={`relative flex items-center justify-center h-12 w-12`}>
-      <div className={`absolute inline-flex rounded-full h-12 w-12 bg-${color} opacity-75 animate-pulse-ring transform -translate-x-1/2 translate-y-0`}></div>
+      <div
+        className={`absolute inline-flex rounded-full h-12 w-12 bg-${color} opacity-75 animate-pulse-ring transform -translate-x-1/2 translate-y-0`}
+      ></div>
       <div className={`absolute inline-flex rounded-full h-5 w-5 bg-${color} opacity-75 animate-pulse-dot`}></div>
     </div>
   );
-}
+};

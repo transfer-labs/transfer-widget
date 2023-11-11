@@ -2,7 +2,7 @@ import React, { type FunctionComponent, useState, type ReactNode } from 'react';
 import Best from '../../icons/routes/best-route.png';
 import { TokenNetworkImage } from '../Widget/TokenNetworkImage';
 import { RouteDetails } from './RouteDetails';
-import { DefaultTooltip } from '../tooltips/DefaultTooltip';
+import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type SupportedChain, type Route as RouteType, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type ErrorType } from 'models/const';

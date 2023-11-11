@@ -1,12 +1,11 @@
 import React, { type FunctionComponent, useState } from 'react';
 import { DividerCircle } from '../Routes/Route';
 import { ActionButton, type ActionButtonProps } from '../ActionButton';
-import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
+import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TokenNetworkImage } from './TokenNetworkImage';
 import { type SupportedToken, type Route, type SupportedChain } from '@argoplatform/transfer-sdk';
-
 
 export interface ReviewRouteProps {
   route: Route;

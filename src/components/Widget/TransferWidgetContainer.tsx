@@ -1,7 +1,7 @@
 import React, { type FunctionComponent, type ReactNode, useState } from 'react';
 import { TokenNetworkInput } from './TokenNetworkInput';
 import { RouteContainer } from '../Routes/RouteContainer';
-import { ErrorMessage } from '../errors/ErrorMessage';
+import { ErrorMessage } from '../Errors/ErrorMessage';
 import { SwitchArrow } from '../SwitchArrow';
 import { ActionButton, type ActionButtonProps } from '../ActionButton';
 import { type SupportedChain, type SupportedToken, type BridgeResult } from '@argoplatform/transfer-sdk';
