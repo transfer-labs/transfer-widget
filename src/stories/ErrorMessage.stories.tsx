@@ -16,6 +16,6 @@ export const Default: Story = {
 
 export const GasError: Story = {
   args: {
-    type: 'gas',
+    errorType: 'gas',
   },
 };

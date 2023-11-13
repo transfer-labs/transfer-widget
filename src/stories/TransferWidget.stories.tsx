@@ -9,14 +9,21 @@ type Story = StoryObj<typeof TransferWidget>;
 
 export default meta;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    isTestnet: true,
+    userAddress: '0x3ee16d933bc109641A3915D650B223EA40Aca096',
+  },
+};
 
 export const ChainTokenSelected: Story = {
   args: {
-    fromChainId: 1,
-    fromTokenAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    toChainId: 137,
-    toTokenAddress: '0xD6DF932A45C0f255f85145f286eA0b292B21C90B',
+    fromChainId: 5,
+    fromTokenAddress: '0xDf0360Ad8C5ccf25095Aa97ee5F2785c8d848620',
+    toChainId: 80001,
+    toTokenAddress: '0x742DfA5Aa70a8212857966D491D67B09Ce7D6ec7',
     amountToBeTransferred: '1',
+    isTestnet: true,
+    userAddress: '0x3ee16d933bc109641A3915D650B223EA40Aca096',
   },
 };

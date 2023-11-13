@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { TokenNetworkInput } from '../components/Widget/TokenNetworkInput';
 import { SupportedChains, SupportedTokens } from '../models/dummy';
+
 const meta: Meta<typeof TokenNetworkInput> = {
   component: TokenNetworkInput,
 };
@@ -26,7 +27,7 @@ export const SelectedTo: Story = {
 
 export const SelectedFrom: Story = {
   args: {
-    direction: 'to',
+    direction: 'from',
     amount: '1.7',
     chain: SupportedChains[1],
     token: SupportedTokens[1],
