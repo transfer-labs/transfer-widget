@@ -29,3 +29,9 @@ export const Error: Story = {
     type: 'error',
   },
 };
+
+export const Loading: Story = {
+  args: {
+    type: 'loading',
+  },
+};

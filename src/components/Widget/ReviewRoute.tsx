@@ -1,12 +1,13 @@
 import React, { type FunctionComponent, useState } from 'react';
 import { DividerCircle } from '../Routes/Route';
 import { ActionButton, type ActionButtonProps } from '../ActionButton';
-import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
+import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TokenNetworkImage } from './TokenNetworkImage';
 import { type SupportedToken, type Route, type SupportedChain } from '@argoplatform/transfer-sdk';
-
+import { type ErrorType } from 'models/const';
+import { ErrorMessage } from '../Errors/ErrorMessage';
 
 export interface ReviewRouteProps {
   route: Route;
@@ -15,6 +16,8 @@ export interface ReviewRouteProps {
   toToken?: SupportedToken;
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
+  error?: ErrorType;
+  onClose: () => void;
 }
 
 export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
@@ -24,6 +27,8 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
   toChain,
   fromChain,
   toToken,
+  error,
+  onClose,
 }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -33,12 +38,12 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5, ease: 'easeInOut' }}
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
     >
       <div className='inline-flex flex-col py-5 px-6 gap-6 border-1 rounded-lg border-border-color bg-modal-background sm:w-[90vw] sm:min-w-[300px] max-w-[475px]'>
         <div className='flex flex-row justify-between items-center'>
           <p className='text-white font-manrope font-medium text-xl'>Review Route</p>
-          <div className='p-2 hover:bg-shadow-element hover:rounded-lg cursor-pointer'>
+          <div className='p-2 hover:bg-shadow-element hover:rounded-lg cursor-pointer' onClick={onClose}>
             <svg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='none'>
               <path
                 fill='#fff'
@@ -148,10 +153,10 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                   transition={{ duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] }}
                 >
                   <div className='flex flex-col gap-.5'>
-                    <div className='flex flex-row gap-.25 items-center'>
+                    {/* <div className='flex flex-row gap-.25 items-center'>
                       <img src={route.bridgeInfo.logoURI} className='w-5 h-5' />
                       <p className={'text-accent-color font-manrope text-lg font-medium'}>{route.bridgeInfo.name}</p>
-                    </div>
+                    </div> */}
                     <p className='text-accent-color font-manrope text-sm m-0'>
                       Bridge from {fromToken?.name} to {toToken?.name} using {route.bridgeInfo.name}
                     </p>
@@ -189,6 +194,8 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
             </motion.div>
           </div>
         </motion.div>
+        {error !== undefined ? <ErrorMessage errorType={error} /> : null}
+
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}

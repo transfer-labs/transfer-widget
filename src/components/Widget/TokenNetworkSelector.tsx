@@ -1,5 +1,5 @@
 import React, { type FunctionComponent } from 'react';
-import { DefaultTooltip } from '../Tooltips/DefaultTooltip';
+import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion } from 'framer-motion';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type Direction } from 'models/const';
@@ -12,13 +12,13 @@ interface ChainSelectorProps {
 const ChainSelector: FunctionComponent<ChainSelectorProps> = ({ chains, selectedChain, handleChainSelect }) => {
   return (
     <div className='flex flex-col w-full gap-3 bg-component-background py-3 px-2 rounded-lg border-border-color border-1'>
-      <div className='flex flex-row justify-between items-center w-full'>
+      <div className='flex flex-row items-center w-full gap-4 overflow-x-auto'>
         {chains?.map((chain) => {
           return (
             <div
               key={chain.chainId}
-              className={`hover:cursor-pointer ${
-                selectedChain?.chainId === chain.chainId ? 'border-success-green border-4 rounded-[13px]' : ''
+              className={`hover:cursor-pointer border-2 rounded-lg ${
+                selectedChain?.chainId === chain.chainId ? 'border-success-green' : 'border-transparent'
               }`}
               onClick={() => {
                 handleChainSelect(chain);
@@ -55,8 +55,8 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selected
           return (
             <div
               key={token.address}
-              className={`flex w-full flex-row justify-between items-center hover:bg-shadow-element cursor-pointer hover:rounded-lg ${
-                selectedToken?.address === token.address ? 'border-success-green border-1 rounded-lg' : ''
+              className={`flex w-full flex-row justify-between items-center hover:bg-shadow-element cursor-pointer rounded-lg border-2 ${
+                selectedToken?.address === token.address ? 'border-success-green' : 'border-transparent'
               }`}
               onClick={() => {
                 handleTokenSelect(token);
@@ -65,11 +65,11 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selected
               <div className='flex flex-row gap-1 items-center'>
                 <img className='w-12 h-12' src={token.logoURI} />
                 <div className='flex flex-col'>
-                  <p className='text-white font-manrope text-lg'>{token.name}</p>
-                  <p className='text-accent-color font-manrope text-md'>*description*</p>
+                  <p className='text-white font-manrope text-lg'>{token.symbol}</p>
+                  <p className='text-accent-color font-manrope text-md'>{token.name}</p>
                 </div>
               </div>
-              <p className='text-accent-color font-manrope text-md'>*balance*</p>
+              {/* <p className='text-accent-color font-manrope text-md'>*balance*</p> */}
             </div>
           );
         })}
@@ -86,7 +86,7 @@ export interface TokenNetworkSelectorProps {
   selectedToken?: SupportedToken;
   handleChainSelect: (direction: Direction, chain?: SupportedChain) => void;
   handleTokenSelect: (direction: Direction, token?: SupportedToken) => void;
-  onClose?: () => void;
+  onClose: () => void;
 }
 
 export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> = ({
@@ -165,6 +165,7 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
               tokens={tokens}
               selectedToken={selectedToken}
               handleTokenSelect={(token) => {
+                onClose();
                 handleTokenSelect(direction, token);
               }}
             />

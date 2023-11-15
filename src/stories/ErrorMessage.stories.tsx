@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ErrorMessage } from '../components/errors/ErrorMessage';
+import { ErrorMessage } from '../components/Errors/ErrorMessage';
 
 const meta: Meta<typeof ErrorMessage> = {
   component: ErrorMessage,
@@ -16,6 +16,6 @@ export const Default: Story = {
 
 export const GasError: Story = {
   args: {
-    type: 'gas',
+    errorType: 'gas',
   },
 };
