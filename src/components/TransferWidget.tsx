@@ -159,6 +159,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         .then((result) => {
           console.log(result);
           setEstimateTransferValue(result.bestRoute.dstAmountEstimate.toString());
+          setError(undefined);
           setButtonState({
             type: 'default',
             label: 'Transfer',

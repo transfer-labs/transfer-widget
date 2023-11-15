@@ -48,7 +48,6 @@ export const Route: FunctionComponent<RouteProps> = ({
 }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-
   return (
     <div
       className={`flex flex-col gap-4 w-full bg-component-background ${
@@ -74,7 +73,7 @@ export const Route: FunctionComponent<RouteProps> = ({
             {/* token, bridge info (unexpanded), and expanded button  */}
             <div className='relative flex flex-row justify-between w-full items-start sm:items-center'>
               <div className='flex flex-row gap-1 items-center justify-center'>
-                <TokenNetworkImage tokenLogo={toToken?.logoURI} networkLogo={toChain?.logoURI} />
+                <TokenNetworkImage tokenLogo={toToken?.logoUri} networkLogo={toChain?.logoURI} />
                 <div className='flex flex-col'>
                   <p className={'text-white font-manrope text-xl font-medium'}>
                     {estimateTransferValue} {toToken?.name}

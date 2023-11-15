@@ -37,7 +37,7 @@ export function useTransfer({ transfer }: Props): UseTransfer {
     }
     try {
       const tokens = await transfer.getSupportedTokens(chainId);
-
+      console.log(tokens);
       setSupportedTokensByChain((prev) => {
         return {
           ...prev,

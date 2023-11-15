@@ -63,7 +63,7 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selected
               }}
             >
               <div className='flex flex-row gap-1 items-center'>
-                <img className='w-12 h-12' src={token.logoURI} />
+                <img className='w-12 h-12' src={token.logoUri} />
                 <div className='flex flex-col'>
                   <p className='text-white font-manrope text-lg'>{token.symbol}</p>
                   <p className='text-accent-color font-manrope text-md'>{token.name}</p>
