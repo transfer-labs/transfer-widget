@@ -4,7 +4,7 @@ import { RouteContainer } from '../Routes/RouteContainer';
 import { ErrorMessage } from '../Errors/ErrorMessage';
 import { SwitchArrow } from '../SwitchArrow';
 import { ActionButton, type ActionButtonProps } from '../ActionButton';
-import { type SupportedChain, type SupportedToken, type BridgeResult } from '@argoplatform/transfer-sdk';
+import { type SupportedChain, type SupportedToken, type QuoteResult } from '@argoplatform/transfer-sdk';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TokenNetworkSelector } from './TokenNetworkSelector';
 import { type Direction, type SupportedTokensByChain } from 'models/const';
@@ -14,7 +14,6 @@ import { ReviewRoute } from './ReviewRoute';
 export interface TransferWidgetContainerProps {
   supportedChains?: SupportedChain[];
   supportedTokensByChain?: SupportedTokensByChain;
-  bridgeResult?: BridgeResult;
   fromChain?: SupportedChain;
   fromToken?: SupportedToken;
   toChain?: SupportedChain;
@@ -24,7 +23,7 @@ export interface TransferWidgetContainerProps {
   setAmountToBeTransferred: (amount: string) => void;
   amountToBeTransferred?: string;
   buttonState: ActionButtonProps;
-  estimateTransferValue?: string;
+  quoteResult?: QuoteResult;
   error?: ErrorType;
   userAddress?: string;
   widgetView: WidgetViewType;
@@ -40,9 +39,8 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   toToken,
   buttonState,
   error,
-  estimateTransferValue,
+  quoteResult,
   amountToBeTransferred,
-  bridgeResult,
   userAddress,
   widgetView,
   setWidgetView,
@@ -78,9 +76,9 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   if (widgetView === 'review') {
     return (
       <AnimatePresence>
-        {bridgeResult?.bestRoute !== undefined && (
+        {quoteResult?.bestRoute !== undefined && (
           <ReviewRoute
-            route={bridgeResult.bestRoute}
+            route={quoteResult.bestRoute}
             fromChain={fromChain}
             toChain={toChain}
             fromToken={fromToken}
@@ -173,7 +171,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                   token={toToken}
                   direction='to'
                   // balance='0.0'
-                  amount={estimateTransferValue}
+                  amount={quoteResult?.bestRoute?.dstAmountEstimate?.toString()}
                   onAnchorClick={() => {
                     setWidgetView('selectTokenNetworkTo');
                   }}
@@ -184,14 +182,14 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
           {error !== undefined ? <ErrorMessage errorType={error} /> : null}
 
           {/* if both the paramaters are fufilled animate in the routes component */}
-          {bridgeResult !== undefined && (
+          {quoteResult !== undefined && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
             >
               <RouteContainer
-                bridgeResult={bridgeResult}
+                quoteResult={quoteResult}
                 fromChain={fromChain}
                 toChain={toChain}
                 fromToken={fromToken}

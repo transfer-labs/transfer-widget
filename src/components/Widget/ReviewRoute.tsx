@@ -5,12 +5,12 @@ import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TokenNetworkImage } from './TokenNetworkImage';
-import { type SupportedToken, type Route, type SupportedChain } from '@argoplatform/transfer-sdk';
+import { type SupportedToken, type BasicRoute, type SupportedChain } from '@argoplatform/transfer-sdk';
 import { type ErrorType } from 'models/const';
 import { ErrorMessage } from '../Errors/ErrorMessage';
 
 export interface ReviewRouteProps {
-  route: Route;
+  route: BasicRoute;
   buttonState: ActionButtonProps;
   fromToken?: SupportedToken;
   toToken?: SupportedToken;
@@ -76,13 +76,13 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.5, ease: 'easeInOut' }}
               >
-                <TimeInfo value={route.timeEstimate} color='accent-color' side='left' />
+                <TimeInfo value={'TODO'} color='accent-color' side='left' />
               </motion.div>
             </div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
               <div className='flex flex-row gap-1 items-center justify-center'>
-                <TokenNetworkImage tokenLogo={fromToken?.logoURI} networkLogo={fromChain?.logoURI} />
+                <TokenNetworkImage tokenLogo={fromToken?.logoUri} networkLogo={fromChain?.logoURI} />
                 <div className='flex flex-col'>
                   {/* <p className={'text-white font-manrope text-xl font-medium'}>
                     {routeprops.routetokenprops.fromTokenProps.SupportedTokensProps.fromToken.balance}{' '}
@@ -166,7 +166,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
             </AnimatePresence>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
-              <GasInfo value={route.transactionRequest.gasPrice?.toString()} color='unselected-text' side='right' />
+              <GasInfo value={'TODO'} color='unselected-text' side='right' />
             </motion.div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
@@ -175,7 +175,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
               <div className='flex flex-row gap-1 items-center justify-center'>
-                <TokenNetworkImage tokenLogo={toToken?.logoURI} networkLogo={toChain?.logoURI} />
+                <TokenNetworkImage tokenLogo={toToken?.logoUri} networkLogo={toChain?.logoURI} />
                 <div className='flex flex-col'>
                   {/* <p className={'text-white font-manrope text-xl font-medium'}>
                     {routeprops.routetokenprops.toTokenProps.SupportedTokensProps.toToken.balance}{' '}

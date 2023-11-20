@@ -18,6 +18,9 @@ export const Error = {
   execute_bridge: {
     description: 'Error executing bridge.',
   },
+  no_bridge_routes: {
+    description: 'No bridge routes found.',
+  },
 };
 
 export type ErrorType = keyof typeof Error;

@@ -4,7 +4,7 @@ import { TokenNetworkImage } from '../Widget/TokenNetworkImage';
 import { RouteDetails } from './RouteDetails';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
-import { type SupportedChain, type Route as RouteType, type SupportedToken } from '@argoplatform/transfer-sdk';
+import { type SupportedChain, type BasicRoute, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type ErrorType } from 'models/const';
 
 export interface RouteProps {
@@ -20,7 +20,7 @@ export interface RouteProps {
   // tokenNetwork?: string; // the network url if 'selected' status
   // balance?: string; // Balance of the token if 'selected' status
   // details: RouteDetailsProps; // Details of the route if 'selected' status
-  route?: RouteType;
+  route?: BasicRoute;
   toToken?: SupportedToken;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
@@ -139,7 +139,7 @@ export const Route: FunctionComponent<RouteProps> = ({
                       <p className={'text-accent-color font-manrope text-lg font-medium'}>{route?.bridgeInfo.name}</p>
                     </div>
                     <p className='text-accent-color font-manrope text-sm m-0'>
-                      Bridge from {fromToken?.symbol} on {fromChain?.name} to {toToken?.symbol} on {toChain?.name} using
+                      Bridge from {fromToken?.symbol} on {fromChain?.name} to {toToken?.symbol} on {toChain?.name} using{' '}
                       {route?.bridgeInfo.name}
                     </p>
                   </div>
@@ -171,9 +171,9 @@ export const Route: FunctionComponent<RouteProps> = ({
 
           {/* icons regarding the route details */}
           <RouteDetails
-            gas={route?.transactionRequest.gasPrice?.toString()}
-            fees={'0.01'} // TODO: calculate fees
-            time={route?.timeEstimate}
+            gas={'TODO'}
+            fees={'TODO'} // TODO: calculate fees
+            time={'TODO'}
             steps={(route?.dstChainSwapDexs.length ?? 0) + (route?.srcChainSwapDexs.length ?? 0)}
           />
         </>
