@@ -170,7 +170,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
             </motion.div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
-              <FeeInfo value={12} color='unselected-text' side='right' />
+              <FeeInfo value={-1} color='unselected-text' side='right' />
             </motion.div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
