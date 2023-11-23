@@ -9,7 +9,7 @@ import {
   type BridgeRequest,
 } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
-import { type ErrorType, type Direction } from 'models/const';
+import { type ErrorType, type Direction, type WidgetState } from 'models/const';
 import { type ActionButtonProps } from './ActionButton';
 import { type ethers } from 'ethers';
 import { type WidgetViewType } from '../models/const';
@@ -47,6 +47,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   const [error, setError] = useState<ErrorType | undefined>(undefined);
   const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
+  const [widgetState, setWidgetState] = useState<WidgetState>(undefined);
   const [buttonState, setButtonState] = useState<ActionButtonProps>({
     type: 'disabled',
     label: 'Select tokens',
@@ -117,10 +118,12 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       });
 
       try {
+        setWidgetState('loading');
         const result = await transfer.quoteBridge(bridgeRequest);
         if (Object.keys(result.bestRoute).length === 0) {
           setQuoteResult(undefined);
           setError('no_bridge_routes');
+          setWidgetState('error');
           setButtonState({
             type: 'error',
             label: 'Error',
@@ -128,6 +131,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
           });
         } else {
           setQuoteResult(result);
+          setWidgetState('default');
           setError(undefined);
           setButtonState({
             type: 'default',
@@ -138,6 +142,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       } catch (error) {
         console.error(error);
         setError('retrieving_bridge_routes');
+        setWidgetState('error');
         setButtonState({
           type: 'error',
           label: 'Error',
@@ -147,6 +152,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     }
 
     if (userAddress === undefined) {
+      setQuoteResult(undefined);
       setButtonState({
         type: 'error',
         label: 'Error',
@@ -256,6 +262,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         error={error}
         userAddress={userAddress}
         widgetView={widgetView}
+        widgetState={widgetState}
         setWidgetView={setWidgetView}
       />
     </TransferContext.Provider>

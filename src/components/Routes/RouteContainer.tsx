@@ -1,10 +1,11 @@
 import React, { type FunctionComponent } from 'react';
 import { type SupportedChain, type SupportedToken, type QuoteResult } from '@argoplatform/transfer-sdk';
 import { Route } from './Route';
-import { type ErrorType } from 'models/const';
+import { type WidgetState, type ErrorType } from 'models/const';
 
 export interface RouteContainerProps {
   quoteResult?: QuoteResult;
+  widgetState?: WidgetState;
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
@@ -17,6 +18,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
   error,
   fromChain,
   fromToken,
+  widgetState,
   toChain,
   toToken,
 }) => {
@@ -35,6 +37,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
         fromToken={fromToken}
         toToken={toToken}
         error={error}
+        widgetState={widgetState}
       />
     </div>
   );

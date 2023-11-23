@@ -8,7 +8,7 @@ import { type SupportedChain, type SupportedToken, type QuoteResult } from '@arg
 import { motion, AnimatePresence } from 'framer-motion';
 import { TokenNetworkSelector } from './TokenNetworkSelector';
 import { type Direction, type SupportedTokensByChain } from 'models/const';
-import { type ErrorType, type WidgetViewType } from '../../models/const';
+import { type ErrorType, type WidgetViewType, type WidgetState } from '../../models/const';
 import { ReviewRoute } from './ReviewRoute';
 
 export interface TransferWidgetContainerProps {
@@ -27,6 +27,7 @@ export interface TransferWidgetContainerProps {
   error?: ErrorType;
   userAddress?: string;
   widgetView: WidgetViewType;
+  widgetState: WidgetState;
   setWidgetView: (view?: WidgetViewType) => void;
 }
 
@@ -43,6 +44,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   amountToBeTransferred,
   userAddress,
   widgetView,
+  widgetState,
   setWidgetView,
   handleChainSelect,
   handleTokenSelect,
@@ -189,6 +191,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
               transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
             >
               <RouteContainer
+                widgetState={widgetState}
                 quoteResult={quoteResult}
                 fromChain={fromChain}
                 toChain={toChain}

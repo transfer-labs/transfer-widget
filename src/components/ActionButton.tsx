@@ -1,35 +1,10 @@
 import React from 'react';
 import { Line } from './Skeleton/Line';
+import { type WidgetState, WidgetStateTheme } from '../models/const';
 
-const ButtonTypes = {
-  default: {
-    backgroundColor: 'bg-success-green',
-    textColor: 'text-black',
-    hoverBackgroundColor: 'hover:bg-hover-green',
-    disabled: false,
-  },
-  error: {
-    backgroundColor: 'bg-failure-red',
-    textColor: 'text-black',
-    hoverBackgroundColor: null,
-    disabled: true,
-  },
-  disabled: {
-    backgroundColor: 'bg-component-background',
-    textColor: 'text-unselected-text',
-    hoverBackgroundColor: null,
-    disabled: true,
-  },
-  loading: {
-    backgroundColor: 'bg-component-background',
-    textColor: 'text-unselected-text',
-    hoverBackgroundColor: null,
-    disabled: true,
-  },
-};
 export interface ActionButtonProps {
   label?: string;
-  type?: keyof typeof ButtonTypes;
+  type?: WidgetState;
   onClick?: () => void;
 }
 
@@ -38,7 +13,7 @@ const BASE_BUTTON_CLASSES =
 
 export const ActionButton: React.FunctionComponent<ActionButtonProps> = ({ label, type, onClick }) => {
   const _type = type ?? 'default';
-  const { backgroundColor, textColor, hoverBackgroundColor, disabled } = ButtonTypes[_type];
+  const { backgroundColor, textColor, hoverBackgroundColor, disabled } = WidgetStateTheme[_type];
   const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer';
 
   return (
