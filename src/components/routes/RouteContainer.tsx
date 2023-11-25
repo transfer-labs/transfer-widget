@@ -26,9 +26,9 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
     <div className='flex flex-col gap-3 w-full'>
       <div className='flex flex-row justify-between w-full items-center'>
         <p className={'text-white font-manrope text-lg font-medium'}>Routes</p>
-        <a className='cursor-pointer'>
+        {/* <a className='cursor-pointer'>
           <p className={'text-accent-color font-manrope text-sm font-medium'}>View Additional</p>
-        </a>
+        </a> */}
       </div>
       <Route
         route={quoteResult?.bestRoute}

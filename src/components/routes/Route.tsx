@@ -14,7 +14,6 @@ export interface RouteProps {
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
   fromChain?: SupportedChain;
-  estimateTransferValue?: string;
   error?: ErrorType;
 }
 
@@ -30,7 +29,6 @@ export const Route: FunctionComponent<RouteProps> = ({
   route,
   toToken,
   toChain,
-  estimateTransferValue,
   fromChain,
   fromToken,
   widgetState,
@@ -58,14 +56,14 @@ export const Route: FunctionComponent<RouteProps> = ({
               <TokenNetworkImage tokenLogo={toToken?.logoUri} networkLogo={toChain?.logoURI} />
               <div className='flex flex-col'>
                 <p className={'text-white font-manrope text-xl font-medium'}>
-                  {estimateTransferValue} {toToken?.name}
+                  {_route.dstAmountEstimate ?? '0'} {toToken?.name}
                 </p>
                 <div className='flex flex-row gap-1 items-center'>
                   <p className={'text-accent-color font-manrope text-sm font-medium'}>{toChain?.name}</p>
                   <DividerCircle />
                   <div className='flex flex-row gap-.25 items-center'>
-                    <img src={route?.bridgeInfo.logoURI} className='w-4 h-4' />
-                    <p className={'text-accent-color font-manrope text-sm font-medium'}>{route?.bridgeInfo.name}</p>
+                    <img src={_route.bridgeInfo.logoURI} className='w-4 h-4' />
+                    <p className={'text-accent-color font-manrope text-sm font-medium'}>{_route.bridgeInfo.name}</p>
                   </div>
                 </div>
               </div>
@@ -117,12 +115,12 @@ export const Route: FunctionComponent<RouteProps> = ({
               >
                 <div className='flex flex-col gap-.5'>
                   <div className='flex flex-row gap-.25 items-center'>
-                    <img src={route?.bridgeInfo.logoURI} className='w-5 h-5' />
-                    <p className={'text-accent-color font-manrope text-lg font-medium'}>{route?.bridgeInfo.name}</p>
+                    <img src={_route.bridgeInfo.logoURI} className='w-5 h-5' />
+                    <p className={'text-accent-color font-manrope text-lg font-medium'}>{_route.bridgeInfo.name}</p>
                   </div>
                   <p className='text-accent-color font-manrope text-sm m-0'>
                     Bridge from {fromToken?.symbol} on {fromChain?.name} to {toToken?.symbol} on {toChain?.name} using{' '}
-                    {route?.bridgeInfo.name}
+                    {_route.bridgeInfo.name}
                   </p>
                 </div>
               </motion.div>
@@ -178,11 +176,19 @@ export const Route: FunctionComponent<RouteProps> = ({
     }
   };
 
+  const border = (): string => {
+    if (error !== undefined) {
+      return 'border-failure-red';
+    } else if (widgetState === 'default') {
+      return 'border-success-green';
+    } else {
+      return 'border-border-color';
+    }
+  };
+
   return (
     <div
-      className={`flex flex-col gap-4 w-full bg-component-background ${
-        error !== undefined ? 'border border-failure-red' : 'border border-success-green'
-      } rounded-lg py-3 px-4`}
+      className={`flex flex-col w-full bg-component-background border ${border()} rounded-lg py-3 px-4 min-h-[158px] gap-4`}
     >
       <RouteContainter />
     </div>
