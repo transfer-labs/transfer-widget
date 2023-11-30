@@ -21,15 +21,16 @@ export const Error = {
   no_bridge_routes: {
     description: 'No bridge routes found.',
   },
+  no_wallet_found: {
+    description: 'No wallet found.',
+  },
 };
 
 export type ErrorType = keyof typeof Error;
 
 export type SupportedTokensByChain = Record<number, SupportedToken[]>;
 
-export type WidgetViewType = 'selectTokenNetworkFrom' | 'selectTokenNetworkTo' | 'review' | undefined;
-
-export const WidgetStateTheme = {
+export const ButtonTheme = {
   default: {
     backgroundColor: 'bg-success-green',
     textColor: 'text-black',
@@ -56,4 +57,24 @@ export const WidgetStateTheme = {
   },
 };
 
-export type WidgetState = keyof typeof WidgetStateTheme | undefined;
+export type WidgetView = 'selectTokenNetworkFrom' | 'selectTokenNetworkTo' | 'review' | 'default';
+
+// export type WidgetState = Record<WidgetViewType, State>;
+
+export interface ButtonState {
+  label?: string;
+  type?: keyof typeof ButtonTheme;
+  onClick?: () => void;
+}
+
+export interface WidgetState {
+  error?: ErrorType;
+  loading: boolean;
+  buttonState: ButtonState;
+  view: WidgetView;
+}
+
+export interface ReviewState {
+  txnHash?: string;
+  bridgeState?: 'notStarted' | 'started' | 'done';
+}

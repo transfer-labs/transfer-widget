@@ -1,26 +1,24 @@
 import React, { type FunctionComponent } from 'react';
 import { type SupportedChain, type SupportedToken, type QuoteResult } from '@argoplatform/transfer-sdk';
 import { Route } from './Route';
-import { type WidgetState, type ErrorType } from 'models/const';
+import { type WidgetState } from 'models/const';
 
 export interface RouteContainerProps {
   quoteResult?: QuoteResult;
-  widgetState?: WidgetState;
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
   toToken?: SupportedToken;
-  error?: ErrorType;
+  widgetState: WidgetState;
 }
 
 export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
   quoteResult,
-  error,
   fromChain,
   fromToken,
-  widgetState,
   toChain,
   toToken,
+  widgetState,
 }) => {
   return (
     <div className='flex flex-col gap-3 w-full'>
@@ -36,7 +34,6 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
         toChain={toChain}
         fromToken={fromToken}
         toToken={toToken}
-        error={error}
         widgetState={widgetState}
       />
     </div>

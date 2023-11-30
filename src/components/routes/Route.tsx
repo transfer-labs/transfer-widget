@@ -5,16 +5,15 @@ import { RouteDetails } from './RouteDetails';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type SupportedChain, type BasicRoute, type SupportedToken } from '@argoplatform/transfer-sdk';
-import { type ErrorType, type WidgetState } from 'models/const';
+import { type WidgetState } from 'models/const';
 import { LoadingRoute } from './LoadingRoute';
 export interface RouteProps {
-  widgetState?: WidgetState;
   route?: BasicRoute;
   toToken?: SupportedToken;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
   fromChain?: SupportedChain;
-  error?: ErrorType;
+  widgetState: WidgetState;
 }
 
 export const DividerCircle = (): ReactNode => {
@@ -32,11 +31,9 @@ export const Route: FunctionComponent<RouteProps> = ({
   fromChain,
   fromToken,
   widgetState,
-  error,
 }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-
   const RouteContent = ({ _route }: { _route: BasicRoute }): ReactNode => {
     return (
       <>
@@ -161,13 +158,13 @@ export const Route: FunctionComponent<RouteProps> = ({
   };
 
   const RouteContainter = (): ReactNode => {
-    if (error !== undefined) {
+    if (widgetState.error !== undefined) {
       return (
         <p className={'text-failure-red font-manrope text-md font-medium text-center'}>
           Unable to find successful route
         </p>
       );
-    } else if (widgetState === 'loading') {
+    } else if (widgetState.loading) {
       return <LoadingRoute />;
     } else if (route !== undefined) {
       return <RouteContent _route={route} />;
@@ -177,12 +174,12 @@ export const Route: FunctionComponent<RouteProps> = ({
   };
 
   const border = (): string => {
-    if (error !== undefined) {
+    if (widgetState.error !== undefined) {
       return 'border-failure-red';
-    } else if (widgetState === 'default') {
-      return 'border-success-green';
-    } else {
+    } else if (widgetState.loading) {
       return 'border-border-color';
+    } else {
+      return 'border-success-green';
     }
   };
 

@@ -1,33 +1,35 @@
 import React, { type FunctionComponent, useState } from 'react';
 import { DividerCircle } from '../Routes/Route';
-import { ActionButton, type ActionButtonProps } from '../ActionButton';
+import { ActionButton } from '../ActionButton';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TokenNetworkImage } from './TokenNetworkImage';
 import { type SupportedToken, type BasicRoute, type SupportedChain } from '@argoplatform/transfer-sdk';
-import { type ErrorType } from 'models/const';
-import { ErrorMessage } from '../Errors/ErrorMessage';
-
+import { type WidgetState, type ReviewState } from 'models/const';
+import { ErrorMessage } from '../Message/ErrorMessage';
+import { SuccessMessage } from '../Message/SuccessMessage';
+import { PingText } from '../PingText';
+import { LinkText } from '../LinkText';
 export interface ReviewRouteProps {
   route: BasicRoute;
-  buttonState: ActionButtonProps;
   fromToken?: SupportedToken;
   toToken?: SupportedToken;
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
-  error?: ErrorType;
+  widgetState: WidgetState;
+  reviewState?: ReviewState;
   onClose: () => void;
 }
 
 export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
   route,
-  buttonState,
   fromToken,
   toChain,
   fromChain,
   toToken,
-  error,
+  widgetState,
+  reviewState,
   onClose,
 }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -194,14 +196,42 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
             </motion.div>
           </div>
         </motion.div>
-        {error !== undefined ? <ErrorMessage errorType={error} /> : null}
+        {widgetState.error !== undefined && <ErrorMessage errorType={widgetState.error} />}
+        {reviewState?.bridgeState !== undefined && reviewState.bridgeState === 'started' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className='w-full flex justify-start p-2'>
+              <PingText status={widgetState.error === undefined ? 'loading' : 'error'} text='Executing bridge...' />
+            </div>
+          </motion.div>
+        )}
+        {reviewState?.txnHash !== undefined && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+            <div className='w-full flex flex-col justify-start p-2 gap-2'>
+              <LinkText text='View on Block Explorer' link={`${fromChain?.blockExplorer}tx/${reviewState.txnHash}`} />
 
+              <LinkText
+                text='View on Bridge Explorer'
+                link={`${route.bridgeInfo.bridgeExplorer}tx/${reviewState.txnHash}`}
+              />
+            </div>
+          </motion.div>
+        )}
+        {reviewState?.bridgeState !== undefined && reviewState.bridgeState === 'done' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+            <SuccessMessage text='Bridge Successful!' />
+          </motion.div>
+        )}
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ delay: 2.5, duration: 0.5, type: 'spring', bounce: 0.3 }}
         >
-          <ActionButton {...buttonState} />
+          <ActionButton {...widgetState.buttonState} />
         </motion.div>
       </div>
     </motion.div>
