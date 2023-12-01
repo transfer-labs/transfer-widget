@@ -12,6 +12,7 @@ import { SuccessMessage } from '../Message/SuccessMessage';
 import { PingText } from '../PingText';
 import { LinkText } from '../LinkText';
 import { useTransfer } from '../../hooks/useTransfer';
+import { capitalize } from '../../utils/text';
 export interface ReviewRouteProps {
   route: BasicRoute;
   fromToken?: SupportedToken;
@@ -99,7 +100,9 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                     <DividerCircle />
                     <div className='flex flex-row gap-.25 items-center'>
                       <img src={route.bridgeInfo.logoURI} className='w-4 h-4' />
-                      <p className={'text-accent-color font-manrope text-sm font-medium'}>{route.bridgeInfo.name}</p>
+                      <p className={'text-accent-color font-manrope text-sm font-medium'}>
+                        {capitalize(route.bridgeInfo.name)}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -110,7 +113,9 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
                 <div className='flex flex-row gap-.25 items-center'>
                   <img src={route.bridgeInfo.logoURI} className='w-5 h-5' />
-                  <p className={'text-accent-color font-manrope text-lg font-medium'}>{route.bridgeInfo.name}</p>
+                  <p className={'text-accent-color font-manrope text-lg font-medium'}>
+                    {capitalize(route.bridgeInfo.name)}
+                  </p>
                 </div>
               </motion.div>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
@@ -164,7 +169,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                       <p className={'text-accent-color font-manrope text-lg font-medium'}>{route.bridgeInfo.name}</p>
                     </div> */}
                     <p className='text-accent-color font-manrope text-sm m-0'>
-                      Bridge from {fromToken?.name} to {toToken?.name} using {route.bridgeInfo.name}
+                      Bridge from {fromToken?.name} to {toToken?.name} using {capitalize(route.bridgeInfo.name)}
                     </p>
                   </div>
                 </motion.div>
@@ -194,7 +199,9 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                     <DividerCircle />
                     <div className='flex flex-row gap-.25 items-center'>
                       <img src={route.bridgeInfo.logoURI} className='w-4 h-4' />
-                      <p className={'text-accent-color font-manrope text-sm font-medium'}>{route.bridgeInfo.name}</p>
+                      <p className={'text-accent-color font-manrope text-sm font-medium'}>
+                        {capitalize(route.bridgeInfo.name)}
+                      </p>
                     </div>
                   </div>
                 </div>

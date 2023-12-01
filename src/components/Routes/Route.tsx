@@ -8,6 +8,7 @@ import { type SupportedChain, type BasicRoute, type SupportedToken } from '@argo
 import { type WidgetState } from 'models/const';
 import { LoadingRoute } from './LoadingRoute';
 import { useTransfer } from '../../hooks/useTransfer';
+import { capitalize } from '../../utils/text';
 export interface RouteProps {
   route?: BasicRoute;
   toToken?: SupportedToken;
@@ -63,7 +64,9 @@ export const Route: FunctionComponent<RouteProps> = ({
                   <DividerCircle />
                   <div className='flex flex-row gap-.25 items-center'>
                     <img src={_route.bridgeInfo.logoURI} className='w-4 h-4' />
-                    <p className={'text-accent-color font-manrope text-sm font-medium'}>{_route.bridgeInfo.name}</p>
+                    <p className={'text-accent-color font-manrope text-sm font-medium'}>
+                      {capitalize(_route.bridgeInfo.name)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -116,11 +119,13 @@ export const Route: FunctionComponent<RouteProps> = ({
                 <div className='flex flex-col gap-.5'>
                   <div className='flex flex-row gap-.25 items-center'>
                     <img src={_route.bridgeInfo.logoURI} className='w-5 h-5' />
-                    <p className={'text-accent-color font-manrope text-lg font-medium'}>{_route.bridgeInfo.name}</p>
+                    <p className={'text-accent-color font-manrope text-lg font-medium'}>
+                      {capitalize(_route.bridgeInfo.name)}
+                    </p>
                   </div>
                   <p className='text-accent-color font-manrope text-sm m-0'>
                     Bridge from {fromToken?.symbol} on {fromChain?.name} to {toToken?.symbol} on {toChain?.name} using{' '}
-                    {_route.bridgeInfo.name}
+                    {capitalize(_route.bridgeInfo.name)}
                   </p>
                 </div>
               </motion.div>
