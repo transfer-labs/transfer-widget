@@ -37,8 +37,10 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
         <input
           className={`bg-component-background border-none outline-none font-bold text-3xl w-full ${
             amount !== undefined && +amount > 0 ? 'text-white' : 'text-unselected-text'
-          }`}
-          type='text'
+          }
+          [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+          `}
+          type='number'
           value={amount}
           placeholder='0'
           disabled={direction === 'to'}

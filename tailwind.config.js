@@ -23,19 +23,21 @@ module.exports = {
       borderWidth: {
         1: '1px',
       },
-      animation: { // Add this section
+      animation: {
+        // Add this section
         'pulse-ring': 'pulse-ring 1.25s cubic-bezier(0.215, 0.61, 0.355, 1) infinite',
         'pulse-dot': 'pulse-dot 1.25s cubic-bezier(0.455, 0.03, 0.515, 0.955) -0.4s infinite',
       },
-      keyframes: { // And this section
+      keyframes: {
+        // And this section
         'pulse-ring': {
-          '0%': { 'transform': 'scale(.33)' },
-          '80%, 100%': { 'opacity': '0' },
+          '0%': { transform: 'scale(.33)' },
+          '80%, 100%': { opacity: '0' },
         },
         'pulse-dot': {
-          '0%': { 'transform': 'scale(.8)' },
-          '50%': { 'transform': 'scale(1)' },
-          '100%': { 'transform': 'scale(.8)' },
+          '0%': { transform: 'scale(.8)' },
+          '50%': { transform: 'scale(1)' },
+          '100%': { transform: 'scale(.8)' },
         },
       },
     },

@@ -34,7 +34,7 @@ export const GasInfo: FunctionComponent<InfoProps> = ({
               </clipPath>
             </defs>
           </svg>
-          <p className={'text-unselected-text font-manrope text-sm font-small'}>${value}</p>
+          <p className={'text-unselected-text font-manrope text-sm font-small'}>{value}</p>
         </div>
       </DefaultTooltip>
     </>
@@ -58,7 +58,7 @@ export const FeeInfo: FunctionComponent<InfoProps> = ({
             />
           </svg>
 
-          <p className={`text-${color} font-manrope text-sm font-small`}>${value}</p>
+          <p className={`text-${color} font-manrope text-sm font-small`}>{value}</p>
         </div>
       </DefaultTooltip>
     </>
@@ -106,25 +106,6 @@ export const RouteDetails: FunctionComponent<RouteDetailsProps> = ({ gas, fees, 
       <FeeInfo value={fees} />
       <TimeInfo value={time} />
       <StepsInfo value={steps} />
-    </div>
-  );
-};
-
-interface LoadingIndicatorProps {
-  status: string;
-}
-
-export const LoadingIndicator: FunctionComponent<LoadingIndicatorProps> = ({ status }) => {
-  let color = 'loading-yellow';
-  if (status === 'error') color = 'failure-red';
-  if (status === 'success') color = 'success-green';
-
-  return (
-    <div className={`relative flex items-center justify-center h-12 w-12`}>
-      <div
-        className={`absolute inline-flex rounded-full h-12 w-12 bg-${color} opacity-75 animate-pulse-ring transform -translate-x-1/2 translate-y-0`}
-      ></div>
-      <div className={`absolute inline-flex rounded-full h-5 w-5 bg-${color} opacity-75 animate-pulse-dot`}></div>
     </div>
   );
 };

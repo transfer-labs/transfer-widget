@@ -1,40 +1,40 @@
 import React, { type FunctionComponent } from 'react';
-import { type SupportedChain, type BridgeResult, type SupportedToken } from '@argoplatform/transfer-sdk';
+import { type SupportedChain, type SupportedToken, type QuoteResult } from '@argoplatform/transfer-sdk';
 import { Route } from './Route';
-import { type ErrorType } from 'models/const';
+import { type WidgetState } from 'models/const';
 
 export interface RouteContainerProps {
-  bridgeResult?: BridgeResult;
+  quoteResult?: QuoteResult;
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
   toToken?: SupportedToken;
-  error?: ErrorType;
+  widgetState: WidgetState;
 }
 
 export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
-  bridgeResult,
-  error,
+  quoteResult,
   fromChain,
   fromToken,
   toChain,
   toToken,
+  widgetState,
 }) => {
   return (
     <div className='flex flex-col gap-3 w-full'>
       <div className='flex flex-row justify-between w-full items-center'>
         <p className={'text-white font-manrope text-lg font-medium'}>Routes</p>
-        <a className='cursor-pointer'>
+        {/* <a className='cursor-pointer'>
           <p className={'text-accent-color font-manrope text-sm font-medium'}>View Additional</p>
-        </a>
+        </a> */}
       </div>
       <Route
-        route={bridgeResult?.bestRoute}
+        route={quoteResult?.bestRoute}
         fromChain={fromChain}
         toChain={toChain}
         fromToken={fromToken}
         toToken={toToken}
-        error={error}
+        widgetState={widgetState}
       />
     </div>
   );

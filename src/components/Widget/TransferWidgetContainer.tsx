@@ -1,20 +1,20 @@
 import React, { type FunctionComponent, type ReactNode } from 'react';
 import { TokenNetworkInput } from './TokenNetworkInput';
 import { RouteContainer } from '../Routes/RouteContainer';
-import { ErrorMessage } from '../Errors/ErrorMessage';
+import { ErrorMessage } from '../Message/ErrorMessage';
 import { SwitchArrow } from '../SwitchArrow';
-import { ActionButton, type ActionButtonProps } from '../ActionButton';
-import { type SupportedChain, type SupportedToken, type BridgeResult } from '@argoplatform/transfer-sdk';
+import { ActionButton } from '../ActionButton';
+import { type SupportedChain, type SupportedToken, type QuoteResult } from '@argoplatform/transfer-sdk';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TokenNetworkSelector } from './TokenNetworkSelector';
-import { type Direction, type SupportedTokensByChain } from 'models/const';
-import { type ErrorType, type WidgetViewType } from '../../models/const';
+import { type ReviewState, type Direction, type SupportedTokensByChain } from 'models/const';
+import { type WidgetState } from '../../models/const';
 import { ReviewRoute } from './ReviewRoute';
+import { useTransfer } from '../../hooks/useTransfer';
 
 export interface TransferWidgetContainerProps {
   supportedChains?: SupportedChain[];
   supportedTokensByChain?: SupportedTokensByChain;
-  bridgeResult?: BridgeResult;
   fromChain?: SupportedChain;
   fromToken?: SupportedToken;
   toChain?: SupportedChain;
@@ -23,12 +23,11 @@ export interface TransferWidgetContainerProps {
   handleTokenSelect: (direction: Direction, token?: SupportedToken) => void;
   setAmountToBeTransferred: (amount: string) => void;
   amountToBeTransferred?: string;
-  buttonState: ActionButtonProps;
-  estimateTransferValue?: string;
-  error?: ErrorType;
+  quoteResult?: QuoteResult;
   userAddress?: string;
-  widgetView: WidgetViewType;
-  setWidgetView: (view?: WidgetViewType) => void;
+  widgetState: WidgetState;
+  reviewState?: ReviewState;
+  setWidgetState: (state: WidgetState) => void;
 }
 
 export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerProps> = ({
@@ -38,18 +37,18 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   fromToken,
   toChain,
   toToken,
-  buttonState,
-  error,
-  estimateTransferValue,
+  quoteResult,
   amountToBeTransferred,
-  bridgeResult,
   userAddress,
-  widgetView,
-  setWidgetView,
+  widgetState,
+  reviewState,
+  setWidgetState,
   handleChainSelect,
   handleTokenSelect,
   setAmountToBeTransferred,
 }): ReactNode => {
+  const { calculateEstimatedValue } = useTransfer();
+
   function handleChainTokenSwitch(): void {
     const tempChain = fromChain;
     const tempToken = fromToken;
@@ -64,51 +63,70 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
       return undefined;
     }
 
-    if (widgetView === 'selectTokenNetworkFrom' && fromChain !== undefined) {
+    if (widgetState.view === 'selectTokenNetworkFrom' && fromChain !== undefined) {
       return supportedTokensByChain[fromChain.chainId];
     }
 
-    if (widgetView === 'selectTokenNetworkTo' && toChain !== undefined) {
+    if (widgetState.view === 'selectTokenNetworkTo' && toChain !== undefined) {
       return supportedTokensByChain[toChain.chainId];
     }
 
     return undefined;
   }
 
-  if (widgetView === 'review') {
+  if (widgetState.view === 'review') {
     return (
       <AnimatePresence>
-        {bridgeResult?.bestRoute !== undefined && (
+        {quoteResult?.bestRoute !== undefined && (
           <ReviewRoute
-            route={bridgeResult.bestRoute}
+            route={quoteResult.bestRoute}
             fromChain={fromChain}
             toChain={toChain}
             fromToken={fromToken}
             toToken={toToken}
-            error={error}
+            widgetState={widgetState}
+            reviewState={reviewState}
             onClose={() => {
-              setWidgetView(undefined);
+              setWidgetState({
+                ...widgetState,
+                error: undefined,
+                view: 'default',
+                loading: false,
+                buttonState: {
+                  onClick: undefined,
+                  type: 'disabled',
+                  label: 'Select tokens',
+                },
+              });
             }}
-            buttonState={buttonState}
           />
         )}
       </AnimatePresence>
     );
   }
 
-  if (widgetView === 'selectTokenNetworkFrom' || widgetView === 'selectTokenNetworkTo') {
+  if (widgetState.view === 'selectTokenNetworkFrom' || widgetState.view === 'selectTokenNetworkTo') {
     return (
       <AnimatePresence>
         <TokenNetworkSelector
           chains={supportedChains}
           tokens={getTokens()}
-          selectedChain={widgetView === 'selectTokenNetworkFrom' ? fromChain : toChain}
-          selectedToken={widgetView === 'selectTokenNetworkFrom' ? fromToken : toToken}
+          selectedChain={widgetState.view === 'selectTokenNetworkFrom' ? fromChain : toChain}
+          selectedToken={widgetState.view === 'selectTokenNetworkFrom' ? fromToken : toToken}
           handleChainSelect={handleChainSelect}
           handleTokenSelect={handleTokenSelect}
-          direction={widgetView === 'selectTokenNetworkFrom' ? 'from' : 'to'}
+          direction={widgetState.view === 'selectTokenNetworkFrom' ? 'from' : 'to'}
           onClose={() => {
-            setWidgetView(undefined);
+            setWidgetState({
+              view: 'default',
+              error: undefined,
+              loading: false,
+              buttonState: {
+                onClick: undefined,
+                type: 'disabled',
+                label: 'Select tokens',
+              },
+            });
           }}
         />
       </AnimatePresence>
@@ -148,7 +166,10 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                   amount={amountToBeTransferred}
                   // balance='0.0'
                   onAnchorClick={() => {
-                    setWidgetView('selectTokenNetworkFrom');
+                    setWidgetState({
+                      ...widgetState,
+                      view: 'selectTokenNetworkFrom',
+                    });
                   }}
                 />
               </motion.div>
@@ -173,30 +194,37 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                   token={toToken}
                   direction='to'
                   // balance='0.0'
-                  amount={estimateTransferValue}
+                  amount={
+                    toToken !== undefined && quoteResult !== undefined
+                      ? calculateEstimatedValue(toToken, quoteResult.bestRoute.dstAmountEstimate)
+                      : '0'
+                  }
                   onAnchorClick={() => {
-                    setWidgetView('selectTokenNetworkTo');
+                    setWidgetState({
+                      ...widgetState,
+                      view: 'selectTokenNetworkTo',
+                    });
                   }}
                 />
               </motion.div>
             </div>
           </div>
-          {error !== undefined ? <ErrorMessage errorType={error} /> : null}
+          {widgetState.error !== undefined ? <ErrorMessage errorType={widgetState.error} /> : null}
 
           {/* if both the paramaters are fufilled animate in the routes component */}
-          {bridgeResult !== undefined && (
+          {quoteResult !== undefined && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
             >
               <RouteContainer
-                bridgeResult={bridgeResult}
+                quoteResult={quoteResult}
                 fromChain={fromChain}
                 toChain={toChain}
                 fromToken={fromToken}
                 toToken={toToken}
-                error={error}
+                widgetState={widgetState}
               />
             </motion.div>
           )}
@@ -207,7 +235,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
           >
-            <ActionButton {...buttonState} />
+            <ActionButton {...widgetState.buttonState} />
           </motion.div>
         </div>
       </motion.div>

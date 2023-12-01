@@ -1,33 +1,35 @@
 import React, { type FunctionComponent, useState } from 'react';
 import { DividerCircle } from '../Routes/Route';
-import { ActionButton, type ActionButtonProps } from '../ActionButton';
+import { ActionButton } from '../ActionButton';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TokenNetworkImage } from './TokenNetworkImage';
-import { type SupportedToken, type Route, type SupportedChain } from '@argoplatform/transfer-sdk';
-import { type ErrorType } from 'models/const';
-import { ErrorMessage } from '../Errors/ErrorMessage';
-
+import { type SupportedToken, type BasicRoute, type SupportedChain } from '@argoplatform/transfer-sdk';
+import { type WidgetState, type ReviewState } from 'models/const';
+import { ErrorMessage } from '../Message/ErrorMessage';
+import { SuccessMessage } from '../Message/SuccessMessage';
+import { PingText } from '../PingText';
+import { LinkText } from '../LinkText';
 export interface ReviewRouteProps {
-  route: Route;
-  buttonState: ActionButtonProps;
+  route: BasicRoute;
   fromToken?: SupportedToken;
   toToken?: SupportedToken;
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
-  error?: ErrorType;
+  widgetState: WidgetState;
+  reviewState?: ReviewState;
   onClose: () => void;
 }
 
 export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
   route,
-  buttonState,
   fromToken,
   toChain,
   fromChain,
   toToken,
-  error,
+  widgetState,
+  reviewState,
   onClose,
 }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -76,13 +78,14 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.5, ease: 'easeInOut' }}
               >
-                <TimeInfo value={route.timeEstimate} color='accent-color' side='left' />
+                {/* TODO replace */}
+                <TimeInfo value={'~2 min'} color='accent-color' side='left' />
               </motion.div>
             </div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
               <div className='flex flex-row gap-1 items-center justify-center'>
-                <TokenNetworkImage tokenLogo={fromToken?.logoURI} networkLogo={fromChain?.logoURI} />
+                <TokenNetworkImage tokenLogo={fromToken?.logoUri} networkLogo={fromChain?.logoURI} />
                 <div className='flex flex-col'>
                   {/* <p className={'text-white font-manrope text-xl font-medium'}>
                     {routeprops.routetokenprops.fromTokenProps.SupportedTokensProps.fromToken.balance}{' '}
@@ -166,16 +169,18 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
             </AnimatePresence>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
-              <GasInfo value={route.transactionRequest.gasPrice?.toString()} color='unselected-text' side='right' />
+              {/* TODO: Replace */}
+              <GasInfo value={'30 gwei'} color='unselected-text' side='right' />
             </motion.div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
-              <FeeInfo value={12} color='unselected-text' side='right' />
+              {/* TODO: Replace */}
+              <FeeInfo value={'40 gwei'} color='unselected-text' side='right' />
             </motion.div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
               <div className='flex flex-row gap-1 items-center justify-center'>
-                <TokenNetworkImage tokenLogo={toToken?.logoURI} networkLogo={toChain?.logoURI} />
+                <TokenNetworkImage tokenLogo={toToken?.logoUri} networkLogo={toChain?.logoURI} />
                 <div className='flex flex-col'>
                   {/* <p className={'text-white font-manrope text-xl font-medium'}>
                     {routeprops.routetokenprops.toTokenProps.SupportedTokensProps.toToken.balance}{' '}
@@ -194,14 +199,42 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
             </motion.div>
           </div>
         </motion.div>
-        {error !== undefined ? <ErrorMessage errorType={error} /> : null}
+        {widgetState.error !== undefined && <ErrorMessage errorType={widgetState.error} />}
+        {reviewState?.bridgeState !== undefined && reviewState.bridgeState === 'started' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className='w-full flex justify-start p-2'>
+              <PingText status={widgetState.error === undefined ? 'default' : 'error'} text='Executing bridge...' />
+            </div>
+          </motion.div>
+        )}
+        {reviewState?.txnHash !== undefined && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+            <div className='w-full flex flex-col justify-start p-2 gap-2'>
+              <LinkText text='View on Block Explorer' link={`${fromChain?.blockExplorer}tx/${reviewState.txnHash}`} />
 
+              <LinkText
+                text='View on Bridge Explorer'
+                link={`${route.bridgeInfo.bridgeExplorer}tx/${reviewState.txnHash}`}
+              />
+            </div>
+          </motion.div>
+        )}
+        {reviewState?.bridgeState !== undefined && reviewState.bridgeState === 'done' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+            <SuccessMessage text='Bridge Successful!' />
+          </motion.div>
+        )}
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ delay: 2.5, duration: 0.5, type: 'spring', bounce: 0.3 }}
         >
-          <ActionButton {...buttonState} />
+          <ActionButton {...widgetState.buttonState} />
         </motion.div>
       </div>
     </motion.div>

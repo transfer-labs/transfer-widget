@@ -44,35 +44,50 @@ export interface TokenSelectorProps {
   selectedToken?: SupportedToken;
 }
 const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selectedToken, handleTokenSelect }) => {
+  const [search, setSearch] = React.useState<string>('');
+
   return (
     <div className='flex flex-col gap-2'>
       <input
         className='bg-component-background border-1 border-border-color py-4 rounded-lg px-2 text-white placeholder-unselected-text font-Manrope'
         placeholder='Search by name or address'
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+        }}
       />
       <div className='flex bg-component-background rounded-lg border-1 border-border-color px-2 py-4 flex-col w-full gap-3 max-h-[300px] min-h-[300px] overflow-y-auto'>
-        {tokens?.map((token) => {
-          return (
-            <div
-              key={token.address}
-              className={`flex w-full flex-row justify-between items-center hover:bg-shadow-element cursor-pointer rounded-lg border-2 ${
-                selectedToken?.address === token.address ? 'border-success-green' : 'border-transparent'
-              }`}
-              onClick={() => {
-                handleTokenSelect(token);
-              }}
-            >
-              <div className='flex flex-row gap-1 items-center'>
-                <img className='w-12 h-12' src={token.logoUri} />
-                <div className='flex flex-col'>
-                  <p className='text-white font-manrope text-lg'>{token.symbol}</p>
-                  <p className='text-accent-color font-manrope text-md'>{token.name}</p>
+        {tokens
+          ?.filter((token) => {
+            const _search = search.trim().toLowerCase();
+            return (
+              token.name.toLowerCase().includes(_search) ||
+              token.address.toLowerCase().includes(_search) ||
+              token.symbol.toLowerCase().includes(_search)
+            );
+          })
+          .map((token) => {
+            return (
+              <div
+                key={token.address}
+                className={`flex w-full flex-row justify-between items-center hover:bg-shadow-element cursor-pointer rounded-lg border-2 ${
+                  selectedToken?.address === token.address ? 'border-success-green' : 'border-transparent'
+                }`}
+                onClick={() => {
+                  handleTokenSelect(token);
+                }}
+              >
+                <div className='flex flex-row gap-1 items-center'>
+                  <img className='w-12 h-12' src={token.logoUri} />
+                  <div className='flex flex-col'>
+                    <p className='text-white font-manrope text-lg'>{token.symbol}</p>
+                    <p className='text-accent-color font-manrope text-md'>{token.name}</p>
+                  </div>
                 </div>
+                {/* <p className='text-accent-color font-manrope text-md'>*balance*</p> */}
               </div>
-              {/* <p className='text-accent-color font-manrope text-md'>*balance*</p> */}
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </div>
   );

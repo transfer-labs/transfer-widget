@@ -1,5 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { TransferWidget } from '../components/TransferWidget';
+import { createWalletClient, custom } from 'viem';
+import { mainnet } from 'viem/chains';
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+const client = createWalletClient({
+  chain: mainnet,
+  transport: custom(window.ethereum),
+});
 
 const meta: Meta<typeof TransferWidget> = {
   component: TransferWidget,
@@ -25,5 +36,6 @@ export const ChainTokenSelected: Story = {
     amountToBeTransferred: '1',
     isTestnet: true,
     userAddress: '0x3ee16d933bc109641A3915D650B223EA40Aca096',
+    walletClient: client,
   },
 };
