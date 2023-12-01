@@ -141,7 +141,6 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       });
 
       try {
-        await walletClient.switchChain({ id: fromChain.chainId });
         const bridgeRequest = {
           srcChainId: fromChain.chainId,
           dstChainId: toChain.chainId,
@@ -153,12 +152,16 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         };
         const bridgeResult = await transfer.bridge(bridgeRequest);
         if (bridgeResult !== undefined) {
-          const hash = await transfer.executeBridge({
+          const txnReceipt = await transfer.executeBridge({
             route: bridgeResult?.bestRoute,
             walletClient,
           });
+          if (txnReceipt.status === 'reverted') {
+            throw new Error('execute_bridge');
+          }
+
           setReviewState({
-            txnHash: hash,
+            txnHash: txnReceipt.transactionHash,
             bridgeState: 'done',
           });
           setWidgetState((prevState) => ({
