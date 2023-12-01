@@ -1,15 +1,15 @@
 import React from 'react';
 
-export type TextButtonProps = {
-    label: string
+export interface TextButtonProps {
+  label: string;
 }
 
-function TextButton({label}: TextButtonProps) {
+function TextButton({ label }: TextButtonProps) {
   return (
     <>
-        <button>{label}</button>
+      <button>{label}</button>
     </>
-  )
+  );
 }
 
-export default TextButton
+export default TextButton;

@@ -1,89 +1,338 @@
-import React, { useState, type FunctionComponent, useEffect, type ReactNode } from 'react'
-import ActionButton, { type ActionButtonProps } from './ActionButton'
-import TokenNetworkInput, { type TokenNetworkInputProps } from './TokenNetworkInput'
+import '../index.css';
+import React, { type FunctionComponent, useEffect, type ReactNode, useState } from 'react';
+import { TransferWidgetContainer } from './Widget/TransferWidgetContainer';
+import { TransferContext } from '../context/TransferContext';
+import {
+  Transfer,
+  type SupportedChain,
+  type SupportedToken,
+  type QuoteResult,
+  type BridgeRequest,
+} from '@argoplatform/transfer-sdk';
+import { useTransfer } from '../hooks/useTransfer';
+import {
+  type ErrorType,
+  type Direction,
+  type WidgetState,
+  type ReviewState,
+  Error as ErrorBody,
+} from '../models/const';
+import { type WalletClient } from 'viem';
 
 export interface TransferWidgetProps {
-  actionbutton: ActionButtonProps
-  fromtokennetworkinput: TokenNetworkInputProps
-  totokennetworkinput: TokenNetworkInputProps
-  fromTokenAddress?: string
-  toTokenAddress?: string
-  fromChainId?: number
-  toChainId?: number
-}
-
-const SwitchArrow = (): ReactNode => {
-  const [isHovered, setIsHovered] = useState(false)
-  const [isClicked, setIsClicked] = useState(false)
-
-  return (
-    <div
-      className={'absolute top-[45.5%] left-[49%] transform -translate-x-1/2 -translate-y-1/2'}
-      onMouseEnter={() => { setIsHovered(true) }}
-      onMouseLeave={() => { setIsHovered(false) }}
-      onClick={() => { setIsClicked(!isClicked) }}
-      style={{
-        transition: 'transform 0.3s ease-in-out',
-        transform: isClicked ? 'rotate(180deg)' : 'rotate(0deg)'
-      }}
-    >
-      <svg
-        width="40"
-        height="40"
-        viewBox="0 0 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect x="1.5" y="1.5" width="37" height="37" rx="7.5" fill="#111111" />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M15.1465 14.1465C15.3417 13.9512 15.6583 13.9512 15.8536 14.1465L19.8536 18.1465C20.0488 18.3417 20.0488 18.6583 19.8536 18.8536C19.6583 19.0488 19.3417 19.0488 19.1464 18.8536L16 15.7071V24.5C16 24.7761 15.7761 25 15.5 25C15.2239 25 15 24.7761 15 24.5V15.7071L11.8536 18.8536C11.6583 19.0488 11.3417 19.0488 11.1465 18.8536C10.9512 18.6583 10.9512 18.3417 11.1465 18.1465L15.1465 14.1465Z"
-          fill="white"
-        />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M24.5 14C24.7761 14 25 14.2239 25 14.5V23.2929L28.1464 20.1465C28.3417 19.9512 28.6583 19.9512 28.8536 20.1465C29.0488 20.3417 29.0488 20.6583 28.8536 20.8535L24.8536 24.8536C24.7598 24.9473 24.6326 25 24.5 25C24.3674 25 24.2402 24.9473 24.1465 24.8536L20.1465 20.8535C19.9512 20.6583 19.9512 20.3417 20.1465 20.1465C20.3417 19.9512 20.6583 19.9512 20.8536 20.1465L24 23.2929V14.5C24 14.2239 24.2239 14 24.5 14Z"
-          fill="white"
-        />
-        <rect
-          x="1.5"
-          y="1.5"
-          width="37"
-          height="37"
-          rx="7.5"
-          stroke={isHovered ? 'white' : 'black'}
-          strokeWidth="3"
-        />
-      </svg>
-    </div>
-  )
+  fromChainId?: number;
+  toChainId?: number;
+  fromTokenAddress?: string;
+  toTokenAddress?: string;
+  amountToBeTransferred?: string;
+  isTestnet?: boolean;
+  userAddress?: string;
+  walletClient?: WalletClient;
 }
 
 export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
-  actionbutton,
-  fromtokennetworkinput,
-  totokennetworkinput
-}) => {
+  fromChainId,
+  toChainId,
+  fromTokenAddress,
+  toTokenAddress,
+  amountToBeTransferred,
+  isTestnet,
+  userAddress,
+  walletClient,
+}): ReactNode => {
+  const transfer = new Transfer({
+    isTestnet,
+  });
+
+  const [fromChain, setFromChain] = useState<SupportedChain | undefined>(undefined);
+  const [toChain, setToChain] = useState<SupportedChain | undefined>(undefined);
+  const [_amountToBeTransferred, setAmountToBeTransferred] = useState<string>(amountToBeTransferred ?? '');
+  const [quoteResult, setQuoteResult] = useState<QuoteResult | undefined>(undefined);
+  const { supportedChains, getSupportedTokens, supportedTokensByChain, calculateAmountToBeTransferred } = useTransfer({
+    transfer,
+  });
+  const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
+  const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
+  const [widgetState, setWidgetState] = useState<WidgetState>({
+    view: 'default',
+    error: undefined,
+    loading: false,
+    buttonState: {
+      type: 'disabled',
+      label: 'Select tokens',
+    },
+  });
+  const [reviewState, setReviewState] = useState<ReviewState | undefined>(undefined);
+
+  function setLoadingState(): void {
+    setWidgetState((prevState) => ({
+      ...prevState,
+      error: undefined,
+      loading: true,
+      buttonState: {
+        type: 'loading',
+        onClick: undefined,
+        label: '',
+      },
+    }));
+  }
+
+  function setDefaultState(): void {
+    setWidgetState((prevState) => ({
+      view: 'default',
+      error: undefined,
+      loading: false,
+      buttonState: {
+        type: 'disabled',
+        label: 'Select tokens',
+        onClick: undefined,
+      },
+    }));
+  }
+
+  function setErrorState(error: ErrorType): void {
+    setWidgetState((prevState) => ({
+      ...prevState,
+      error,
+      loading: false,
+      buttonState: {
+        type: 'error',
+        label: 'Error',
+        onClick: undefined,
+      },
+    }));
+  }
+
+  function setReviewWidgetState(): void {
+    setWidgetState({
+      view: 'review',
+      loading: false,
+      error: undefined,
+      buttonState: {
+        type: 'default',
+        label: 'Bridge',
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        onClick: executeBridge,
+      },
+    });
+  }
+
+  async function executeBridge(): Promise<void> {
+    if (walletClient === undefined) {
+      setErrorState('no_user_wallet');
+      return;
+    }
+    if (userAddress === undefined) {
+      setErrorState('no_user_address');
+      return;
+    }
+
+    if (
+      fromChain !== undefined &&
+      fromToken !== undefined &&
+      toChain !== undefined &&
+      toToken !== undefined &&
+      _amountToBeTransferred !== undefined &&
+      +_amountToBeTransferred > 0
+    ) {
+      setLoadingState();
+      setReviewState({
+        bridgeState: 'started',
+      });
+
+      try {
+        await walletClient.switchChain({ id: fromChain.chainId });
+        const bridgeRequest = {
+          srcChainId: fromChain.chainId,
+          dstChainId: toChain.chainId,
+          srcChainTokenAddress: fromToken.address,
+          dstChainTokenAddress: toToken.address,
+          qty: calculateAmountToBeTransferred(fromToken, _amountToBeTransferred),
+          fromAddress: userAddress,
+          toAddress: userAddress,
+        };
+        const bridgeResult = await transfer.bridge(bridgeRequest);
+        if (bridgeResult !== undefined) {
+          const hash = await transfer.executeBridge({
+            route: bridgeResult?.bestRoute,
+            walletClient,
+          });
+          setReviewState({
+            txnHash: hash,
+            bridgeState: 'done',
+          });
+          setWidgetState((prevState) => ({
+            ...prevState,
+            loading: false,
+            error: undefined,
+            buttonState: {
+              type: 'default',
+              label: 'Bridge Again',
+              onClick: setDefaultState,
+            },
+          }));
+        } else {
+          throw new Error('retrieving_bridge_routes');
+        }
+      } catch (e: any) {
+        console.error(e);
+        if (typeof e === 'string' && e in ErrorBody) {
+          setErrorState(e as ErrorType);
+        } else {
+          setErrorState('execute_bridge');
+        }
+      }
+    }
+  }
+
+  async function quoteBridge(bridgeRequest: BridgeRequest): Promise<void> {
+    setLoadingState();
+    try {
+      const result = await transfer.quoteBridge(bridgeRequest);
+      if (Object.keys(result.bestRoute).length === 0) {
+        setQuoteResult(undefined);
+        setErrorState('no_bridge_routes');
+      } else {
+        setQuoteResult(result);
+        setWidgetState((prevState) => ({
+          ...prevState,
+          loading: false,
+          error: undefined,
+          buttonState: {
+            type: 'default',
+            label: 'Review',
+            onClick: setReviewWidgetState,
+          },
+        }));
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorState('retrieving_bridge_routes');
+    }
+  }
+
+  // Quote bridge
   useEffect(() => {
-    // TODO: parse props here
-    console.log(fromtokennetworkinput)
-    console.log(totokennetworkinput)
-  }, [])
+    if (widgetState.view !== 'default' || widgetState.loading) {
+      return;
+    }
+
+    if (
+      fromChain !== undefined &&
+      fromToken !== undefined &&
+      toChain !== undefined &&
+      toToken !== undefined &&
+      _amountToBeTransferred !== undefined &&
+      +_amountToBeTransferred > 0
+    ) {
+      if (userAddress === undefined) {
+        setQuoteResult(undefined);
+        setErrorState('no_user_address');
+        return;
+      }
+      // Ready to be bridged
+      const bridgeRequest = {
+        srcChainId: fromChain.chainId,
+        dstChainId: toChain.chainId,
+        srcChainTokenAddress: fromToken.address,
+        dstChainTokenAddress: toToken.address,
+        qty: calculateAmountToBeTransferred(fromToken, _amountToBeTransferred),
+        fromAddress: userAddress,
+        toAddress: userAddress,
+      };
+      void quoteBridge(bridgeRequest);
+    } else {
+      setWidgetState((prevState) => ({
+        ...prevState,
+        loading: false,
+        error: undefined,
+        buttonState: {
+          onClick: undefined,
+          type: 'disabled',
+          label: 'Select tokens',
+        },
+      }));
+    }
+  }, [fromChain, fromToken, toChain, toToken, _amountToBeTransferred, userAddress, widgetState.view]);
+
+  // Process initial props
+  useEffect(() => {
+    async function setSupportedChainAndToken(
+      _supportedChains: SupportedChain[],
+      direction: Direction,
+      chainId: number,
+      tokenAddress?: string,
+    ): Promise<void> {
+      const chain = _supportedChains.find((chain) => chain.chainId === chainId);
+      if (direction === 'from') {
+        setFromChain(chain);
+      } else {
+        setToChain(chain);
+      }
+
+      if (tokenAddress !== undefined && chain !== undefined) {
+        const tokens = await getSupportedTokens(chainId);
+        const lowerCaseTokenAddress = tokenAddress.toLowerCase();
+        if (tokens !== undefined) {
+          const token = tokens.find((token) => token.address.toLowerCase() === lowerCaseTokenAddress);
+          if (direction === 'from') {
+            setFromToken(token);
+          } else {
+            setToToken(token);
+          }
+        }
+      }
+    }
+    if (supportedChains !== undefined && supportedChains.length > 0) {
+      if (fromChainId !== undefined) {
+        void setSupportedChainAndToken(supportedChains, 'from', fromChainId, fromTokenAddress);
+      }
+      if (toChainId !== undefined) {
+        void setSupportedChainAndToken(supportedChains, 'to', toChainId, toTokenAddress);
+      }
+    }
+  }, [supportedChains, fromChainId, toChainId, fromTokenAddress, toTokenAddress]);
+
+  function handleChainSelect(direction: Direction, chain?: SupportedChain): void {
+    if (chain !== undefined) {
+      void getSupportedTokens(chain.chainId);
+    }
+
+    if (direction === 'from') {
+      setFromChain(chain);
+    } else {
+      setToChain(chain);
+    }
+  }
+
+  function handleTokenSelect(direction: Direction, token?: SupportedToken): void {
+    // TODO: handle select logic
+    if (direction === 'from') {
+      setFromToken(token);
+    } else {
+      setToToken(token);
+    }
+  }
 
   return (
-    <div className="inline-flex flex-col py-5 px-6 gap-6 border rounded-lg border-border-color bg-modal-background  w-[475px]">
-      <div className="flex flex-col gap-3">
-        <p className="text-white font-manrope font-bold text-xl">Transfer</p>
-
-        <div className="flex flex-col gap-1">
-          <TokenNetworkInput {...fromtokennetworkinput} />
-          <SwitchArrow />
-          <TokenNetworkInput {...totokennetworkinput} />
-        </div>
-      </div>
-      <ActionButton {...actionbutton} />
-    </div>
-  )
-}
+    <TransferContext.Provider value={transfer}>
+      <TransferWidgetContainer
+        fromChain={fromChain}
+        fromToken={fromToken}
+        toChain={toChain}
+        toToken={toToken}
+        handleChainSelect={handleChainSelect}
+        handleTokenSelect={handleTokenSelect}
+        amountToBeTransferred={_amountToBeTransferred}
+        quoteResult={quoteResult}
+        setAmountToBeTransferred={setAmountToBeTransferred}
+        supportedChains={supportedChains}
+        supportedTokensByChain={supportedTokensByChain}
+        userAddress={userAddress}
+        widgetState={widgetState}
+        setWidgetState={setWidgetState}
+        reviewState={reviewState}
+      />
+    </TransferContext.Provider>
+  );
+};

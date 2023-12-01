@@ -1,11 +1,11 @@
-import type { Preview } from "@storybook/react";
+import type { Preview } from '@storybook/react';
 // .storybook/preview.js
-import '../src/tailwind.output.css';
+import '../src/index.css';
 
 const preview: Preview = {
   parameters: {
     layout: 'centered',
-    actions: { argTypesRegex: "^on[A-Z].*" },
+    actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
         color: /(background|color)$/i,

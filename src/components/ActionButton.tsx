@@ -1,20 +1,22 @@
-import React from 'react'
-
-export interface ActionButtonProps {
-  label: string
-  background: string
-  textColor: string
-}
+import React from 'react';
+import { Line } from './Skeleton/Line';
+import { ButtonTheme, type ButtonState } from '../models/const';
 
 const BASE_BUTTON_CLASSES =
-  'cursor-pointer border-radius-6 rounded border-1 border-border-color font-manrope font-medium py-3 px-4 w-full'
+  'border-radius-6 rounded border-1 border-border-color font-manrope font-medium py-3 px-4 w-full flex justify-center items-center min-h-[50px]';
 
-const ActionButton: React.FunctionComponent<ActionButtonProps> = ({ label, background, textColor }) => {
+export const ActionButton: React.FunctionComponent<ButtonState> = ({ label, type, onClick }) => {
+  const _type = type ?? 'default';
+  const { backgroundColor, textColor, hoverBackgroundColor, disabled } = ButtonTheme[_type];
+  const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer';
+
   return (
-    <button className={`${BASE_BUTTON_CLASSES} ${background} ${textColor}`}>
-      {label}
+    <button
+      className={`${BASE_BUTTON_CLASSES} ${backgroundColor} ${hoverBackgroundColor} ${textColor} ${cursor}`}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      {type === 'loading' ? <Line /> : label}
     </button>
-  )
-}
-
-export default ActionButton
+  );
+};
