@@ -141,6 +141,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       });
 
       try {
+        await walletClient.switchChain({ id: fromChain.chainId });
         const bridgeRequest = {
           srcChainId: fromChain.chainId,
           dstChainId: toChain.chainId,
