@@ -1,5 +1,5 @@
 import React, { type FunctionComponent, useState, type ReactNode } from 'react';
-import Best from '../../icons/routes/best-route.png';
+import Best from '../Icons/BestRoute.png';
 import { TokenNetworkImage } from '../Widget/TokenNetworkImage';
 import { RouteDetails } from './RouteDetails';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';

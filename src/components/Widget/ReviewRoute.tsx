@@ -11,6 +11,7 @@ import { ErrorMessage } from '../Message/ErrorMessage';
 import { SuccessMessage } from '../Message/SuccessMessage';
 import { PingText } from '../PingText';
 import { LinkText } from '../LinkText';
+import { useTransfer } from '../../hooks/useTransfer';
 export interface ReviewRouteProps {
   route: BasicRoute;
   fromToken?: SupportedToken;
@@ -19,6 +20,7 @@ export interface ReviewRouteProps {
   toChain?: SupportedChain;
   widgetState: WidgetState;
   reviewState?: ReviewState;
+  amountToBeTransferred?: string;
   onClose: () => void;
 }
 
@@ -30,10 +32,12 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
   toToken,
   widgetState,
   reviewState,
+  amountToBeTransferred,
   onClose,
 }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { calculateEstimatedValue } = useTransfer();
 
   return (
     <motion.div
@@ -87,10 +91,9 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
               <div className='flex flex-row gap-1 items-center justify-center'>
                 <TokenNetworkImage tokenLogo={fromToken?.logoUri} networkLogo={fromChain?.logoURI} />
                 <div className='flex flex-col'>
-                  {/* <p className={'text-white font-manrope text-xl font-medium'}>
-                    {routeprops.routetokenprops.fromTokenProps.SupportedTokensProps.fromToken.balance}{' '}
-                    {routeprops.routetokenprops.toTokenProps.SupportedTokensProps.toToken.tokenName}
-                  </p> */}
+                  <p className={'text-white font-manrope text-xl font-medium'}>
+                    {amountToBeTransferred} {fromToken?.symbol}
+                  </p>
                   <div className='flex flex-row gap-1 items-center'>
                     <p className={'text-accent-color font-manrope text-sm font-medium'}>{fromChain?.name}</p>
                     <DividerCircle />
@@ -182,10 +185,10 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
               <div className='flex flex-row gap-1 items-center justify-center'>
                 <TokenNetworkImage tokenLogo={toToken?.logoUri} networkLogo={toChain?.logoURI} />
                 <div className='flex flex-col'>
-                  {/* <p className={'text-white font-manrope text-xl font-medium'}>
-                    {routeprops.routetokenprops.toTokenProps.SupportedTokensProps.toToken.balance}{' '}
-                    {routeprops.routetokenprops.toTokenProps.SupportedTokensProps.toToken.tokenName}
-                  </p> */}
+                  <p className={'text-white font-manrope text-xl font-medium'}>
+                    {toToken !== undefined && calculateEstimatedValue(toToken, route.dstAmountEstimate)}{' '}
+                    {toToken?.symbol}
+                  </p>
                   <div className='flex flex-row gap-1 items-center'>
                     <p className={'text-accent-color font-manrope text-sm font-medium'}>{toChain?.name}</p>
                     <DividerCircle />

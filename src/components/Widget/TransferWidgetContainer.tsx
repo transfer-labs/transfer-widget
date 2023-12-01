@@ -86,6 +86,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
             toToken={toToken}
             widgetState={widgetState}
             reviewState={reviewState}
+            amountToBeTransferred={amountToBeTransferred}
             onClose={() => {
               setWidgetState({
                 ...widgetState,
