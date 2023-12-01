@@ -208,7 +208,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
             exit={{ opacity: 0 }}
           >
             <div className='w-full flex justify-start p-2'>
-              <PingText status={widgetState.error === undefined ? 'loading' : 'error'} text='Executing bridge...' />
+              <PingText status={widgetState.error === undefined ? 'default' : 'error'} text='Executing bridge...' />
             </div>
           </motion.div>
         )}

@@ -1,3 +1,4 @@
+import '../index.css';
 import React, { type FunctionComponent, useEffect, type ReactNode, useState } from 'react';
 import { TransferWidgetContainer } from './Widget/TransferWidgetContainer';
 import { TransferContext } from '../context/TransferContext';
@@ -9,7 +10,13 @@ import {
   type BridgeRequest,
 } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
-import { type ErrorType, type Direction, type WidgetState, type ReviewState } from 'models/const';
+import {
+  type ErrorType,
+  type Direction,
+  type WidgetState,
+  type ReviewState,
+  Error as ErrorBody,
+} from '../models/const';
 import { type WalletClient } from 'viem';
 
 export interface TransferWidgetProps {
@@ -168,7 +175,11 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         }
       } catch (e: any) {
         console.error(e);
-        setErrorState(e ?? 'execute_bridge');
+        if (typeof e === 'string' && e in ErrorBody) {
+          setErrorState(e as ErrorType);
+        } else {
+          setErrorState('execute_bridge');
+        }
       }
     }
   }
@@ -260,8 +271,9 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
 
       if (tokenAddress !== undefined && chain !== undefined) {
         const tokens = await getSupportedTokens(chainId);
+        const lowerCaseTokenAddress = tokenAddress.toLowerCase();
         if (tokens !== undefined) {
-          const token = tokens.find((token) => token.address === tokenAddress);
+          const token = tokens.find((token) => token.address.toLowerCase() === lowerCaseTokenAddress);
           if (direction === 'from') {
             setFromToken(token);
           } else {

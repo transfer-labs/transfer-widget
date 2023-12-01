@@ -32,12 +32,19 @@ export default [
       commonjs(),
       typescript({ tsconfig: './tsconfig.json', exclude: ['**/*.stories.tsx'] }),
       postcss({
-        extract: true, // Extract to a .css file
-        minimize: true, // If you want to minify the CSS
+        config: {
+          path: './postcss.config.js',
+        },
+        extensions: ['.css'],
+        minimize: true,
+        inject: {
+          insertAt: 'top',
+        },
       }),
       terser(),
       image(),
     ],
+    external: ['react', 'react-dom'],
   },
   {
     input: 'dist/esm/types/index.d.ts',

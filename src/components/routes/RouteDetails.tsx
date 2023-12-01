@@ -34,7 +34,7 @@ export const GasInfo: FunctionComponent<InfoProps> = ({
               </clipPath>
             </defs>
           </svg>
-          <p className={'text-unselected-text font-manrope text-sm font-small'}>${value}</p>
+          <p className={'text-unselected-text font-manrope text-sm font-small'}>{value}</p>
         </div>
       </DefaultTooltip>
     </>
@@ -58,7 +58,7 @@ export const FeeInfo: FunctionComponent<InfoProps> = ({
             />
           </svg>
 
-          <p className={`text-${color} font-manrope text-sm font-small`}>${value}</p>
+          <p className={`text-${color} font-manrope text-sm font-small`}>{value}</p>
         </div>
       </DefaultTooltip>
     </>

@@ -1,15 +1,15 @@
 import React, { type FunctionComponent } from 'react';
 
 interface PingTextProps {
-  status: 'loading' | 'error' | 'success';
+  status?: 'default' | 'error';
   text?: string;
 }
 
-export const PingText: FunctionComponent<PingTextProps> = ({ status, text }) => {
+export const PingText: FunctionComponent<PingTextProps> = ({ status = 'default', text }) => {
   let color = 'success-green';
-  if (status === 'error') color = 'failure-red';
-  if (status === 'success') color = 'success-green';
-  if (status === 'loading') color = 'loading-yellow';
+  if (status === 'error') {
+    color = 'failure-red';
+  }
 
   return (
     <div className='flex flex-row justify-center gap-3 items-center'>
