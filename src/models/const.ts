@@ -15,14 +15,14 @@ export const Error = {
   no_user_wallet: {
     description: 'User wallet is not connected.',
   },
+  no_user_address: {
+    description: 'No user wallet address.',
+  },
   execute_bridge: {
     description: 'Error executing bridge.',
   },
   no_bridge_routes: {
     description: 'No bridge routes found.',
-  },
-  no_wallet_found: {
-    description: 'No wallet found.',
   },
 };
 

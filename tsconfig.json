@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5", 
-     "baseUrl": "src",
+    "target": "es2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "typeRoots": ["node_modules/@types", "src/types"],   /* Specify multiple folders that act like `./node_modules/@types`. */
+    "baseUrl": "src",
     "esModuleInterop": true, 
     "forceConsistentCasingInFileNames": true,
     "strict": true, 
@@ -11,7 +12,7 @@
     "declaration": true,
     "declarationDir": "types",
     "sourceMap": true,
-    "outDir": "dist",
+    "outDir": "./dist",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "emitDeclarationOnly": true,

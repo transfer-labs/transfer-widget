@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { type Transfer, type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type SupportedTokensByChain } from '../models/const';
 interface Props {
@@ -8,15 +8,19 @@ interface Props {
 interface UseTransfer {
   supportedChains: SupportedChain[] | undefined;
   supportedTokensByChain: SupportedTokensByChain | undefined;
+  calculateAmountToBeTransferred: (fromToken: SupportedToken, amount: string) => number;
   getSupportedTokens: (chainId: number) => Promise<SupportedToken[] | undefined>;
+  calculateEstimatedValue: (toToken: SupportedToken, amount: number) => string;
 }
 
-export function useTransfer({ transfer }: Props): UseTransfer {
-  const [supportedChains, setSupportedChains] = useState<SupportedChain[] | undefined>(undefined);
-  const [supportedTokensByChain, setSupportedTokensByChain] = useState<SupportedTokensByChain | undefined>(undefined);
+export function useTransfer(props?: Props): UseTransfer {
+  const [supportedChains, setSupportedChains] = React.useState<SupportedChain[] | undefined>(undefined);
+  const [supportedTokensByChain, setSupportedTokensByChain] = React.useState<SupportedTokensByChain | undefined>(
+    undefined,
+  );
 
-  useEffect(() => {
-    async function _setSupportedChains(): Promise<void> {
+  React.useEffect(() => {
+    async function _setSupportedChains(transfer: Transfer): Promise<void> {
       try {
         const chains = await transfer.getSupportedChains();
         setSupportedChains(chains);
@@ -26,17 +30,20 @@ export function useTransfer({ transfer }: Props): UseTransfer {
       }
     }
 
-    if (supportedChains === undefined) {
-      void _setSupportedChains();
+    if (supportedChains === undefined && props !== undefined) {
+      void _setSupportedChains(props.transfer);
     }
   }, []);
 
   async function getSupportedTokens(chainId: number): Promise<SupportedToken[] | undefined> {
+    if (props === undefined) {
+      return undefined;
+    }
     if (supportedTokensByChain?.[chainId] !== undefined) {
       return supportedTokensByChain[chainId];
     }
     try {
-      const tokens = await transfer.getSupportedTokens(chainId);
+      const tokens = await props.transfer.getSupportedTokens(chainId);
       setSupportedTokensByChain((prev) => {
         return {
           ...prev,
@@ -50,9 +57,19 @@ export function useTransfer({ transfer }: Props): UseTransfer {
     }
   }
 
+  function calculateAmountToBeTransferred(fromToken: SupportedToken, amount: string): number {
+    return +amount * 10 ** fromToken.decimals;
+  }
+
+  function calculateEstimatedValue(toToken: SupportedToken, amount: number): string {
+    return (amount / 10 ** toToken.decimals).toFixed(3);
+  }
+
   return {
     supportedChains,
     getSupportedTokens,
     supportedTokensByChain,
+    calculateAmountToBeTransferred,
+    calculateEstimatedValue,
   };
 }

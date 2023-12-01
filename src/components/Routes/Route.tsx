@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { type SupportedChain, type BasicRoute, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type WidgetState } from 'models/const';
 import { LoadingRoute } from './LoadingRoute';
+import { useTransfer } from '../../hooks/useTransfer';
 export interface RouteProps {
   route?: BasicRoute;
   toToken?: SupportedToken;
@@ -34,7 +35,9 @@ export const Route: FunctionComponent<RouteProps> = ({
 }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const RouteContent = ({ _route }: { _route: BasicRoute }): ReactNode => {
+  const { calculateEstimatedValue } = useTransfer();
+
+  const RouteContent = ({ _route, _toToken }: { _route: BasicRoute; _toToken: SupportedToken }): ReactNode => {
     return (
       <>
         {/* top routes and best icon (if route is the best) */}
@@ -50,10 +53,10 @@ export const Route: FunctionComponent<RouteProps> = ({
           {/* token, bridge info (unexpanded), and expanded button  */}
           <div className='relative flex flex-row justify-between w-full items-start sm:items-center'>
             <div className='flex flex-row gap-1 items-center justify-center'>
-              <TokenNetworkImage tokenLogo={toToken?.logoUri} networkLogo={toChain?.logoURI} />
+              <TokenNetworkImage tokenLogo={_toToken.logoUri} networkLogo={toChain?.logoURI} />
               <div className='flex flex-col'>
                 <p className={'text-white font-manrope text-xl font-medium'}>
-                  {_route.dstAmountEstimate ?? '0'} {toToken?.name}
+                  {calculateEstimatedValue(_toToken, _route.dstAmountEstimate)} {_toToken.name}
                 </p>
                 <div className='flex flex-row gap-1 items-center'>
                   <p className={'text-accent-color font-manrope text-sm font-medium'}>{toChain?.name}</p>
@@ -147,10 +150,11 @@ export const Route: FunctionComponent<RouteProps> = ({
         </div>
 
         {/* icons regarding the route details */}
+        {/* TODO: Replace */}
         <RouteDetails
-          gas={'TODO'}
-          fees={'TODO'} // TODO: calculate fees
-          time={'TODO'}
+          gas={'30 gwei'}
+          fees={'40 gwei'}
+          time={'~2 min'}
           steps={(route?.dstChainSwapDexs.length ?? 0) + (route?.srcChainSwapDexs.length ?? 0)}
         />
       </>
@@ -166,8 +170,8 @@ export const Route: FunctionComponent<RouteProps> = ({
       );
     } else if (widgetState.loading) {
       return <LoadingRoute />;
-    } else if (route !== undefined) {
-      return <RouteContent _route={route} />;
+    } else if (route !== undefined && toToken !== undefined) {
+      return <RouteContent _route={route} _toToken={toToken} />;
     } else {
       return null;
     }

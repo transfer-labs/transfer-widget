@@ -10,6 +10,7 @@ import { TokenNetworkSelector } from './TokenNetworkSelector';
 import { type ReviewState, type Direction, type SupportedTokensByChain } from 'models/const';
 import { type WidgetState } from '../../models/const';
 import { ReviewRoute } from './ReviewRoute';
+import { useTransfer } from '../../hooks/useTransfer';
 
 export interface TransferWidgetContainerProps {
   supportedChains?: SupportedChain[];
@@ -46,6 +47,8 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   handleTokenSelect,
   setAmountToBeTransferred,
 }): ReactNode => {
+  const { calculateEstimatedValue } = useTransfer();
+
   function handleChainTokenSwitch(): void {
     const tempChain = fromChain;
     const tempToken = fromToken;
@@ -191,7 +194,11 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                   token={toToken}
                   direction='to'
                   // balance='0.0'
-                  amount={quoteResult?.bestRoute?.dstAmountEstimate?.toString()}
+                  amount={
+                    toToken !== undefined && quoteResult !== undefined
+                      ? calculateEstimatedValue(toToken, quoteResult.bestRoute.dstAmountEstimate)
+                      : '0'
+                  }
                   onAnchorClick={() => {
                     setWidgetState({
                       ...widgetState,

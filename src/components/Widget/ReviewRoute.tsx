@@ -78,7 +78,8 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.5, ease: 'easeInOut' }}
               >
-                <TimeInfo value={'TODO'} color='accent-color' side='left' />
+                {/* TODO replace */}
+                <TimeInfo value={'~2 min'} color='accent-color' side='left' />
               </motion.div>
             </div>
 
@@ -168,11 +169,13 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
             </AnimatePresence>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
-              <GasInfo value={'TODO'} color='unselected-text' side='right' />
+              {/* TODO: Replace */}
+              <GasInfo value={'30 gwei'} color='unselected-text' side='right' />
             </motion.div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
-              <FeeInfo value={-1} color='unselected-text' side='right' />
+              {/* TODO: Replace */}
+              <FeeInfo value={'40 gwei'} color='unselected-text' side='right' />
             </motion.div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
