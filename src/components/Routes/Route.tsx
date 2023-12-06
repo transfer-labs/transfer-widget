@@ -1,5 +1,4 @@
 import React, { type FunctionComponent, useState, type ReactNode } from 'react';
-import Best from '../Icons/BestRoute.png';
 import { TokenNetworkImage } from '../Widget/TokenNetworkImage';
 import { RouteDetails } from './RouteDetails';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
@@ -9,13 +8,17 @@ import { type WidgetState } from 'models/const';
 import { LoadingRoute } from './LoadingRoute';
 import { useTransfer } from '../../hooks/useTransfer';
 import { capitalize } from '../../utils/text';
+import { BestRouteIcon } from '../Icons/BestRouteIcon';
 export interface RouteProps {
   route?: BasicRoute;
   toToken?: SupportedToken;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
   fromChain?: SupportedChain;
+  isBest?: boolean;
   widgetState: WidgetState;
+  isSelectedRoute?: boolean;
+  setSelectedRoute: (route: BasicRoute | undefined) => void;
 }
 
 export const DividerCircle = (): ReactNode => {
@@ -33,6 +36,9 @@ export const Route: FunctionComponent<RouteProps> = ({
   fromChain,
   fromToken,
   widgetState,
+  setSelectedRoute,
+  isBest = false,
+  isSelectedRoute = false,
 }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -44,10 +50,11 @@ export const Route: FunctionComponent<RouteProps> = ({
         {/* top routes and best icon (if route is the best) */}
         <div className='flex flex-row justify-between w-full'>
           <p className={'text-white font-manrope text-md font-semibold'}>Bridge</p>
-
-          <DefaultTooltip label='Best route based on price, speed, and slippage' side='left'>
-            <img src={Best} className='w-[45px]' />
-          </DefaultTooltip>
+          {isBest && (
+            <DefaultTooltip label='Best route based on price, speed, and slippage' side='left'>
+              <BestRouteIcon />
+            </DefaultTooltip>
+          )}
         </div>
 
         <div className={`flex flex-col ${isClicked ? 'gap-2' : 'gap-0'}`}>
@@ -157,8 +164,8 @@ export const Route: FunctionComponent<RouteProps> = ({
         {/* icons regarding the route details */}
         {/* TODO: Replace */}
         <RouteDetails
-          gas={'30 gwei'}
-          fees={'40 gwei'}
+          gas={'$1.32'}
+          fees={'$2.44'}
           time={'~2 min'}
           steps={(route?.dstChainSwapDexs.length ?? 0) + (route?.srcChainSwapDexs.length ?? 0)}
         />
@@ -185,16 +192,19 @@ export const Route: FunctionComponent<RouteProps> = ({
   const border = (): string => {
     if (widgetState.error !== undefined) {
       return 'border-failure-red';
-    } else if (widgetState.loading) {
-      return 'border-border-color';
-    } else {
+    } else if (isSelectedRoute && !widgetState.loading) {
       return 'border-success-green';
+    } else {
+      return 'border-border-color';
     }
   };
 
   return (
     <div
-      className={`flex flex-col w-full bg-component-background border ${border()} rounded-lg py-3 px-4 min-h-[158px] gap-4`}
+      onClick={() => {
+        setSelectedRoute(route);
+      }}
+      className={`flex flex-col w-full bg-component-background border ${border()} rounded-lg py-3 px-4 min-h-[158px] gap-4 cursor-pointer`}
     >
       <RouteContainter />
     </div>

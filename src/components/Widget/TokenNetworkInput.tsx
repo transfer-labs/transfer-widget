@@ -29,7 +29,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
   }
 
   return (
-    <div className='flex px-4 py-3 flex-col gap-3 w-full border rounded-lg border-border-color bg-component-background'>
+    <div className='flex px-4 py-3 flex-col gap-3 w-full border rounded-lg border-border-color bg-component-background min-w-[75px]'>
       <p className={'text-white font-manrope text-lg font-medium'}>
         {direction.charAt(0).toUpperCase() + direction.slice(1)}
       </p>
@@ -49,7 +49,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
         <div className='flex flex-col'>
           {chain !== undefined && token !== undefined ? (
             <div className='flex flex-row gap-1 justify-center items-center cursor-pointer' onClick={onAnchorClick}>
-              <div className='flex flex-col items-stretch h-full'>
+              <div className='flex flex-col h-full'>
                 <p className='text-white font-manrope text-lg'>{token.symbol}</p>
                 <p className='text-accent-color font-manrope text-sm'>{chain.name.split(' ')[0]}</p>
               </div>
@@ -57,11 +57,11 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
             </div>
           ) : (
             <div className='flex flex-row gap-2 items-center' onClick={onAnchorClick}>
-              <a href='#' className='text-unselected-text whitespace-nowrap'>
+              <a href='#' className='text-unselected-text whitespace-nowrap hidden min-[414px]:block'>
                 Select {direction} chain and token
               </a>
               <div className='w-[53px] h-[50px]'>
-                <svg width='53' height='50' viewBox='0 0 64 59' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                <svg width='50' height='50' viewBox='0 0 64 59' fill='none' xmlns='http://www.w3.org/2000/svg'>
                   <path
                     fillRule='evenodd'
                     clipRule='evenodd'
@@ -76,7 +76,8 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
         </div>
       </div>
 
-      <div className='flex flex-row justify-end w-full h-5 pt-2'>
+      {/* Add when balance is added */}
+      {/* <div className='flex flex-row justify-end w-full h-5 pt-2'>
         <div className='flex flex-row gap-1 items-center justify-center'>
           {balance !== undefined && balance !== '' && (
             <>
@@ -90,7 +91,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
             </>
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
