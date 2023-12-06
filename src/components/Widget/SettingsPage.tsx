@@ -10,15 +10,18 @@ interface SettingsPageProps {
 export const SettingsPage: FunctionComponent<SettingsPageProps> = ({ slippage, onClose }) => {
 
     const [slippageValue, setSlippage] = useState(slippage);
+    const [isSlippageChanged, setSlippageChanged] = useState(false);
 
     const slippageOptions = [0.01, 0.02, 0.05];
 
     const handleSlippageClick = (value: number) => {
         setSlippage(value);
+        setSlippageChanged(true);
     };
 
     const handleSlippageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSlippage(parseFloat(event.target.value));
+        setSlippageChanged(true);
     };
 
     return (
@@ -69,7 +72,7 @@ export const SettingsPage: FunctionComponent<SettingsPageProps> = ({ slippage, o
                                         className={`flex w-[30%] items-center justify-center rounded-lg border-1 ${slippageValue === option ? 'border-hover-green' : 'border-border-color'} bg-component-background cursor-pointer hover:bg-shadow-element p-2`}
                                         onClick={() => handleSlippageClick(option)}
                                     >
-                                        <p className='font-manrope text-unselected-text rounded-lg font-semibold'>{option * 100}%</p>
+                                        <p className='font-manrope text-unselected-text rounded-lg font-medium'>{option * 100}%</p>
                                     </div>
                                 ))}
                             </div>
@@ -80,7 +83,10 @@ export const SettingsPage: FunctionComponent<SettingsPageProps> = ({ slippage, o
             </motion.div>
 
             <div className='mt-auto'>
-                <ActionButton />
+                <ActionButton 
+                    label={isSlippageChanged ? 'Update Slippage' : ''} 
+                    type={isSlippageChanged ? 'default' : 'disabled'} 
+                />
             </div>
         </div>
     );
