@@ -4,7 +4,12 @@ import { RouteContainer } from '../Routes/RouteContainer';
 import { ErrorMessage } from '../Message/ErrorMessage';
 import { SwitchArrow } from '../SwitchArrow';
 import { ActionButton } from '../ActionButton';
-import { type SupportedChain, type SupportedToken, type QuoteResult } from '@argoplatform/transfer-sdk';
+import {
+  type SupportedChain,
+  type SupportedToken,
+  type QuoteResult,
+  type BasicRoute,
+} from '@argoplatform/transfer-sdk';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TokenNetworkSelector } from './TokenNetworkSelector';
 import { type ReviewState, type Direction, type SupportedTokensByChain } from 'models/const';
@@ -26,8 +31,10 @@ export interface TransferWidgetContainerProps {
   quoteResult?: QuoteResult;
   userAddress?: string;
   widgetState: WidgetState;
+  selectedRoute?: BasicRoute;
   reviewState?: ReviewState;
   setWidgetState: (state: WidgetState) => void;
+  setSelectedRoute: (route: BasicRoute | undefined) => void;
 }
 
 export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerProps> = ({
@@ -42,10 +49,12 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   userAddress,
   widgetState,
   reviewState,
+  selectedRoute,
   setWidgetState,
   handleChainSelect,
   handleTokenSelect,
   setAmountToBeTransferred,
+  setSelectedRoute,
 }): ReactNode => {
   const { calculateEstimatedValue } = useTransfer();
 
@@ -226,6 +235,8 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                 fromToken={fromToken}
                 toToken={toToken}
                 widgetState={widgetState}
+                selectedRoute={selectedRoute}
+                setSelectedRoute={setSelectedRoute}
               />
             </motion.div>
           )}

@@ -8,6 +8,7 @@ import {
   type SupportedToken,
   type QuoteResult,
   type BridgeRequest,
+  type BasicRoute,
 } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
 import {
@@ -18,6 +19,7 @@ import {
   Error as ErrorBody,
 } from '../models/const';
 import { type WalletClient } from 'viem';
+import { findRouteFromSelected } from '../utils/routes';
 
 export interface TransferWidgetProps {
   fromChainId?: number;
@@ -53,6 +55,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   });
   const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
+  const [selectedRoute, setSelectedRoute] = useState<BasicRoute | undefined>(undefined);
   const [widgetState, setWidgetState] = useState<WidgetState>({
     view: 'default',
     error: undefined,
@@ -152,6 +155,10 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         };
         const bridgeResult = await transfer.bridge(bridgeRequest);
         if (bridgeResult !== undefined) {
+          const route = findRouteFromSelected(selectedRoute, bridgeResult.bestRoute, bridgeResult.alternateRoutes);
+          if (route === undefined) {
+            throw new Error('no_bridge_routes');
+          }
           const txnReceipt = await transfer.executeBridge({
             route: bridgeResult?.bestRoute,
             walletClient,
@@ -309,11 +316,16 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   }
 
   function handleTokenSelect(direction: Direction, token?: SupportedToken): void {
-    // TODO: handle select logic
     if (direction === 'from') {
       setFromToken(token);
     } else {
       setToToken(token);
+    }
+  }
+
+  function handleSelectRoute(route: BasicRoute | undefined): void {
+    if (route !== undefined) {
+      setSelectedRoute(route);
     }
   }
 
@@ -335,6 +347,8 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         widgetState={widgetState}
         setWidgetState={setWidgetState}
         reviewState={reviewState}
+        setSelectedRoute={handleSelectRoute}
+        selectedRoute={selectedRoute}
       />
     </TransferContext.Provider>
   );
