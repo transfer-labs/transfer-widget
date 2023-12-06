@@ -57,7 +57,7 @@ export const ButtonTheme = {
   },
 };
 
-export type WidgetView = 'selectTokenNetworkFrom' | 'selectTokenNetworkTo' | 'review' | 'default';
+export type WidgetView = 'selectTokenNetworkFrom' | 'selectTokenNetworkTo' | 'review' | 'default' | 'settings';
 
 // export type WidgetState = Record<WidgetViewType, State>;
 

@@ -11,6 +11,8 @@ import { type ReviewState, type Direction, type SupportedTokensByChain } from 'm
 import { type WidgetState } from '../../models/const';
 import { ReviewRoute } from './ReviewRoute';
 import { useTransfer } from '../../hooks/useTransfer';
+import { SettingsIcon } from '../Icons/SettingsIcon';
+import { SettingsPage } from './SettingsPage';
 
 export interface TransferWidgetContainerProps {
   supportedChains?: SupportedChain[];
@@ -72,6 +74,29 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
     }
 
     return undefined;
+  }
+
+  if (widgetState.view === 'settings') {
+    return (
+      <AnimatePresence>
+        <SettingsPage 
+          slippage = {.01}
+          onClose={() => {
+            setWidgetState({
+              ...widgetState,
+              error: undefined,
+              view: 'default',
+              loading: false,
+              buttonState: {
+                onClick: undefined,
+                type: 'disabled',
+                label: 'Select tokens',
+              },
+            });
+          }}
+        />
+    </AnimatePresence>
+    )
   }
 
   if (widgetState.view === 'review') {
@@ -143,13 +168,23 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
       >
         <div className='inline-flex flex-col py-5 px-6 gap-6 border-1 rounded-lg border-border-color bg-modal-background sm:w-[90vw] sm:min-w-[300px] max-w-[475px]'>
           <div className='flex flex-col gap-3'>
-            <div className='flex flex-row gap-3 items-center'>
-              <p className='text-white font-manrope font-bold text-xl'>Transfer</p>
-              <p className='text-gray-400 font-manrope font-light text-sm'>
-                {userAddress !== undefined
-                  ? userAddress.substring(0, 5) + '...' + userAddress.substring(userAddress.length - 3)
-                  : ''}
-              </p>
+            <div className ='flex flex-row w-full justify-between'>
+              <div className='flex flex-row gap-3 items-center'>
+                <p className='text-white font-manrope font-bold text-xl'>Transfer</p>
+                <p className='text-gray-400 font-manrope font-light text-sm'>
+                  {userAddress !== undefined
+                    ? userAddress.substring(0, 5) + '...' + userAddress.substring(userAddress.length - 3)
+                    : ''}
+                </p>
+              </div>
+              <div className = 'p-1 rounded-md hover:bg-component-background cursor-pointer' 
+                onClick={() => setWidgetState({
+                      ...widgetState,
+                      view: 'settings',
+                })}
+              >
+                <SettingsIcon />
+              </div>
             </div>
 
             <div className='relative flex flex-col gap-1'>
