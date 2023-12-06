@@ -9,7 +9,7 @@ export const ActionButton: React.FunctionComponent<ButtonState> = ({ label, type
   const _type = type ?? 'default';
   const { backgroundColor, textColor, hoverBackgroundColor, disabled } = ButtonTheme[_type];
   const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer';
-
+  
   return (
     <button
       className={`${BASE_BUTTON_CLASSES} ${backgroundColor} ${hoverBackgroundColor} ${textColor} ${cursor}`}
