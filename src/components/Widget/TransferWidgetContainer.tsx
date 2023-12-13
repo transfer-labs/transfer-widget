@@ -12,7 +12,7 @@ import {
 } from '@argoplatform/transfer-sdk';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TokenNetworkSelector } from './TokenNetworkSelector';
-import { type ReviewState, type Direction, type SupportedTokensByChain } from 'models/const';
+import { type ReviewState, type Direction, type SupportedTokensByChain, type Settings } from 'models/const';
 import { type WidgetState } from '../../models/const';
 import { ReviewRoute } from './ReviewRoute';
 import { useTransfer } from '../../hooks/useTransfer';
@@ -37,6 +37,8 @@ export interface TransferWidgetContainerProps {
   reviewState?: ReviewState;
   setWidgetState: (state: WidgetState) => void;
   setSelectedRoute: (route: BasicRoute | undefined) => void;
+  setSettings: (settings: Settings) => void;
+  settings: Settings;
 }
 
 export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerProps> = ({
@@ -52,11 +54,13 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   widgetState,
   reviewState,
   selectedRoute,
+  settings,
   setWidgetState,
   handleChainSelect,
   handleTokenSelect,
   setAmountToBeTransferred,
   setSelectedRoute,
+  setSettings,
 }): ReactNode => {
   const { calculateEstimatedValue } = useTransfer();
 
@@ -88,8 +92,9 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   if (widgetState.view === 'settings') {
     return (
       <AnimatePresence>
-        <SettingsPage 
-          slippage = {.01}
+        <SettingsPage
+          settings={settings}
+          setSettings={setSettings}
           onClose={() => {
             setWidgetState({
               ...widgetState,
@@ -104,8 +109,8 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
             });
           }}
         />
-    </AnimatePresence>
-    )
+      </AnimatePresence>
+    );
   }
 
   if (widgetState.view === 'review') {
@@ -177,7 +182,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
       >
         <div className='inline-flex flex-col py-5 px-6 gap-6 border-1 rounded-lg border-border-color bg-modal-background sm:w-[90vw] sm:min-w-[300px] max-w-[475px]'>
           <div className='flex flex-col gap-3'>
-            <div className ='flex flex-row w-full justify-between'>
+            <div className='flex flex-row w-full justify-between'>
               <div className='flex flex-row gap-3 items-center'>
                 <p className='text-white font-manrope font-bold text-xl'>Transfer</p>
                 <p className='text-gray-400 font-manrope font-light text-sm'>
@@ -186,11 +191,14 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                     : ''}
                 </p>
               </div>
-              <div className = 'p-1 rounded-md hover:bg-component-background cursor-pointer' 
-                onClick={() => setWidgetState({
-                      ...widgetState,
-                      view: 'settings',
-                })}
+              <div
+                className='p-1 rounded-md hover:bg-component-background cursor-pointer'
+                onClick={() => {
+                  setWidgetState({
+                    ...widgetState,
+                    view: 'settings',
+                  });
+                }}
               >
                 <SettingsIcon />
               </div>

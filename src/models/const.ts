@@ -78,3 +78,7 @@ export interface ReviewState {
   txnHash?: string;
   bridgeState?: 'notStarted' | 'started' | 'done';
 }
+
+export interface Settings {
+  slippage?: number;
+}
