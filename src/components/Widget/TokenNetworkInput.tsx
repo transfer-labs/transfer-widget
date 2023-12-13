@@ -48,10 +48,10 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
         />
         <div className='flex flex-col'>
           {chain !== undefined && token !== undefined ? (
-            <div className='flex flex-row gap-1 justify-center items-center cursor-pointer' onClick={onAnchorClick}>
-              <div className='flex flex-col h-full'>
-                <p className='text-white font-manrope text-lg'>{token.symbol}</p>
-                <p className='text-accent-color font-manrope text-sm'>{chain.name.split(' ')[0]}</p>
+            <div className='flex flex-row gap-4 justify-center items-center cursor-pointer' onClick={onAnchorClick}>
+              <div className='flex flex-col h-full items-stretch'>
+                <p className='text-white font-manrope text-md whitespace-nowrap'>{token.symbol}</p>
+                <p className='text-accent-color font-manrope text-sm whitespace-nowrap'>{chain.name.split(' ')[0]}</p>
               </div>
               <TokenNetworkImage tokenLogo={token.logoUri} networkLogo={chain.logoURI} />
             </div>

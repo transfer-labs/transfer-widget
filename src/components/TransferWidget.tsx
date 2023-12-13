@@ -17,6 +17,7 @@ import {
   type WidgetState,
   type ReviewState,
   Error as ErrorBody,
+  type Settings,
 } from '../models/const';
 import { type WalletClient } from 'viem';
 import { findRouteFromSelected } from '../utils/routes';
@@ -56,6 +57,9 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
   const [selectedRoute, setSelectedRoute] = useState<BasicRoute | undefined>(undefined);
+  const [settings, setSettings] = useState<Settings>({
+    slippage: 0.01,
+  });
   const [widgetState, setWidgetState] = useState<WidgetState>({
     view: 'default',
     error: undefined,
@@ -144,7 +148,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       });
 
       try {
-        const bridgeRequest = {
+        const bridgeRequest: BridgeRequest = {
           srcChainId: fromChain.chainId,
           dstChainId: toChain.chainId,
           srcChainTokenAddress: fromToken.address,
@@ -152,6 +156,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
           qty: calculateAmountToBeTransferred(fromToken, _amountToBeTransferred),
           fromAddress: userAddress,
           toAddress: userAddress,
+          slippage: settings.slippage,
         };
         const bridgeResult = await transfer.bridge(bridgeRequest);
         if (bridgeResult !== undefined) {
@@ -241,7 +246,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         return;
       }
       // Ready to be bridged
-      const bridgeRequest = {
+      const bridgeRequest: BridgeRequest = {
         srcChainId: fromChain.chainId,
         dstChainId: toChain.chainId,
         srcChainTokenAddress: fromToken.address,
@@ -249,6 +254,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         qty: calculateAmountToBeTransferred(fromToken, _amountToBeTransferred),
         fromAddress: userAddress,
         toAddress: userAddress,
+        slippage: settings.slippage,
       };
       void quoteBridge(bridgeRequest);
     } else {
@@ -349,6 +355,8 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         reviewState={reviewState}
         setSelectedRoute={handleSelectRoute}
         selectedRoute={selectedRoute}
+        setSettings={setSettings}
+        settings={settings}
       />
     </TransferContext.Provider>
   );
