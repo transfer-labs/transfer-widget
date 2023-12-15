@@ -24,6 +24,9 @@ export const Error = {
   no_bridge_routes: {
     description: 'No bridge routes found.',
   },
+  no_route_selected: {
+    description: 'No route selected.',
+  },
 };
 
 export type ErrorType = keyof typeof Error;
@@ -58,8 +61,6 @@ export const ButtonTheme = {
 };
 
 export type WidgetView = 'selectTokenNetworkFrom' | 'selectTokenNetworkTo' | 'review' | 'default' | 'settings';
-
-// export type WidgetState = Record<WidgetViewType, State>;
 
 export interface ButtonState {
   label?: string;

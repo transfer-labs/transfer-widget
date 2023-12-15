@@ -66,7 +66,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
           toToken={toToken}
           widgetState={widgetState}
           setSelectedRoute={setSelectedRoute}
-          isSelectedRoute={selectedRoute === undefined || areBasicRoutesEqual(quoteResult.bestRoute, selectedRoute)}
+          isSelectedRoute={areBasicRoutesEqual(quoteResult.bestRoute, selectedRoute)}
           isBest
         />
       )}

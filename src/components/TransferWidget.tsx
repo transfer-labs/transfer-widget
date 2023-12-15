@@ -1,5 +1,5 @@
 import '../index.css';
-import React, { type FunctionComponent, useEffect, type ReactNode, useState } from 'react';
+import React, { type FunctionComponent, useEffect, type ReactNode, useState, useRef } from 'react';
 import { TransferWidgetContainer } from './Widget/TransferWidgetContainer';
 import { TransferContext } from '../context/TransferContext';
 import {
@@ -71,6 +71,11 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   });
   const [reviewState, setReviewState] = useState<ReviewState | undefined>(undefined);
 
+  const selectedRouteRef = useRef(selectedRoute);
+  useEffect(() => {
+    selectedRouteRef.current = selectedRoute;
+  }, [selectedRoute]);
+
   function setLoadingState(): void {
     setWidgetState((prevState) => ({
       ...prevState,
@@ -111,6 +116,10 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   }
 
   function setReviewWidgetState(): void {
+    setReviewState({
+      bridgeState: 'notStarted',
+      txnHash: undefined,
+    });
     setWidgetState({
       view: 'review',
       loading: false,
@@ -131,6 +140,11 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     }
     if (userAddress === undefined) {
       setErrorState('no_user_address');
+      return;
+    }
+    const _selectedRoute = selectedRouteRef.current;
+    if (_selectedRoute === undefined) {
+      setErrorState('no_route_selected');
       return;
     }
 
@@ -160,7 +174,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         };
         const bridgeResult = await transfer.bridge(bridgeRequest);
         if (bridgeResult !== undefined) {
-          const route = findRouteFromSelected(selectedRoute, bridgeResult.bestRoute, bridgeResult.alternateRoutes);
+          const route = findRouteFromSelected(_selectedRoute, bridgeResult.bestRoute, bridgeResult.alternateRoutes);
           if (route === undefined) {
             throw new Error('no_bridge_routes');
           }
@@ -191,6 +205,9 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         }
       } catch (e: any) {
         console.error(e);
+        setReviewState({
+          bridgeState: 'notStarted',
+        });
         if (typeof e === 'string' && e in ErrorBody) {
           setErrorState(e as ErrorType);
         } else {
@@ -206,9 +223,11 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       const result = await transfer.quoteBridge(bridgeRequest);
       if (Object.keys(result.bestRoute).length === 0) {
         setQuoteResult(undefined);
+        setSelectedRoute(undefined);
         setErrorState('no_bridge_routes');
       } else {
         setQuoteResult(result);
+        setSelectedRoute(result.bestRoute);
         setWidgetState((prevState) => ({
           ...prevState,
           loading: false,
@@ -222,6 +241,8 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       }
     } catch (error) {
       console.error(error);
+      setQuoteResult(undefined);
+      setSelectedRoute(undefined);
       setErrorState('retrieving_bridge_routes');
     }
   }
