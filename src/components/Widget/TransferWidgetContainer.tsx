@@ -116,9 +116,9 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   if (widgetState.view === 'review') {
     return (
       <AnimatePresence>
-        {quoteResult?.bestRoute !== undefined && (
+        {selectedRoute !== undefined && (
           <ReviewRoute
-            route={quoteResult.bestRoute}
+            route={selectedRoute}
             fromChain={fromChain}
             toChain={toChain}
             fromToken={fromToken}

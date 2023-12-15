@@ -38,7 +38,6 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
 }) => {
   const { calculateEstimatedValue } = useTransfer();
   const [isArrowClicked, setIsArrowClicked] = useState(false);
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -49,7 +48,16 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
       <div className='inline-flex flex-col py-5 px-6 gap-6 border-1 rounded-lg border-border-color bg-modal-background sm:w-[90vw] sm:min-w-[300px] max-w-[475px]'>
         <div className='flex flex-row justify-between items-center'>
           <p className='text-white font-manrope font-medium text-xl'>Review Route</p>
-          <div className='p-2 hover:bg-shadow-element hover:rounded-lg cursor-pointer' onClick={onClose}>
+          <div
+            className={`p-2 ${
+              reviewState?.bridgeState !== 'started' ? 'hover:bg-shadow-element hover:rounded-lg cursor-pointer' : ''
+            }`}
+            onClick={() => {
+              if (reviewState?.bridgeState !== 'started') {
+                onClose();
+              }
+            }}
+          >
             <svg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='none'>
               <path
                 fill='#fff'

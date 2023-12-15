@@ -6,19 +6,14 @@ export function areBasicRoutesEqual(r1?: BasicRoute, r2?: BasicRoute): boolean {
 }
 
 export function areBasicAndActualRoutesEqual(basicRoute: BasicRoute, actualRoute: Route): boolean {
-  return (
-    basicRoute?.bridgeInfo.name === actualRoute?.bridgeInfo.name &&
-    basicRoute?.dstChainAggregatorInfo === actualRoute?.dstChainAggregatorInfo &&
-    basicRoute?.srcChainAggregatorInfo === actualRoute?.srcChainAggregatorInfo
-  );
+  return basicRoute?.bridgeInfo.name === actualRoute?.bridgeInfo.name;
 }
 
 export function findRouteFromSelected(
-  selectedRoute: BasicRoute | undefined,
+  selectedRoute: BasicRoute,
   bestRoute: Route,
   alternateRoutes: Route[],
 ): Route | undefined {
-  if (selectedRoute === undefined) return undefined;
   if (areBasicAndActualRoutesEqual(selectedRoute, bestRoute)) return bestRoute;
   if (alternateRoutes.length === 0) return undefined;
   return alternateRoutes.find((route) => areBasicAndActualRoutesEqual(selectedRoute, route));
