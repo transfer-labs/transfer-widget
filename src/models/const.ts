@@ -83,3 +83,5 @@ export interface ReviewState {
 export interface Settings {
   slippage?: number;
 }
+
+export type WidgetTheme = 'default' | 'light';

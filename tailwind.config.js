@@ -7,7 +7,7 @@ module.exports = {
         manrope: ['Manrope', 'sans-serif'],
       },
       colors: {
-        'modal-background': '#000000',
+        'modal-background': '#18181b',
         'component-background': '#111111',
         'border-color': '#2a2a2e',
         'accent-color': '#c4c4c4',

@@ -13,6 +13,7 @@ import { LinkText } from '../LinkText';
 import { useTransfer } from '../../hooks/useTransfer';
 import { capitalize } from '../../utils/text';
 import { FlipArrowIcon } from '../Icons/FlipArrowIcon';
+import { WidgetContainer } from './WidgetContainer';
 export interface ReviewRouteProps {
   route: BasicRoute;
   fromToken?: SupportedToken;
@@ -23,6 +24,7 @@ export interface ReviewRouteProps {
   reviewState?: ReviewState;
   amountToBeTransferred?: string;
   onClose: () => void;
+  autoSize: boolean;
 }
 
 export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
@@ -34,6 +36,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
   widgetState,
   reviewState,
   amountToBeTransferred,
+  autoSize,
   onClose,
 }) => {
   const { calculateEstimatedValue } = useTransfer();
@@ -45,7 +48,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: 'easeInOut' }}
     >
-      <div className='inline-flex flex-col py-5 px-6 gap-6 border-1 rounded-lg border-border-color bg-modal-background sm:w-[90vw] sm:min-w-[300px] max-w-[475px]'>
+      <WidgetContainer autoSize={autoSize}>
         <div className='flex flex-row justify-between items-center'>
           <p className='text-white font-manrope font-medium text-xl'>Review Route</p>
           <div
@@ -106,7 +109,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                     <p className={'text-accent-color font-manrope text-sm font-medium'}>{fromChain?.name}</p>
                     <DividerCircle />
                     <div className='flex flex-row gap-.25 items-center'>
-                      <img src={route.bridgeInfo.logoURI} className='w-4 h-4' />
+                      <img src={route.bridgeInfo.logoUri} className='w-4 h-4' />
                       <p className={'text-accent-color font-manrope text-sm font-medium'}>
                         {capitalize(route.bridgeInfo.name)}
                       </p>
@@ -169,7 +172,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                     <p className={'text-accent-color font-manrope text-sm font-medium'}>{toChain?.name}</p>
                     <DividerCircle />
                     <div className='flex flex-row gap-.25 items-center'>
-                      <img src={route.bridgeInfo.logoURI} className='w-4 h-4' />
+                      <img src={route.bridgeInfo.logoUri} className='w-4 h-4' />
                       <p className={'text-accent-color font-manrope text-sm font-medium'}>
                         {capitalize(route.bridgeInfo.name)}
                       </p>
@@ -226,7 +229,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
         >
           <ActionButton {...widgetState.buttonState} />
         </motion.div>
-      </div>
+      </WidgetContainer>
     </motion.div>
   );
 };

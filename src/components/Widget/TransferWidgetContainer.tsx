@@ -18,6 +18,8 @@ import { ReviewRoute } from './ReviewRoute';
 import { useTransfer } from '../../hooks/useTransfer';
 import { SettingsIcon } from '../Icons/SettingsIcon';
 import { SettingsPage } from './SettingsPage';
+import { TransferLogo } from '../Icons/TransferLogo';
+import { WidgetContainer } from './WidgetContainer';
 
 export interface TransferWidgetContainerProps {
   supportedChains?: SupportedChain[];
@@ -39,6 +41,7 @@ export interface TransferWidgetContainerProps {
   setSelectedRoute: (route: BasicRoute | undefined) => void;
   setSettings: (settings: Settings) => void;
   settings: Settings;
+  autoSize: boolean;
 }
 
 export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerProps> = ({
@@ -61,6 +64,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   setAmountToBeTransferred,
   setSelectedRoute,
   setSettings,
+  autoSize,
 }): ReactNode => {
   const { calculateEstimatedValue } = useTransfer();
 
@@ -93,6 +97,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
     return (
       <AnimatePresence>
         <SettingsPage
+          autoSize={autoSize}
           settings={settings}
           setSettings={setSettings}
           onClose={() => {
@@ -118,6 +123,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
       <AnimatePresence>
         {selectedRoute !== undefined && (
           <ReviewRoute
+            autoSize={autoSize}
             route={selectedRoute}
             fromChain={fromChain}
             toChain={toChain}
@@ -155,6 +161,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
           selectedToken={widgetState.view === 'selectTokenNetworkFrom' ? fromToken : toToken}
           handleChainSelect={handleChainSelect}
           handleTokenSelect={handleTokenSelect}
+          autoSize={autoSize}
           direction={widgetState.view === 'selectTokenNetworkFrom' ? 'from' : 'to'}
           onClose={() => {
             setWidgetState({
@@ -180,10 +187,11 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
-        <div className='inline-flex flex-col py-5 px-6 gap-6 border-1 rounded-lg border-border-color bg-modal-background sm:w-[90vw] sm:min-w-[300px] max-w-[475px]'>
+        <WidgetContainer autoSize={autoSize}>
           <div className='flex flex-col gap-3'>
             <div className='flex flex-row w-full justify-between'>
               <div className='flex flex-row gap-3 items-center'>
+                <TransferLogo />
                 <p className='text-white font-manrope font-bold text-xl'>Transfer</p>
                 <p className='text-gray-400 font-manrope font-light text-sm'>
                   {userAddress !== undefined
@@ -292,7 +300,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
           >
             <ActionButton {...widgetState.buttonState} />
           </motion.div>
-        </div>
+        </WidgetContainer>
       </motion.div>
     </AnimatePresence>
   );

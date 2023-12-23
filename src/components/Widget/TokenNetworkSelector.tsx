@@ -3,6 +3,7 @@ import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion } from 'framer-motion';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type Direction } from 'models/const';
+import { WidgetContainer } from './WidgetContainer';
 
 interface ChainSelectorProps {
   chains?: SupportedChain[];
@@ -101,6 +102,7 @@ export interface TokenNetworkSelectorProps {
   selectedToken?: SupportedToken;
   handleChainSelect: (direction: Direction, chain?: SupportedChain) => void;
   handleTokenSelect: (direction: Direction, token?: SupportedToken) => void;
+  autoSize: boolean;
   onClose: () => void;
 }
 
@@ -110,6 +112,7 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
   tokens,
   selectedChain,
   selectedToken,
+  autoSize,
   handleChainSelect,
   handleTokenSelect,
   onClose,
@@ -121,7 +124,7 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
       exit={{ opacity: 0.25, scale: 0.9, transition: { duration: 0.5 } }}
       transition={{ duration: 0.5, type: 'spring', bounce: 0.3 }}
     >
-      <div className='inline-flex flex-col py-5 px-6 gap-4 border-1 rounded-lg border-border-color bg-modal-background sm:w-[90vw] sm:min-w-[300px] max-w-[475px]'>
+      <WidgetContainer autoSize={autoSize}>
         <div className='flex flex-col gap-2'>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -186,7 +189,7 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
             />
           </motion.div>
         </div>
-      </div>
+      </WidgetContainer>
     </motion.div>
   );
 };

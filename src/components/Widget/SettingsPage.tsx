@@ -2,12 +2,14 @@ import React, { type FunctionComponent } from 'react';
 import { motion } from 'framer-motion';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { type Settings } from '../../models/const';
+import { WidgetContainer } from './WidgetContainer';
 interface SettingsPageProps {
   settings: Settings;
   setSettings: (settings: Settings) => void;
+  autoSize: boolean;
   onClose?: () => void;
 }
-export const SettingsPage: FunctionComponent<SettingsPageProps> = ({ settings, setSettings, onClose }) => {
+export const SettingsPage: FunctionComponent<SettingsPageProps> = ({ settings, setSettings, onClose, autoSize }) => {
   const slippage = settings.slippage ?? 0.01;
 
   const slippageOptions = [0.01, 0.02, 0.05];
@@ -21,7 +23,7 @@ export const SettingsPage: FunctionComponent<SettingsPageProps> = ({ settings, s
   };
 
   return (
-    <div className='inline-flex flex-col py-5 px-6 gap-3 border-1 rounded-lg border-border-color bg-modal-background sm:w-[90vw] min-h-[400px] sm:min-w-[300px] max-w-[475px]'>
+    <WidgetContainer autoSize={autoSize}>
       <div className='flex flex-row justify-between items-center'>
         <p className='text-white font-manrope font-medium text-xl'>Settings</p>
         <div className='p-2 hover:bg-shadow-element hover:rounded-lg cursor-pointer' onClick={onClose}>
@@ -100,6 +102,6 @@ export const SettingsPage: FunctionComponent<SettingsPageProps> = ({ settings, s
           </div>
         </div>
       </motion.div>
-    </div>
+    </WidgetContainer>
   );
 };

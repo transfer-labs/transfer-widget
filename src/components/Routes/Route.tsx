@@ -64,13 +64,13 @@ export const Route: FunctionComponent<RouteProps> = ({
               <TokenNetworkImage tokenLogo={_toToken.logoUri} networkLogo={toChain?.logoURI} />
               <div className='flex flex-col'>
                 <p className={'text-white font-manrope text-xl font-medium'}>
-                  {calculateEstimatedValue(_toToken, _route.dstAmountEstimate)} {_toToken.name}
+                  {calculateEstimatedValue(_toToken, _route.dstAmountEstimate)} {_toToken.symbol}
                 </p>
                 <div className='flex flex-row gap-1 items-center'>
                   <p className={'text-accent-color font-manrope text-sm font-medium'}>{toChain?.name}</p>
                   <DividerCircle />
                   <div className='flex flex-row gap-.25 items-center'>
-                    <img src={_route.bridgeInfo.logoURI} className='w-4 h-4' />
+                    <img src={_route.bridgeInfo.logoUri} className='w-4 h-4' />
                     <p className={'text-accent-color font-manrope text-sm font-medium'}>
                       {capitalize(_route.bridgeInfo.name)}
                     </p>
@@ -125,7 +125,7 @@ export const Route: FunctionComponent<RouteProps> = ({
               >
                 <div className='flex flex-col gap-.5'>
                   <div className='flex flex-row gap-.25 items-center'>
-                    <img src={_route.bridgeInfo.logoURI} className='w-5 h-5' />
+                    <img src={_route.bridgeInfo.logoUri} className='w-5 h-5' />
                     <p className={'text-accent-color font-manrope text-lg font-medium'}>
                       {capitalize(_route.bridgeInfo.name)}
                     </p>

@@ -18,6 +18,7 @@ import {
   type ReviewState,
   Error as ErrorBody,
   type Settings,
+  type WidgetTheme,
 } from '../models/const';
 import { type WalletClient } from 'viem';
 import { findRouteFromSelected } from '../utils/routes';
@@ -31,6 +32,9 @@ export interface TransferWidgetProps {
   isTestnet?: boolean;
   userAddress?: string;
   walletClient?: WalletClient;
+  onSuccess?: () => void;
+  theme?: WidgetTheme;
+  autoSize?: boolean;
 }
 
 export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
@@ -42,6 +46,8 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   isTestnet,
   userAddress,
   walletClient,
+  theme = 'default',
+  autoSize = false,
 }): ReactNode => {
   const transfer = new Transfer({
     isTestnet,
@@ -378,6 +384,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         selectedRoute={selectedRoute}
         setSettings={setSettings}
         settings={settings}
+        autoSize={autoSize}
       />
     </TransferContext.Provider>
   );
