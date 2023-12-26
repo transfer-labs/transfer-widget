@@ -1,7 +1,7 @@
 import React, { type FunctionComponent } from 'react';
 import { type BasicRoute, type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { areBasicRoutesEqual } from '../../utils/routes';
-import { type WidgetState } from 'models/const';
+import { type WidgetState, type WidgetTheme } from 'models/const';
 import { Route } from './Route';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,6 +14,7 @@ interface AdditionalRoutesProps {
   widgetState: WidgetState;
   setSelectedRoute: (route: BasicRoute | undefined) => void;
   selectedRoute?: BasicRoute;
+  theme: WidgetTheme;
 }
 
 export const AdditionalRoutes: FunctionComponent<AdditionalRoutesProps> = ({
@@ -25,6 +26,7 @@ export const AdditionalRoutes: FunctionComponent<AdditionalRoutesProps> = ({
   widgetState,
   setSelectedRoute,
   selectedRoute,
+  theme,
 }) => {
   if (routes.length === 0) {
     return (
@@ -35,7 +37,7 @@ export const AdditionalRoutes: FunctionComponent<AdditionalRoutesProps> = ({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
-          <div className='flex w-full justify-center bg-component-background border border-border-color rounded-lg py-3 px-4'>
+          <div className='flex w-full justify-center bg-component-background-dark-dark border border-border-color-dark rounded-lg py-3 px-4'>
             <p className={'text-white font-manrope text-sm font-medium '}>No additional bridges</p>
           </div>
         </motion.div>
@@ -64,6 +66,7 @@ export const AdditionalRoutes: FunctionComponent<AdditionalRoutesProps> = ({
                   widgetState={widgetState}
                   setSelectedRoute={setSelectedRoute}
                   isSelectedRoute={areBasicRoutesEqual(route, selectedRoute)}
+                  theme={theme}
                 />
               </div>
             );

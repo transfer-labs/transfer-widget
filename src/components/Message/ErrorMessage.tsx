@@ -1,7 +1,9 @@
 import React, { type ReactNode, type FunctionComponent } from 'react';
 import { type ErrorType, Error } from '../../models/const';
+import { type WidgetTheme } from 'models/const';
 export interface ErrorMessageProps {
   errorType?: ErrorType;
+  theme?: WidgetTheme;
 }
 
 const GasIcon = (): ReactNode => {
@@ -22,10 +24,16 @@ const GasIcon = (): ReactNode => {
   );
 };
 
-export const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({ errorType = 'default' }) => {
+export const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({ errorType = 'default', theme }) => {
   const errorMessage = errorType in Error ? Error[errorType].description : Error.default.description;
   return (
-    <div className='flex flex-row justify-center items-center bg-component-bg border-1 border-border-color rounded-lg px-2 py-2 gap-1'>
+    <div
+      className={`flex flex-row justify-center items-center ${
+        theme === 'light' ? 'bg-component-background-light' : 'bg-component-background-dark'
+      } border-1 ${
+        theme === 'light' ? 'border-border-color-light' : 'border-border-color-dark'
+      } rounded-lg px-2 py-2 gap-1`}
+    >
       {errorType === 'gas' ? <GasIcon /> : null}
       <p className='font-manrope text-sm text-failure-red'>{errorMessage}</p>
     </div>

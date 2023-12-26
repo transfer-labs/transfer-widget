@@ -385,6 +385,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         setSettings={setSettings}
         settings={settings}
         autoSize={autoSize}
+        theme = {theme}
       />
     </TransferContext.Provider>
   );

@@ -5,7 +5,7 @@ import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TokenNetworkImage } from './TokenNetworkImage';
 import { type SupportedToken, type BasicRoute, type SupportedChain } from '@argoplatform/transfer-sdk';
-import { type WidgetState, type ReviewState } from 'models/const';
+import { type WidgetState, type ReviewState, type WidgetTheme } from 'models/const';
 import { ErrorMessage } from '../Message/ErrorMessage';
 import { SuccessMessage } from '../Message/SuccessMessage';
 import { PingText } from '../PingText';
@@ -21,6 +21,7 @@ export interface ReviewRouteProps {
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
   widgetState: WidgetState;
+  theme: WidgetTheme;
   reviewState?: ReviewState;
   amountToBeTransferred?: string;
   onClose: () => void;
@@ -34,6 +35,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
   fromChain,
   toToken,
   widgetState,
+  theme,
   reviewState,
   amountToBeTransferred,
   autoSize,
@@ -48,22 +50,20 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: 'easeInOut' }}
     >
-      <WidgetContainer autoSize={autoSize}>
+      <WidgetContainer autoSize={autoSize} theme={theme}>
         <div className='flex flex-row justify-between items-center'>
-          <p className='text-white font-manrope font-medium text-xl'>Review Route</p>
+          <p className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope font-medium text-xl'}>
+            Review Route
+          </p>
           <div
             className={`p-2 ${
-              reviewState?.bridgeState !== 'started' ? 'hover:bg-shadow-element hover:rounded-lg cursor-pointer' : ''
-            }`}
-            onClick={() => {
-              if (reviewState?.bridgeState !== 'started') {
-                onClose();
-              }
-            }}
+              theme === 'light' ? 'hover:bg-shadow-element-light' : 'hover:bg-shadow-element-dark'
+            } hover:rounded-lg cursor-pointer`}
+            onClick={onClose}
           >
             <svg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='none'>
               <path
-                fill='#fff'
+                fill={theme === 'light' ? '#000' : '#fff'}
                 fillRule='evenodd'
                 d='M6.854 3.146a.5.5 0 0 1 0 .708L3.707 7H12.5a.5.5 0 0 1 0 1H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708 0Z'
                 clipRule='evenodd'
@@ -78,7 +78,9 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
           transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
         >
           <div
-            className={`flex flex-col gap-4 w-full items-start bg-component-background border-border-color border-1 rounded-lg py-3 px-4`}
+            className={`flex flex-col gap-4 w-full items-start ${
+              theme === 'light' ? 'bg-component-background-light border-border-color' : 'bg-component-background-dark border-border-color-dark'
+            } border-1 rounded-lg py-3 px-4`}
           >
             <div className='flex flex-row justify-between w-full'>
               <motion.div
@@ -86,7 +88,9 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.5, ease: 'easeInOut' }}
               >
-                <p className={'text-white font-manrope text-md font-semibold'}>Bridge</p>
+                <p className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-md font-semibold'}>
+                  Bridge
+                </p>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: -50 }}
@@ -102,15 +106,29 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
               <div className='flex flex-row gap-1 items-center justify-center'>
                 <TokenNetworkImage tokenLogo={fromToken?.logoUri} networkLogo={fromChain?.logoURI} />
                 <div className='flex flex-col'>
-                  <p className={'text-white font-manrope text-xl font-medium'}>
+                  <p className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}>
                     {amountToBeTransferred} {fromToken?.symbol}
                   </p>
                   <div className='flex flex-row gap-1 items-center'>
-                    <p className={'text-accent-color font-manrope text-sm font-medium'}>{fromChain?.name}</p>
-                    <DividerCircle />
+                    <p
+                      className={
+                        theme === 'light'
+                          ? 'text-primary-dark'
+                          : 'text-accent-color' + ' font-manrope text-sm font-medium'
+                      }
+                    >
+                      {fromChain?.name}
+                    </p>
+                    <DividerCircle theme={theme} />
                     <div className='flex flex-row gap-.25 items-center'>
-                      <img src={route.bridgeInfo.logoUri} className='w-4 h-4' />
-                      <p className={'text-accent-color font-manrope text-sm font-medium'}>
+                      <img src={route.bridgeInfo.logoURI} className='w-4 h-4' />
+                      <p
+                        className={
+                          theme === 'light'
+                            ? 'text-primary-dark'
+                            : 'text-accent-color' + ' font-manrope text-sm font-medium'
+                        }
+                      >
                         {capitalize(route.bridgeInfo.name)}
                       </p>
                     </div>
@@ -123,6 +141,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                 tooltipText='View Route Steps'
                 isClicked={isArrowClicked}
                 setIsClicked={setIsArrowClicked}
+                theme={theme}
               />
             </div>
             <AnimatePresence initial={false}>
@@ -141,9 +160,13 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                   <div className='flex flex-col gap-.5'>
                     {/* <div className='flex flex-row gap-.25 items-center'>
                       <img src={route.bridgeInfo.logoURI} className='w-5 h-5' />
-                      <p className={'text-accent-color font-manrope text-lg font-medium'}>{route.bridgeInfo.name}</p>
+                      <p className={theme === 'light' ? 'text-primary-dark' : 'text-accent-color' + ' font-manrope text-lg font-medium'}>{route.bridgeInfo.name}</p>
                     </div> */}
-                    <p className='text-accent-color font-manrope text-sm m-0'>
+                    <p
+                      className={
+                        theme === 'light' ? 'text-primary-dark' : 'text-accent-color' + ' font-manrope text-sm m-0'
+                      }
+                    >
                       Bridge from {fromToken?.name} to {toToken?.name} using {capitalize(route.bridgeInfo.name)}
                     </p>
                   </div>
@@ -164,16 +187,30 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
               <div className='flex flex-row gap-1 items-center justify-center'>
                 <TokenNetworkImage tokenLogo={toToken?.logoUri} networkLogo={toChain?.logoURI} />
                 <div className='flex flex-col'>
-                  <p className={'text-white font-manrope text-xl font-medium'}>
+                  <p className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}>
                     {toToken !== undefined && calculateEstimatedValue(toToken, route.dstAmountEstimate)}{' '}
                     {toToken?.symbol}
                   </p>
                   <div className='flex flex-row gap-1 items-center'>
-                    <p className={'text-accent-color font-manrope text-sm font-medium'}>{toChain?.name}</p>
-                    <DividerCircle />
+                    <p
+                      className={
+                        theme === 'light'
+                          ? 'text-primary-dark'
+                          : 'text-accent-color' + ' font-manrope text-sm font-medium'
+                      }
+                    >
+                      {toChain?.name}
+                    </p>
+                    <DividerCircle theme={theme} />
                     <div className='flex flex-row gap-.25 items-center'>
-                      <img src={route.bridgeInfo.logoUri} className='w-4 h-4' />
-                      <p className={'text-accent-color font-manrope text-sm font-medium'}>
+                      <img src={route.bridgeInfo.logoURI} className='w-4 h-4' />
+                      <p
+                        className={
+                          theme === 'light'
+                            ? 'text-primary-dark'
+                            : 'text-accent-color' + ' font-manrope text-sm font-medium'
+                        }
+                      >
                         {capitalize(route.bridgeInfo.name)}
                       </p>
                     </div>
@@ -183,7 +220,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
             </motion.div>
           </div>
         </motion.div>
-        {widgetState.error !== undefined && <ErrorMessage errorType={widgetState.error} />}
+        {widgetState.error !== undefined && <ErrorMessage errorType={widgetState.error} theme={theme}/>}
         {reviewState?.bridgeState !== undefined && reviewState.bridgeState === 'started' && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -201,6 +238,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                     : 'error'
                 }
                 text='Executing bridge...'
+                theme={theme}
               />
             </div>
           </motion.div>
@@ -208,18 +246,23 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
         {reviewState?.txnHash !== undefined && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
             <div className='w-full flex flex-col justify-start p-2 gap-2'>
-              <LinkText text='View on Block Explorer' link={`${fromChain?.blockExplorer}tx/${reviewState.txnHash}`} />
+              <LinkText
+                text='View on Block Explorer'
+                link={`${fromChain?.blockExplorer}tx/${reviewState.txnHash}`}
+                theme={theme}
+              />
 
               <LinkText
                 text='View on Bridge Explorer'
                 link={`${route.bridgeInfo.bridgeExplorer}tx/${reviewState.txnHash}`}
+                theme={theme}
               />
             </div>
           </motion.div>
         )}
         {reviewState?.bridgeState !== undefined && reviewState.bridgeState === 'done' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-            <SuccessMessage text='Bridge Successful!' />
+            <SuccessMessage text='Bridge Successful!' theme={theme} />
           </motion.div>
         )}
         <motion.div
@@ -227,7 +270,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ delay: 2.5, duration: 0.5, type: 'spring', bounce: 0.3 }}
         >
-          <ActionButton {...widgetState.buttonState} />
+          <ActionButton {...widgetState.buttonState} theme={theme} />
         </motion.div>
       </WidgetContainer>
     </motion.div>

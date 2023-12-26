@@ -6,7 +6,7 @@ import {
   type BasicRoute,
 } from '@argoplatform/transfer-sdk';
 import { Route } from './Route';
-import { type WidgetState } from 'models/const';
+import { type WidgetState, type WidgetTheme } from 'models/const';
 import { areBasicRoutesEqual } from '../../utils/routes';
 import { AdditionalRoutes } from './AdditionalRoutes';
 
@@ -19,6 +19,7 @@ export interface RouteContainerProps {
   widgetState: WidgetState;
   setSelectedRoute: (route: BasicRoute | undefined) => void;
   selectedRoute?: BasicRoute;
+  theme: WidgetTheme;
 }
 
 export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
@@ -30,6 +31,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
   widgetState,
   setSelectedRoute,
   selectedRoute,
+  theme,
 }) => {
   const [showAdditionalRoutes, setShowAdditionalRoutes] = useState<boolean>(false);
   return (
@@ -56,6 +58,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
           widgetState={widgetState}
           setSelectedRoute={setSelectedRoute}
           selectedRoute={selectedRoute}
+          theme={theme}
         />
       ) : (
         <Route
@@ -68,6 +71,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
           setSelectedRoute={setSelectedRoute}
           isSelectedRoute={areBasicRoutesEqual(quoteResult.bestRoute, selectedRoute)}
           isBest
+          theme={theme}
         />
       )}
     </div>
