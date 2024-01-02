@@ -4,7 +4,7 @@ import { RouteDetails } from './RouteDetails';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type SupportedChain, type BasicRoute, type SupportedToken } from '@argoplatform/transfer-sdk';
-import { type WidgetState } from 'models/const';
+import { type WidgetState, type WidgetTheme } from 'models/const';
 import { LoadingRoute } from './LoadingRoute';
 import { useTransfer } from '../../hooks/useTransfer';
 import { capitalize } from '../../utils/text';
@@ -19,12 +19,13 @@ export interface RouteProps {
   widgetState: WidgetState;
   isSelectedRoute?: boolean;
   setSelectedRoute: (route: BasicRoute | undefined) => void;
+  theme: WidgetTheme;
 }
 
-export const DividerCircle = (): ReactNode => {
+export const DividerCircle = ({ theme }: { theme: WidgetTheme }): ReactNode => {
   return (
     <svg width='5' height='5' viewBox='0 0 5 5' fill='none' xmlns='http://www.w3.org/2000/svg'>
-      <circle cx='2.5' cy='2.5' r='2.5' fill='#C4C4C4' />
+      <circle cx='2.5' cy='2.5' r='2.5' fill={theme === 'light' ? '#E2E2E2' : '#C4C4C4'} />
     </svg>
   );
 };
@@ -36,6 +37,7 @@ export const Route: FunctionComponent<RouteProps> = ({
   fromChain,
   fromToken,
   widgetState,
+  theme,
   setSelectedRoute,
   isBest = false,
   isSelectedRoute = false,
@@ -49,10 +51,12 @@ export const Route: FunctionComponent<RouteProps> = ({
       <>
         {/* top routes and best icon (if route is the best) */}
         <div className='flex flex-row justify-between w-full'>
-          <p className={'text-white font-manrope text-md font-semibold'}>Bridge</p>
+          <p className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-md font-semibold'}>
+            Bridge
+          </p>
           {isBest && (
             <DefaultTooltip label='Best route based on price, speed, and slippage' side='left'>
-              <BestRouteIcon />
+              <BestRouteIcon theme={theme} />
             </DefaultTooltip>
           )}
         </div>
@@ -63,15 +67,29 @@ export const Route: FunctionComponent<RouteProps> = ({
             <div className='flex flex-row gap-1 items-center justify-center'>
               <TokenNetworkImage tokenLogo={_toToken.logoUri} networkLogo={toChain?.logoURI} />
               <div className='flex flex-col'>
-                <p className={'text-white font-manrope text-xl font-medium'}>
+                <p className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}>
                   {calculateEstimatedValue(_toToken, _route.dstAmountEstimate)} {_toToken.symbol}
                 </p>
                 <div className='flex flex-row gap-1 items-center'>
-                  <p className={'text-accent-color font-manrope text-sm font-medium'}>{toChain?.name}</p>
-                  <DividerCircle />
+                  <p
+                    className={
+                      theme === 'light'
+                        ? 'text-primary-dark'
+                        : 'text-accent-color' + ' font-manrope text-sm font-medium'
+                    }
+                  >
+                    {toChain?.name}
+                  </p>
+                  <DividerCircle theme={theme} />
                   <div className='flex flex-row gap-.25 items-center'>
-                    <img src={_route.bridgeInfo.logoUri} className='w-4 h-4' />
-                    <p className={'text-accent-color font-manrope text-sm font-medium'}>
+                    <img src={_route.bridgeInfo.logoURI} className='w-4 h-4' />
+                    <p
+                      className={
+                        theme === 'light'
+                          ? 'text-primary-dark'
+                          : 'text-accent-color' + ' font-manrope text-sm font-medium'
+                      }
+                    >
                       {capitalize(_route.bridgeInfo.name)}
                     </p>
                   </div>
@@ -97,14 +115,30 @@ export const Route: FunctionComponent<RouteProps> = ({
             >
               <DefaultTooltip label='View route steps' side='left'>
                 <svg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                  <rect x='0.5' y='0.5' width='29' height='29' rx='8.5' fill='#242424' />
+                  <rect
+                    x='0.5'
+                    y='0.5'
+                    width='29'
+                    height='29'
+                    rx='8.5'
+                    fill={theme === 'light' ? '#FBFBFB' : '#242424'}
+                  />
                   <path
                     fillRule='evenodd'
                     clipRule='evenodd'
                     d='M14.5 10C14.7761 10 15 10.2239 15 10.5V19.2929L18.1464 16.1465C18.3417 15.9512 18.6583 15.9512 18.8536 16.1465C19.0488 16.3417 19.0488 16.6583 18.8536 16.8535L14.8536 20.8536C14.7598 20.9473 14.6326 21 14.5 21C14.3674 21 14.2402 20.9473 14.1465 20.8536L10.1465 16.8535C9.95118 16.6583 9.95118 16.3417 10.1465 16.1465C10.3417 15.9512 10.6583 15.9512 10.8536 16.1465L14 19.2929V10.5C14 10.2239 14.2239 10 14.5 10Z'
-                    fill='white'
+                    fill={theme === 'light' ? '#000000' : 'white'}
                   />
-                  <rect x='0.5' y='0.5' width='29' height='29' rx='8.5' stroke={isHovered ? 'white' : '#2A2A2E'} />
+                  <rect
+                    x='0.5'
+                    y='0.5'
+                    width='29'
+                    height='29'
+                    rx='8.5'
+                    stroke={
+                      isHovered ? (theme === 'light' ? 'black' : 'white') : theme === 'light' ? '#E5E7EB' : '#2A2A2E'
+                    }
+                  />
                 </svg>
               </DefaultTooltip>
             </div>
@@ -125,12 +159,22 @@ export const Route: FunctionComponent<RouteProps> = ({
               >
                 <div className='flex flex-col gap-.5'>
                   <div className='flex flex-row gap-.25 items-center'>
-                    <img src={_route.bridgeInfo.logoUri} className='w-5 h-5' />
-                    <p className={'text-accent-color font-manrope text-lg font-medium'}>
+                    <img src={_route.bridgeInfo.logoURI} className='w-5 h-5' />
+                    <p
+                      className={
+                        theme === 'light'
+                          ? 'text-primary-dark'
+                          : 'text-accent-color' + ' font-manrope text-lg font-medium'
+                      }
+                    >
                       {capitalize(_route.bridgeInfo.name)}
                     </p>
                   </div>
-                  <p className='text-accent-color font-manrope text-sm m-0'>
+                  <p
+                    className={
+                      theme === 'light' ? 'text-primary-dark' : 'text-accent-color' + ' font-manrope text-sm m-0'
+                    }
+                  >
                     Bridge from {fromToken?.symbol} on {fromChain?.name} to {toToken?.symbol} on {toChain?.name} using{' '}
                     {capitalize(_route.bridgeInfo.name)}
                   </p>
@@ -139,26 +183,6 @@ export const Route: FunctionComponent<RouteProps> = ({
             )}
           </AnimatePresence>
 
-          {/* the expanded route details with slide down animation
-            <div className='relative'>
-                {isClicked ? (
-                    <div className="transition-transform duration-500 ease-in-out transform translate-y-0 flex flex-col gap-.5">
-                        <div className = 'flex flex-row gap-.25 items-center'>
-                            <img src = {bridgeLogo} className = 'w-5 h-5'/>
-                            <p className={'text-accent-color font-manrope text-lg font-medium'}>
-                                {bridge}
-                            </p>
-                        </div>
-                    
-                            <p className="text-accent-color font-manrope text-sm m-0">
-                                {type} into {tokenName} using {bridge}
-                            </p>
-                        
-                    </div>
-                ) : (
-                    <div className="absolute transition-transform duration-500 ease-in-out transform -translate-y-full opacity-0"/>
-                )}
-            </div> */}
         </div>
 
         {/* icons regarding the route details */}
@@ -176,7 +200,13 @@ export const Route: FunctionComponent<RouteProps> = ({
   const RouteContainter = (): ReactNode => {
     if (widgetState.error !== undefined) {
       return (
-        <p className={'text-failure-red font-manrope text-md font-medium text-center'}>
+        <p
+          className={
+            theme === 'light'
+              ? 'text-failure-dark'
+              : 'text-failure-red' + ' font-manrope text-md font-medium text-center'
+          }
+        >
           Unable to find successful route
         </p>
       );
@@ -191,11 +221,11 @@ export const Route: FunctionComponent<RouteProps> = ({
 
   const border = (): string => {
     if (widgetState.error !== undefined) {
-      return 'border-failure-red';
+      return theme === 'light' ? 'border-failure-dark' : 'border-failure-red';
     } else if (isSelectedRoute && !widgetState.loading) {
-      return 'border-success-green';
+      return theme === 'light' ? 'border-success-dark' : 'border-success-green';
     } else {
-      return 'border-border-color';
+      return theme === 'light' ? 'border-border-color-light' : 'border-border-color-dark';
     }
   };
 
@@ -204,7 +234,9 @@ export const Route: FunctionComponent<RouteProps> = ({
       onClick={() => {
         setSelectedRoute(route);
       }}
-      className={`flex flex-col w-full bg-component-background border ${border()} rounded-lg py-3 px-4 min-h-[158px] gap-4 cursor-pointer`}
+      className={`flex flex-col w-full ${
+        theme === 'light' ? 'bg-component-background-light' : 'bg-component-background-dark'
+      } border ${border()} rounded-lg py-3 px-4 min-h-[158px] gap-4 cursor-pointer`}
     >
       <RouteContainter />
     </div>

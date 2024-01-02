@@ -1,5 +1,6 @@
 import { type SupportedToken } from '@argoplatform/transfer-sdk';
 
+
 export type Direction = 'to' | 'from';
 
 export const Error = {
@@ -47,13 +48,13 @@ export const ButtonTheme = {
     disabled: true,
   },
   disabled: {
-    backgroundColor: 'bg-component-background',
+    backgroundColor: (widgetTheme: WidgetTheme) => widgetTheme === 'light' ? 'bg-component-background-light' : 'bg-component-background-dark',
     textColor: 'text-unselected-text',
     hoverBackgroundColor: null,
     disabled: true,
   },
   loading: {
-    backgroundColor: 'bg-component-background',
+    backgroundColor: (widgetTheme: WidgetTheme) => widgetTheme === 'light' ? 'bg-component-background-light' : 'bg-component-background-dark',
     textColor: 'text-unselected-text',
     hoverBackgroundColor: null,
     disabled: true,

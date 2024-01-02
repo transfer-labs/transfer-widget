@@ -12,7 +12,13 @@ import {
 } from '@argoplatform/transfer-sdk';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TokenNetworkSelector } from './TokenNetworkSelector';
-import { type ReviewState, type Direction, type SupportedTokensByChain, type Settings } from 'models/const';
+import {
+  type ReviewState,
+  type Direction,
+  type SupportedTokensByChain,
+  type Settings,
+  type WidgetTheme,
+} from 'models/const';
 import { type WidgetState } from '../../models/const';
 import { ReviewRoute } from './ReviewRoute';
 import { useTransfer } from '../../hooks/useTransfer';
@@ -42,6 +48,7 @@ export interface TransferWidgetContainerProps {
   setSettings: (settings: Settings) => void;
   settings: Settings;
   autoSize: boolean;
+  theme?: WidgetTheme;
 }
 
 export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerProps> = ({
@@ -64,6 +71,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   setAmountToBeTransferred,
   setSelectedRoute,
   setSettings,
+  theme,
   autoSize,
 }): ReactNode => {
   const { calculateEstimatedValue } = useTransfer();
@@ -100,6 +108,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
           autoSize={autoSize}
           settings={settings}
           setSettings={setSettings}
+          theme={theme ?? 'default'}
           onClose={() => {
             setWidgetState({
               ...widgetState,
@@ -131,6 +140,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
             toToken={toToken}
             widgetState={widgetState}
             reviewState={reviewState}
+            theme={theme ?? 'default'}
             amountToBeTransferred={amountToBeTransferred}
             onClose={() => {
               setWidgetState({
@@ -162,6 +172,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
           handleChainSelect={handleChainSelect}
           handleTokenSelect={handleTokenSelect}
           autoSize={autoSize}
+          theme={theme ?? 'default'}
           direction={widgetState.view === 'selectTokenNetworkFrom' ? 'from' : 'to'}
           onClose={() => {
             setWidgetState({
@@ -187,12 +198,14 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
-        <WidgetContainer autoSize={autoSize}>
+        <WidgetContainer autoSize={autoSize} theme={theme}>
           <div className='flex flex-col gap-3'>
             <div className='flex flex-row w-full justify-between'>
               <div className='flex flex-row gap-3 items-center'>
                 <TransferLogo />
-                <p className='text-white font-manrope font-bold text-xl'>Transfer</p>
+                <p className={`text-${theme === 'light' ? 'black' : 'white'} font-manrope font-bold text-xl`}>
+                  Transfer
+                </p>
                 <p className='text-gray-400 font-manrope font-light text-sm'>
                   {userAddress !== undefined
                     ? userAddress.substring(0, 5) + '...' + userAddress.substring(userAddress.length - 3)
@@ -200,7 +213,9 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                 </p>
               </div>
               <div
-                className='p-1 rounded-md hover:bg-component-background cursor-pointer'
+                className={`p-1 rounded-md ${
+                  theme === 'light' ? 'hover:bg-component-background-light' : 'hover:bg-component-background-dark'
+                } cursor-pointer`}
                 onClick={() => {
                   setWidgetState({
                     ...widgetState,
@@ -208,7 +223,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                   });
                 }}
               >
-                <SettingsIcon />
+                <SettingsIcon theme={theme ?? 'default'} />
               </div>
             </div>
 
@@ -223,6 +238,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                   chain={fromChain}
                   token={fromToken}
                   direction='from'
+                  theme={theme}
                   setAmount={setAmountToBeTransferred}
                   amount={amountToBeTransferred}
                   // balance='0.0'
@@ -241,7 +257,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.5, type: 'spring', bounce: 0.3 }}
               >
-                <SwitchArrow onClick={handleChainTokenSwitch} />
+                <SwitchArrow onClick={handleChainTokenSwitch} theme={theme} />
               </motion.div>
 
               {/* animate in the individual selectors */}
@@ -254,6 +270,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                   chain={toChain}
                   token={toToken}
                   direction='to'
+                  theme={theme}
                   // balance='0.0'
                   amount={
                     toToken !== undefined && quoteResult !== undefined
@@ -270,7 +287,9 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
               </motion.div>
             </div>
           </div>
-          {widgetState.error !== undefined ? <ErrorMessage errorType={widgetState.error} /> : null}
+          {widgetState.error !== undefined ? (
+            <ErrorMessage errorType={widgetState.error} theme={theme ?? 'default'} />
+          ) : null}
 
           {/* if both the paramaters are fufilled animate in the routes component */}
           {quoteResult !== undefined && (
@@ -288,6 +307,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                 widgetState={widgetState}
                 selectedRoute={selectedRoute}
                 setSelectedRoute={setSelectedRoute}
+                theme={theme ?? 'default'}
               />
             </motion.div>
           )}
@@ -298,7 +318,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
           >
-            <ActionButton {...widgetState.buttonState} />
+            <ActionButton {...widgetState.buttonState} theme={theme ?? 'default'} />
           </motion.div>
         </WidgetContainer>
       </motion.div>

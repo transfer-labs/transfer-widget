@@ -1,11 +1,14 @@
 import React from 'react';
 import { Line } from './Skeleton/Line';
 import { ButtonTheme, type ButtonState } from '../models/const';
+import { type WidgetTheme } from "models/const"
 
-const BASE_BUTTON_CLASSES =
-  'border-radius-6 rounded border-1 border-border-color font-manrope font-medium py-3 px-4 w-full flex justify-center items-center min-h-[50px]';
 
-export const ActionButton: React.FunctionComponent<ButtonState> = ({ label, type, onClick }) => {
+
+export const ActionButton: React.FunctionComponent<ButtonState & { theme: WidgetTheme }> = ({ label, type, theme, onClick }) => {
+  const BASE_BUTTON_CLASSES =
+  `border-radius-6 rounded border-1 ${theme === 'light' ? 'border-border-color-light' : 'border-border-color-dark'} font-manrope font-medium py-3 px-4 w-full flex justify-center items-center min-h-[50px]`;
+
   const _type = type ?? 'default';
   const { backgroundColor, textColor, hoverBackgroundColor, disabled } = ButtonTheme[_type];
   const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer';
