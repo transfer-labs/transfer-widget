@@ -22,6 +22,7 @@ import {
 } from '../models/const';
 import { type WalletClient } from 'viem';
 import { findRouteFromSelected } from '../utils/routes';
+import { WidgetContainer } from './Widget/WidgetContainer';
 
 export interface TransferWidgetProps {
   fromChainId?: number;
@@ -364,29 +365,31 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
 
   return (
     <TransferContext.Provider value={transfer}>
-      <TransferWidgetContainer
-        fromChain={fromChain}
-        fromToken={fromToken}
-        toChain={toChain}
-        toToken={toToken}
-        handleChainSelect={handleChainSelect}
-        handleTokenSelect={handleTokenSelect}
-        amountToBeTransferred={_amountToBeTransferred}
-        quoteResult={quoteResult}
-        setAmountToBeTransferred={setAmountToBeTransferred}
-        supportedChains={supportedChains}
-        supportedTokensByChain={supportedTokensByChain}
-        userAddress={userAddress}
-        widgetState={widgetState}
-        setWidgetState={setWidgetState}
-        reviewState={reviewState}
-        setSelectedRoute={handleSelectRoute}
-        selectedRoute={selectedRoute}
-        setSettings={setSettings}
-        settings={settings}
-        autoSize={autoSize}
-        theme = {theme}
-      />
+      <WidgetContainer autoSize={autoSize} theme={theme}>
+        <TransferWidgetContainer
+          fromChain={fromChain}
+          fromToken={fromToken}
+          toChain={toChain}
+          toToken={toToken}
+          handleChainSelect={handleChainSelect}
+          handleTokenSelect={handleTokenSelect}
+          amountToBeTransferred={_amountToBeTransferred}
+          quoteResult={quoteResult}
+          setAmountToBeTransferred={setAmountToBeTransferred}
+          supportedChains={supportedChains}
+          supportedTokensByChain={supportedTokensByChain}
+          userAddress={userAddress}
+          widgetState={widgetState}
+          setWidgetState={setWidgetState}
+          reviewState={reviewState}
+          setSelectedRoute={handleSelectRoute}
+          selectedRoute={selectedRoute}
+          setSettings={setSettings}
+          settings={settings}
+          autoSize={autoSize}
+          theme={theme}
+        />
+      </WidgetContainer>
     </TransferContext.Provider>
   );
 };

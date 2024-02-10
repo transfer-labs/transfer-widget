@@ -1,9 +1,8 @@
 import React, { type FunctionComponent } from 'react';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type Direction, type WidgetTheme } from 'models/const';
-import { WidgetContainer } from './WidgetContainer';
 
 interface ChainSelectorProps {
   chains?: SupportedChain[];
@@ -54,10 +53,10 @@ export interface TokenSelectorProps {
 }
 const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selectedToken, handleTokenSelect, theme }) => {
   const [search, setSearch] = React.useState<string>('');
-  const themeClass =
-    theme === 'light'
-      ? 'bg-component-background-light border-border-color-light text-black'
-      : 'bg-component-background-dark border-border-color-dark text-white';
+  // const themeClass =
+  //   theme === 'light'
+  //     ? 'bg-component-background-light border-border-color-light text-black'
+  //     : 'bg-component-background-dark border-border-color-dark text-white';
   const inputThemeClass = `bg-component-background-${
     theme === 'light' ? 'light' : 'dark'
   } border-1 border-border-color-${theme === 'light' ? 'light' : 'dark'} py-4 rounded-lg px-2 ${
@@ -150,80 +149,82 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
     theme === 'light' ? 'hover:bg-shadow-element-light' : 'hover:bg-shadow-element-dark'
   } hover:rounded-lg cursor-pointer ${themeClass}`;
   return (
-    <motion.div
-      initial={{ opacity: 0.25, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0.25, scale: 0.9, transition: { duration: 0.5 } }}
-      transition={{ duration: 0.5, type: 'spring', bounce: 0.3 }}
-    >
-      <WidgetContainer autoSize={autoSize} theme={theme}>
-        <div className='flex flex-col gap-2'>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, type: 'spring', bounce: 0.3 }}
-          >
-            <div className='flex flex-row justify-between items-center'>
-              <p className={`font-manrope font-medium text-xl ${themeClass}`}>
-                Select {direction.charAt(0).toUpperCase() + direction.slice(1)} Network
-              </p>
-              <div className={closeButtonThemeClass} onClick={onClose}>
-                <svg width='15' height='15' viewBox='0 0 15 15' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                  <path
-                    fillRule='evenodd'
-                    clipRule='evenodd'
-                    d='M12.8536 2.85355C13.0488 2.65829 13.0488 2.34171 12.8536 2.14645C12.6583 1.95118 12.3417 1.95118 12.1464 2.14645L7.5 6.79289L2.85355 2.14645C2.65829 1.95118 2.34171 1.95118 2.14645 2.14645C1.95118 2.34171 1.95118 2.65829 2.14645 2.85355L6.79289 7.5L2.14645 12.1464C1.95118 12.3417 1.95118 12.6583 2.14645 12.8536C2.34171 13.0488 2.65829 13.0488 2.85355 12.8536L7.5 8.20711L12.1464 12.8536C12.3417 13.0488 12.6583 13.0488 12.8536 12.8536C13.0488 12.6583 13.0488 12.3417 12.8536 12.1464L8.20711 7.5L12.8536 2.85355Z'
-                    fill={theme === 'light' ? 'black' : 'white'}
-                  />
-                </svg>
+    <div className='w-full'>
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0.25, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0.25, scale: 0.9, transition: { duration: 0.5 } }}
+          transition={{ duration: 0.5, type: 'spring', bounce: 0.3 }}
+        >
+          <div className='flex flex-col gap-2'>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, type: 'spring', bounce: 0.3 }}
+            >
+              <div className='flex flex-row justify-between items-center'>
+                <p className={`font-manrope font-medium text-xl ${themeClass}`}>
+                  Select {direction.charAt(0).toUpperCase() + direction.slice(1)} Network
+                </p>
+                <div className={closeButtonThemeClass} onClick={onClose}>
+                  <svg width='15' height='15' viewBox='0 0 15 15' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                    <path
+                      fillRule='evenodd'
+                      clipRule='evenodd'
+                      d='M12.8536 2.85355C13.0488 2.65829 13.0488 2.34171 12.8536 2.14645C12.6583 1.95118 12.3417 1.95118 12.1464 2.14645L7.5 6.79289L2.85355 2.14645C2.65829 1.95118 2.34171 1.95118 2.14645 2.14645C1.95118 2.34171 1.95118 2.65829 2.14645 2.85355L6.79289 7.5L2.14645 12.1464C1.95118 12.3417 1.95118 12.6583 2.14645 12.8536C2.34171 13.0488 2.65829 13.0488 2.85355 12.8536L7.5 8.20711L12.1464 12.8536C12.3417 13.0488 12.6583 13.0488 12.8536 12.8536C13.0488 12.6583 13.0488 12.3417 12.8536 12.1464L8.20711 7.5L12.8536 2.85355Z'
+                      fill={theme === 'light' ? 'black' : 'white'}
+                    />
+                  </svg>
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
-          >
-            <ChainSelector
-              chains={chains}
-              selectedChain={selectedChain}
-              handleChainSelect={(chain) => {
-                handleTokenSelect(direction, undefined);
-                handleChainSelect(direction, chain);
-              }}
-              theme={theme}
-            />
-          </motion.div>
-        </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
+            >
+              <ChainSelector
+                chains={chains}
+                selectedChain={selectedChain}
+                handleChainSelect={(chain) => {
+                  handleTokenSelect(direction, undefined);
+                  handleChainSelect(direction, chain);
+                }}
+                theme={theme}
+              />
+            </motion.div>
+          </div>
 
-        <div className='flex flex-col gap-2'>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, type: 'spring', bounce: 0.3 }}
-          >
-            <p className={`font-manrope font-medium text-xl ${themeClass}`}>
-              Select {direction.charAt(0).toUpperCase() + direction.slice(1)} Token
-            </p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
-          >
-            <TokenSelector
-              tokens={tokens}
-              selectedToken={selectedToken}
-              theme={theme}
-              handleTokenSelect={(token) => {
-                onClose();
-                handleTokenSelect(direction, token);
-              }}
-            />
-          </motion.div>
-        </div>
-      </WidgetContainer>
-    </motion.div>
+          <div className='flex flex-col gap-2'>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, type: 'spring', bounce: 0.3 }}
+            >
+              <p className={`font-manrope font-medium text-xl ${themeClass}`}>
+                Select {direction.charAt(0).toUpperCase() + direction.slice(1)} Token
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
+            >
+              <TokenSelector
+                tokens={tokens}
+                selectedToken={selectedToken}
+                theme={theme}
+                handleTokenSelect={(token) => {
+                  onClose();
+                  handleTokenSelect(direction, token);
+                }}
+              />
+            </motion.div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 };

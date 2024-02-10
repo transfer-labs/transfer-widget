@@ -2,7 +2,6 @@ import React, { type FunctionComponent } from 'react';
 import { motion } from 'framer-motion';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { type Settings, type WidgetTheme } from '../../models/const';
-import { WidgetContainer } from './WidgetContainer';
 interface SettingsPageProps {
   settings: Settings;
   setSettings: (settings: Settings) => void;
@@ -41,7 +40,7 @@ export const SettingsPage: FunctionComponent<SettingsPageProps> = ({
   const iconFill = theme === 'light' ? '#000' : '#fff';
 
   return (
-    <WidgetContainer autoSize={autoSize} theme={theme}>
+    <div className='w-full'>
       <div className={`flex flex-row justify-between items-center ${themeClass}`}>
         <p className={`font-manrope font-medium text-xl ${themeClass}`}>Settings</p>
         <div
@@ -131,6 +130,6 @@ export const SettingsPage: FunctionComponent<SettingsPageProps> = ({
           </div>
         </div>
       </motion.div>
-    </WidgetContainer>
+    </div>
   );
 };

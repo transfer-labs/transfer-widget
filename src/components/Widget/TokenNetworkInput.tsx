@@ -32,18 +32,18 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
 
   return (
     <div
-      className={`flex px-4 py-3 flex-col gap-3 w-full border rounded-lg ${
+      className={`flex px-4 py-3 flex-col gap-3 border rounded-lg ${
         theme === 'light' ? 'border-border-color-light' : 'border-border-color-dark'
-      } ${theme === 'light' ? 'bg-component-background-light' : 'bg-component-background-dark'} min-w-[75px]`}
+      } ${theme === 'light' ? 'bg-component-background-light' : 'bg-component-background-dark'}`}
     >
       <p className={`font-manrope text-lg font-medium ${theme === 'light' ? 'text-black' : 'text-white'}`}>
         {direction.charAt(0).toUpperCase() + direction.slice(1)}
       </p>
-      <div className='flex flex-row w-full items-center gap-1 h-10'>
+      <div className='flex flex-row items-center gap-1 h-10'>
         <input
-          className={`bg-component-background-${
+          className={`w-full text-3xl bg-component-background-${
             theme === 'light' ? 'light' : 'dark'
-          } border-none outline-none font-bold text-3xl w-full ${
+          } border-none outline-none font-bold  ${
             amount !== undefined && +amount > 0
               ? theme === 'light'
                 ? 'text-black'
@@ -73,9 +73,9 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
             </div>
           ) : (
             <div className='flex flex-row gap-2 items-center' onClick={onAnchorClick}>
-              <a href='#' className='text-unselected-text whitespace-nowrap hidden min-[414px]:block'>
+              {/* <a href='#' className='text-unselected-text whitespace-nowrap hidden min-[414px]:block'>
                 Select {direction} chain and token
-              </a>
+              </a> */}
               <div className='w-[53px] h-[50px]'>
                 <svg width='50' height='50' viewBox='0 0 64 59' fill='none' xmlns='http://www.w3.org/2000/svg'>
                   <path

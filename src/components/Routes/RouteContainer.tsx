@@ -35,7 +35,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
 }) => {
   const [showAdditionalRoutes, setShowAdditionalRoutes] = useState<boolean>(false);
   return (
-    <div className='flex flex-col gap-3 w-full'>
+    <div className='flex flex-col gap-3 w-full mt-4'>
       <div className='flex flex-row justify-between w-full items-center'>
         <p className={'text-white font-manrope text-lg font-medium'}>Routes</p>
 
