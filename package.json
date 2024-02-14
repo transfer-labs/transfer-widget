@@ -1,6 +1,6 @@
 {
   "name": "@argoplatform/transfer-widget",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "Transfer widget",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
