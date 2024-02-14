@@ -7,7 +7,7 @@ import { ActionButton } from '../ActionButton';
 import {
   type SupportedChain,
   type SupportedToken,
-  type QuoteResult,
+  type QuoteBridgeResult,
   type BasicRoute,
 } from '@argoplatform/transfer-sdk';
 import { motion } from 'framer-motion';
@@ -37,7 +37,7 @@ export interface TransferWidgetContainerProps {
   handleTokenSelect: (direction: Direction, token?: SupportedToken) => void;
   setAmountToBeTransferred: (amount: string) => void;
   amountToBeTransferred?: string;
-  quoteResult?: QuoteResult;
+  quoteResult?: QuoteBridgeResult;
   userAddress?: string;
   widgetState: WidgetState;
   selectedRoute?: BasicRoute;
@@ -90,11 +90,11 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
     }
 
     if (widgetState.view === 'selectTokenNetworkFrom' && fromChain !== undefined) {
-      return supportedTokensByChain[fromChain.chainId];
+      return supportedTokensByChain[fromChain.chain_id];
     }
 
     if (widgetState.view === 'selectTokenNetworkTo' && toChain !== undefined) {
-      return supportedTokensByChain[toChain.chainId];
+      return supportedTokensByChain[toChain.chain_id];
     }
 
     return undefined;
@@ -262,7 +262,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                 // balance='0.0'
                 amount={
                   toToken !== undefined && quoteResult !== undefined
-                    ? calculateEstimatedValue(toToken, quoteResult.bestRoute.dstAmountEstimate)
+                    ? calculateEstimatedValue(toToken, quoteResult.best_route.dst_amount_estimate)
                     : '0'
                 }
                 onAnchorClick={() => {

@@ -108,7 +108,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
 
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
                 <div className='flex flex-row gap-1 items-center justify-center'>
-                  <TokenNetworkImage tokenLogo={fromToken?.logoUri} networkLogo={fromChain?.logoURI} />
+                  <TokenNetworkImage tokenLogo={fromToken?.logo_uri} networkLogo={fromChain?.logo_uri} />
                   <div className='flex flex-col'>
                     <p
                       className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}
@@ -127,7 +127,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                       </p>
                       <DividerCircle theme={theme} />
                       <div className='flex flex-row gap-.25 items-center'>
-                        <img src={route.bridgeInfo.logoUri} className='w-4 h-4' />
+                        <img src={route.bridge_info.logo_uri} className='w-4 h-4' />
                         <p
                           className={
                             theme === 'light'
@@ -135,7 +135,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                               : 'text-accent-color' + ' font-manrope text-sm font-medium'
                           }
                         >
-                          {capitalize(route.bridgeInfo.name)}
+                          {capitalize(route.bridge_info.name)}
                         </p>
                       </div>
                     </div>
@@ -173,7 +173,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                           theme === 'light' ? 'text-primary-dark' : 'text-accent-color' + ' font-manrope text-sm m-0'
                         }
                       >
-                        Bridge from {fromToken?.name} to {toToken?.name} using {capitalize(route.bridgeInfo.name)}
+                        Bridge from {fromToken?.name} to {toToken?.name} using {capitalize(route.bridge_info.name)}
                       </p>
                     </div>
                   </motion.div>
@@ -191,12 +191,12 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
 
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
                 <div className='flex flex-row gap-1 items-center justify-center'>
-                  <TokenNetworkImage tokenLogo={toToken?.logoUri} networkLogo={toChain?.logoURI} />
+                  <TokenNetworkImage tokenLogo={toToken?.logo_uri} networkLogo={toChain?.logo_uri} />
                   <div className='flex flex-col'>
                     <p
                       className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}
                     >
-                      {toToken !== undefined && calculateEstimatedValue(toToken, route.dstAmountEstimate)}{' '}
+                      {toToken !== undefined && calculateEstimatedValue(toToken, route.dst_amount_estimate)}{' '}
                       {toToken?.symbol}
                     </p>
                     <div className='flex flex-row gap-1 items-center'>
@@ -211,7 +211,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                       </p>
                       <DividerCircle theme={theme} />
                       <div className='flex flex-row gap-.25 items-center'>
-                        <img src={route.bridgeInfo.logoUri} className='w-4 h-4' />
+                        <img src={route.bridge_info.logo_uri} className='w-4 h-4' />
                         <p
                           className={
                             theme === 'light'
@@ -219,7 +219,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                               : 'text-accent-color' + ' font-manrope text-sm font-medium'
                           }
                         >
-                          {capitalize(route.bridgeInfo.name)}
+                          {capitalize(route.bridge_info.name)}
                         </p>
                       </div>
                     </div>
@@ -253,11 +253,14 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
           {reviewState?.txnHash !== undefined && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
               <div className='w-full flex flex-col justify-start p-2 gap-2'>
-                <LinkText text='View on Block Explorer' link={`${fromChain?.blockExplorer}tx/${reviewState.txnHash}`} />
+                <LinkText
+                  text='View on Block Explorer'
+                  link={`${fromChain?.block_explorer}tx/${reviewState.txnHash}`}
+                />
 
                 <LinkText
                   text='View on Bridge Explorer'
-                  link={`${route.bridgeInfo.bridgeExplorer}tx/${reviewState.txnHash}`}
+                  link={`${route.bridge_info.bridge_explorer}tx/${reviewState.txnHash}`}
                 />
               </div>
             </motion.div>

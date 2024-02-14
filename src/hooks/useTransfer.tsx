@@ -8,7 +8,7 @@ interface Props {
 interface UseTransfer {
   supportedChains: SupportedChain[] | undefined;
   supportedTokensByChain: SupportedTokensByChain | undefined;
-  calculateAmountToBeTransferred: (fromToken: SupportedToken, amount: string) => number;
+  calculateAmountToBeTransferred: (fromToken: SupportedToken, amount: string) => string;
   getSupportedTokens: (chainId: number) => Promise<SupportedToken[] | undefined>;
   calculateEstimatedValue: (toToken: SupportedToken, amount: number) => string;
 }
@@ -22,7 +22,7 @@ export function useTransfer(props?: Props): UseTransfer {
   React.useEffect(() => {
     async function _setSupportedChains(transfer: Transfer): Promise<void> {
       try {
-        const chains = await transfer.getSupportedChains();
+        const chains = await transfer.get_supported_chains();
         setSupportedChains(chains);
       } catch (e) {
         console.error(e);
@@ -43,7 +43,7 @@ export function useTransfer(props?: Props): UseTransfer {
       return supportedTokensByChain[chainId];
     }
     try {
-      const tokens = await props.transfer.getSupportedTokens(chainId);
+      const tokens = await props.transfer.get_supported_tokens(chainId);
       setSupportedTokensByChain((prev) => {
         return {
           ...prev,
@@ -57,8 +57,8 @@ export function useTransfer(props?: Props): UseTransfer {
     }
   }
 
-  function calculateAmountToBeTransferred(fromToken: SupportedToken, amount: string): number {
-    return +amount * 10 ** fromToken.decimals;
+  function calculateAmountToBeTransferred(fromToken: SupportedToken, amount: string): string {
+    return (+amount * 10 ** fromToken.decimals).toString();
   }
 
   function calculateEstimatedValue(toToken: SupportedToken, amount: number): string {
