@@ -4,7 +4,7 @@ import { ActionButton } from '../ActionButton';
 import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TokenNetworkImage } from './TokenNetworkImage';
-import { type SupportedToken, type BasicRoute, type SupportedChain } from '@argoplatform/transfer-sdk';
+import { type SupportedToken, type QuoteBridgeRoute, type SupportedChain } from '@argoplatform/transfer-sdk';
 import { type WidgetState, type ReviewState, type WidgetTheme } from 'models/const';
 import { ErrorMessage } from '../Message/ErrorMessage';
 import { SuccessMessage } from '../Message/SuccessMessage';
@@ -14,7 +14,7 @@ import { useTransfer } from '../../hooks/useTransfer';
 import { capitalize } from '../../utils/text';
 import { FlipArrowIcon } from '../Icons/FlipArrowIcon';
 export interface ReviewRouteProps {
-  route: BasicRoute;
+  route: QuoteBridgeRoute;
   fromToken?: SupportedToken;
   toToken?: SupportedToken;
   fromChain?: SupportedChain;

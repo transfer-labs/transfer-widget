@@ -8,7 +8,7 @@ import {
   type SupportedChain,
   type SupportedToken,
   type QuoteBridgeResult,
-  type BasicRoute,
+  type QuoteBridgeRoute,
 } from '@argoplatform/transfer-sdk';
 import { motion } from 'framer-motion';
 import { TokenNetworkSelector } from './TokenNetworkSelector';
@@ -40,10 +40,10 @@ export interface TransferWidgetContainerProps {
   quoteResult?: QuoteBridgeResult;
   userAddress?: string;
   widgetState: WidgetState;
-  selectedRoute?: BasicRoute;
+  selectedRoute?: QuoteBridgeRoute;
   reviewState?: ReviewState;
   setWidgetState: (state: WidgetState) => void;
-  setSelectedRoute: (route: BasicRoute | undefined) => void;
+  setSelectedRoute: (route: QuoteBridgeRoute | undefined) => void;
   setSettings: (settings: Settings) => void;
   settings: Settings;
   autoSize: boolean;

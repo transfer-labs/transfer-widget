@@ -8,7 +8,7 @@ import {
   type SupportedToken,
   type QuoteBridgeResult,
   type BridgeRequest,
-  type BasicRoute,
+  type QuoteBridgeRoute,
 } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
 import {
@@ -63,7 +63,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   });
   const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
-  const [selectedRoute, setSelectedRoute] = useState<BasicRoute | undefined>(undefined);
+  const [selectedRoute, setSelectedRoute] = useState<QuoteBridgeRoute | undefined>(undefined);
   const [settings, setSettings] = useState<Settings>({
     slippage: 0.01,
   });
@@ -357,7 +357,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     }
   }
 
-  function handleSelectRoute(route: BasicRoute | undefined): void {
+  function handleSelectRoute(route: QuoteBridgeRoute | undefined): void {
     if (route !== undefined) {
       setSelectedRoute(route);
     }

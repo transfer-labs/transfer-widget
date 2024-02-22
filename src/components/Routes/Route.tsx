@@ -3,14 +3,14 @@ import { TokenNetworkImage } from '../Widget/TokenNetworkImage';
 import { RouteDetails } from './RouteDetails';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
-import { type SupportedChain, type BasicRoute, type SupportedToken } from '@argoplatform/transfer-sdk';
+import { type SupportedChain, type QuoteBridgeRoute, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type WidgetState, type WidgetTheme } from 'models/const';
 import { LoadingRoute } from './LoadingRoute';
 import { useTransfer } from '../../hooks/useTransfer';
 import { capitalize } from '../../utils/text';
 import { BestRouteIcon } from '../Icons/BestRouteIcon';
 export interface RouteProps {
-  route?: BasicRoute;
+  route?: QuoteBridgeRoute;
   toToken?: SupportedToken;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
@@ -18,7 +18,7 @@ export interface RouteProps {
   isBest?: boolean;
   widgetState: WidgetState;
   isSelectedRoute?: boolean;
-  setSelectedRoute: (route: BasicRoute | undefined) => void;
+  setSelectedRoute: (route: QuoteBridgeRoute | undefined) => void;
   theme: WidgetTheme;
 }
 
@@ -46,7 +46,7 @@ export const Route: FunctionComponent<RouteProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const { calculateEstimatedValue } = useTransfer();
 
-  const RouteContent = ({ _route, _toToken }: { _route: BasicRoute; _toToken: SupportedToken }): ReactNode => {
+  const RouteContent = ({ _route, _toToken }: { _route: QuoteBridgeRoute; _toToken: SupportedToken }): ReactNode => {
     return (
       <>
         {/* top routes and best icon (if route is the best) */}

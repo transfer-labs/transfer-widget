@@ -3,7 +3,7 @@ import {
   type SupportedChain,
   type SupportedToken,
   type QuoteBridgeResult,
-  type BasicRoute,
+  type QuoteBridgeRoute,
 } from '@argoplatform/transfer-sdk';
 import { Route } from './Route';
 import { type WidgetState, type WidgetTheme } from 'models/const';
@@ -17,8 +17,8 @@ export interface RouteContainerProps {
   fromToken?: SupportedToken;
   toToken?: SupportedToken;
   widgetState: WidgetState;
-  setSelectedRoute: (route: BasicRoute | undefined) => void;
-  selectedRoute?: BasicRoute;
+  setSelectedRoute: (route: QuoteBridgeRoute | undefined) => void;
+  selectedRoute?: QuoteBridgeRoute;
   theme: WidgetTheme;
 }
 
@@ -50,7 +50,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
       </div>
       {showAdditionalRoutes ? (
         <AdditionalRoutes
-          routes={quoteResult.alternative_routes}
+          routes={quoteResult.alternate_routes}
           fromChain={fromChain}
           toChain={toChain}
           fromToken={fromToken}
