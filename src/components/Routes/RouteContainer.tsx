@@ -2,8 +2,8 @@ import React, { type FunctionComponent, useState } from 'react';
 import {
   type SupportedChain,
   type SupportedToken,
-  type QuoteResult,
-  type BasicRoute,
+  type QuoteBridgeResult,
+  type QuoteBridgeRoute,
 } from '@argoplatform/transfer-sdk';
 import { Route } from './Route';
 import { type WidgetState, type WidgetTheme } from 'models/const';
@@ -11,14 +11,14 @@ import { areBasicRoutesEqual } from '../../utils/routes';
 import { AdditionalRoutes } from './AdditionalRoutes';
 
 export interface RouteContainerProps {
-  quoteResult: QuoteResult;
+  quoteResult: QuoteBridgeResult;
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
   toToken?: SupportedToken;
   widgetState: WidgetState;
-  setSelectedRoute: (route: BasicRoute | undefined) => void;
-  selectedRoute?: BasicRoute;
+  setSelectedRoute: (route: QuoteBridgeRoute | undefined) => void;
+  selectedRoute?: QuoteBridgeRoute;
   theme: WidgetTheme;
 }
 
@@ -50,7 +50,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
       </div>
       {showAdditionalRoutes ? (
         <AdditionalRoutes
-          routes={quoteResult.alternateRoutes}
+          routes={quoteResult.alternate_routes}
           fromChain={fromChain}
           toChain={toChain}
           fromToken={fromToken}
@@ -62,14 +62,14 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
         />
       ) : (
         <Route
-          route={quoteResult.bestRoute}
+          route={quoteResult.best_route}
           fromChain={fromChain}
           toChain={toChain}
           fromToken={fromToken}
           toToken={toToken}
           widgetState={widgetState}
           setSelectedRoute={setSelectedRoute}
-          isSelectedRoute={areBasicRoutesEqual(quoteResult.bestRoute, selectedRoute)}
+          isSelectedRoute={areBasicRoutesEqual(quoteResult.best_route, selectedRoute)}
           isBest
           theme={theme}
         />

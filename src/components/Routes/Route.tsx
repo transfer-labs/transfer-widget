@@ -3,14 +3,14 @@ import { TokenNetworkImage } from '../Widget/TokenNetworkImage';
 import { RouteDetails } from './RouteDetails';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
-import { type SupportedChain, type BasicRoute, type SupportedToken } from '@argoplatform/transfer-sdk';
+import { type SupportedChain, type QuoteBridgeRoute, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type WidgetState, type WidgetTheme } from 'models/const';
 import { LoadingRoute } from './LoadingRoute';
 import { useTransfer } from '../../hooks/useTransfer';
 import { capitalize } from '../../utils/text';
 import { BestRouteIcon } from '../Icons/BestRouteIcon';
 export interface RouteProps {
-  route?: BasicRoute;
+  route?: QuoteBridgeRoute;
   toToken?: SupportedToken;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
@@ -18,7 +18,7 @@ export interface RouteProps {
   isBest?: boolean;
   widgetState: WidgetState;
   isSelectedRoute?: boolean;
-  setSelectedRoute: (route: BasicRoute | undefined) => void;
+  setSelectedRoute: (route: QuoteBridgeRoute | undefined) => void;
   theme: WidgetTheme;
 }
 
@@ -46,7 +46,7 @@ export const Route: FunctionComponent<RouteProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const { calculateEstimatedValue } = useTransfer();
 
-  const RouteContent = ({ _route, _toToken }: { _route: BasicRoute; _toToken: SupportedToken }): ReactNode => {
+  const RouteContent = ({ _route, _toToken }: { _route: QuoteBridgeRoute; _toToken: SupportedToken }): ReactNode => {
     return (
       <>
         {/* top routes and best icon (if route is the best) */}
@@ -65,10 +65,10 @@ export const Route: FunctionComponent<RouteProps> = ({
           {/* token, bridge info (unexpanded), and expanded button  */}
           <div className='relative flex flex-row justify-between w-full items-start sm:items-center'>
             <div className='flex flex-row gap-1 items-center justify-center'>
-              <TokenNetworkImage tokenLogo={_toToken.logoUri} networkLogo={toChain?.logoURI} />
+              <TokenNetworkImage tokenLogo={_toToken.logo_uri} networkLogo={toChain?.logo_uri} />
               <div className='flex flex-col'>
                 <p className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}>
-                  {calculateEstimatedValue(_toToken, _route.dstAmountEstimate)} {_toToken.symbol}
+                  {calculateEstimatedValue(_toToken, _route.dst_amount_estimate)} {_toToken.symbol}
                 </p>
                 <div className='flex flex-row gap-1 items-center'>
                   <p
@@ -82,7 +82,7 @@ export const Route: FunctionComponent<RouteProps> = ({
                   </p>
                   <DividerCircle theme={theme} />
                   <div className='flex flex-row gap-.25 items-center'>
-                    <img src={_route.bridgeInfo.logoURI} className='w-4 h-4' />
+                    <img src={_route.bridge_info.logo_uri} className='w-4 h-4' />
                     <p
                       className={
                         theme === 'light'
@@ -90,7 +90,7 @@ export const Route: FunctionComponent<RouteProps> = ({
                           : 'text-accent-color' + ' font-manrope text-sm font-medium'
                       }
                     >
-                      {capitalize(_route.bridgeInfo.name)}
+                      {capitalize(_route.bridge_info.name)}
                     </p>
                   </div>
                 </div>
@@ -159,7 +159,7 @@ export const Route: FunctionComponent<RouteProps> = ({
               >
                 <div className='flex flex-col gap-.5'>
                   <div className='flex flex-row gap-.25 items-center'>
-                    <img src={_route.bridgeInfo.logoURI} className='w-5 h-5' />
+                    <img src={_route.bridge_info.logo_uri} className='w-5 h-5' />
                     <p
                       className={
                         theme === 'light'
@@ -167,7 +167,7 @@ export const Route: FunctionComponent<RouteProps> = ({
                           : 'text-accent-color' + ' font-manrope text-lg font-medium'
                       }
                     >
-                      {capitalize(_route.bridgeInfo.name)}
+                      {capitalize(_route.bridge_info.name)}
                     </p>
                   </div>
                   <p
@@ -176,13 +176,12 @@ export const Route: FunctionComponent<RouteProps> = ({
                     }
                   >
                     Bridge from {fromToken?.symbol} on {fromChain?.name} to {toToken?.symbol} on {toChain?.name} using{' '}
-                    {capitalize(_route.bridgeInfo.name)}
+                    {capitalize(_route.bridge_info.name)}
                   </p>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-
         </div>
 
         {/* icons regarding the route details */}
@@ -191,7 +190,7 @@ export const Route: FunctionComponent<RouteProps> = ({
           gas={'$1.32'}
           fees={'$2.44'}
           time={'~2 min'}
-          steps={(route?.dstChainSwapDexs.length ?? 0) + (route?.srcChainSwapDexs.length ?? 0)}
+          steps={(route?.dst_chain_swap_dexs?.length ?? 0) + (route?.src_chain_swap_dexs?.length ?? 0)}
         />
       </>
     );

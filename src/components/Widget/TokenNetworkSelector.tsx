@@ -20,17 +20,17 @@ const ChainSelector: FunctionComponent<ChainSelectorProps> = ({ chains, selected
       <div className='flex flex-row items-center w-full gap-4 overflow-x-auto'>
         {chains?.map((chain) => {
           const chainThemeClass =
-            selectedChain?.chainId === chain.chainId ? 'border-success-green' : 'border-transparent';
+            selectedChain?.chain_id === chain.chain_id ? 'border-success-green' : 'border-transparent';
           return (
             <div
-              key={chain.chainId}
+              key={chain.chain_id}
               className={`hover:cursor-pointer border-2 rounded-lg ${chainThemeClass}`}
               onClick={() => {
                 handleChainSelect(chain);
               }}
             >
               <DefaultTooltip label={chain.name} side='top'>
-                <img src={chain.logoURI} className='w-12 h-12' />
+                <img src={chain.logo_uri} className='w-12 h-12' />
               </DefaultTooltip>
             </div>
           );
@@ -102,7 +102,7 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selected
                 }}
               >
                 <div className='flex flex-row gap-1 items-center'>
-                  <img className='w-12 h-12' src={token.logoUri} />
+                  <img className='w-12 h-12' src={token.logo_uri} />
                   <div className='flex flex-col'>
                     <p className={`font-manrope text-lg ${theme === 'light' ? 'text-black' : 'text-white'}`}>
                       {token.symbol}

@@ -69,7 +69,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
                 </p>
                 <p className='text-accent-color font-manrope text-sm whitespace-nowrap'>{chain.name.split(' ')[0]}</p>
               </div>
-              <TokenNetworkImage tokenLogo={token.logoUri} networkLogo={chain.logoURI} />
+              <TokenNetworkImage tokenLogo={token.logo_uri} networkLogo={chain.logo_uri} />
             </div>
           ) : (
             <div className='flex flex-row gap-2 items-center' onClick={onAnchorClick}>
