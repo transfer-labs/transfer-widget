@@ -62,7 +62,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   const { supportedChains, getSupportedTokens, supportedTokensByChain } = useTransfer({
     transfer,
   });
-  const { toTokenDecimals, test } = useTokenUtils();
+  const { toTokenDecimals } = useTokenUtils();
   const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
   const [selectedRoute, setSelectedRoute] = useState<QuoteBridgeRoute | undefined>(undefined);
@@ -227,7 +227,6 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   }
 
   async function quoteBridge(bridgeRequest: BridgeRequest): Promise<void> {
-    setLoadingState();
     try {
       const result = await transfer.quote_bridge(bridgeRequest);
       if (Object.keys(result.best_route).length === 0) {
@@ -256,56 +255,64 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     }
   }
 
+  function canQuote(): boolean {
+    return (
+      fromChain !== undefined &&
+      fromToken !== undefined &&
+      toChain !== undefined &&
+      toToken !== undefined &&
+      _amountToBeTransferred !== undefined &&
+      +_amountToBeTransferred > 0
+    );
+  }
+
   // Quote bridge
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (widgetState.view !== 'default' || widgetState.loading) {
-        return;
-      }
+    if (widgetState.view !== 'default') {
+      return;
+    }
+
+    if (canQuote()) {
+      setLoadingState();
+    } else {
       setQuoteResult(undefined);
       setSelectedRoute(undefined);
+      setWidgetState((prevState) => ({
+        ...prevState,
+        loading: false,
+        error: undefined,
+        buttonState: {
+          onClick: undefined,
+          type: 'disabled',
+          label: 'Select tokens',
+        },
+      }));
+    }
 
-      if (
-        fromChain !== undefined &&
-        fromToken !== undefined &&
-        toChain !== undefined &&
-        toToken !== undefined &&
-        _amountToBeTransferred !== undefined &&
-        +_amountToBeTransferred > 0
-      ) {
+    const debounce = setTimeout(() => {
+      if (canQuote()) {
         if (userAddress === undefined) {
           setQuoteResult(undefined);
           setErrorState('no_user_address');
-          return;
+        } else {
+          // Ready to be bridged
+          const bridgeRequest: BridgeRequest = {
+            src_chain_id: fromChain?.chain_id ?? 0,
+            dst_chain_id: toChain?.chain_id ?? 0,
+            src_chain_token_address: fromToken?.address ?? '',
+            dst_chain_token_address: toToken?.address ?? '',
+            qty: toTokenDecimals(fromToken?.decimals ?? 1, _amountToBeTransferred),
+            from_address: userAddress,
+            to_address: userAddress,
+            slippage: settings.slippage,
+          };
+          void quoteBridge(bridgeRequest);
         }
-        // Ready to be bridged
-        const bridgeRequest: BridgeRequest = {
-          src_chain_id: fromChain.chain_id,
-          dst_chain_id: toChain.chain_id,
-          src_chain_token_address: fromToken.address,
-          dst_chain_token_address: toToken.address,
-          qty: toTokenDecimals(fromToken.decimals, _amountToBeTransferred),
-          from_address: userAddress,
-          to_address: userAddress,
-          slippage: settings.slippage,
-        };
-        void quoteBridge(bridgeRequest);
-      } else {
-        setWidgetState((prevState) => ({
-          ...prevState,
-          loading: false,
-          error: undefined,
-          buttonState: {
-            onClick: undefined,
-            type: 'disabled',
-            label: 'Select tokens',
-          },
-        }));
       }
-    }, 3000);
+    }, 700);
 
     return () => {
-      clearTimeout(delayDebounceFn);
+      clearTimeout(debounce);
     };
   }, [fromChain, fromToken, toChain, toToken, _amountToBeTransferred, userAddress, widgetState.view]);
 
@@ -376,7 +383,6 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   return (
     <TransferContext.Provider value={transfer}>
       <WidgetContainer autoSize={autoSize} theme={theme}>
-        <div>{test}</div>
         <TransferWidgetContainer
           fromChain={fromChain}
           fromToken={fromToken}

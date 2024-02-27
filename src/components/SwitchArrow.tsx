@@ -1,6 +1,6 @@
 import React, { type ReactNode, useState, type FunctionComponent } from 'react';
 import { motion } from 'framer-motion';
-import { type WidgetTheme } from 'models/const';
+import { type WidgetTheme } from '../models/const';
 
 interface SwitchArrowProps {
   onClick: () => void;
@@ -53,9 +53,7 @@ export const SwitchArrow: FunctionComponent<SwitchArrowProps> = ({ onClick, them
           width='37'
           height='37'
           rx='7.5'
-          stroke={
-            isHovered ? (theme === 'light' ? 'black' : 'white') : theme === 'light' ? '#E5E7EB' : 'black'
-          }
+          stroke={isHovered ? (theme === 'light' ? 'black' : 'white') : theme === 'light' ? '#E5E7EB' : 'black'}
           strokeWidth='2'
         />{' '}
       </svg>

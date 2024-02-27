@@ -1,5 +1,5 @@
 import React from 'react';
-import { type WidgetTheme } from "models/const"
+import { type WidgetTheme } from '../../models/const';
 
 interface SettingsIconProps {
   onClick?: () => void;

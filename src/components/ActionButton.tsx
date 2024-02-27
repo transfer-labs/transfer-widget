@@ -1,7 +1,6 @@
 import React from 'react';
 import { Line } from './Skeleton/Line';
-import { ButtonTheme, type ButtonState } from '../models/const';
-import { type WidgetTheme } from 'models/const';
+import { ButtonTheme, type ButtonState, type WidgetTheme } from '../models/const';
 
 export const ActionButton: React.FunctionComponent<ButtonState & { theme: WidgetTheme }> = ({
   label,

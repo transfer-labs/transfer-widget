@@ -2,7 +2,7 @@ import React, { type FunctionComponent } from 'react';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
-import { type Direction, type WidgetTheme } from 'models/const';
+import { type Direction, type WidgetTheme } from '../../models/const';
 
 interface ChainSelectorProps {
   chains?: SupportedChain[];

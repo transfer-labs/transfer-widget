@@ -1,7 +1,7 @@
 import React, { type FunctionComponent, useState } from 'react';
 import { motion } from 'framer-motion';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
-import { type WidgetTheme } from 'models/const';
+import { type WidgetTheme } from '../../models/const';
 
 interface FlipArrowIconProps {
   tooltipText?: string;
