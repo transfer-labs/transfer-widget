@@ -4,9 +4,9 @@ import { RouteDetails } from './RouteDetails';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type SupportedChain, type QuoteBridgeRoute, type SupportedToken } from '@argoplatform/transfer-sdk';
-import { type WidgetState, type WidgetTheme } from 'models/const';
+import { type WidgetState, type WidgetTheme } from '../../models/const';
 import { LoadingRoute } from './LoadingRoute';
-import { useTransfer } from '../../hooks/useTransfer';
+import { useTokenUtils } from '../../hooks/useTokenUtils';
 import { capitalize } from '../../utils/text';
 import { BestRouteIcon } from '../Icons/BestRouteIcon';
 export interface RouteProps {
@@ -44,7 +44,7 @@ export const Route: FunctionComponent<RouteProps> = ({
 }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const { calculateEstimatedValue } = useTransfer();
+  const { toTokenReadable } = useTokenUtils();
 
   const RouteContent = ({ _route, _toToken }: { _route: QuoteBridgeRoute; _toToken: SupportedToken }): ReactNode => {
     return (
@@ -68,7 +68,7 @@ export const Route: FunctionComponent<RouteProps> = ({
               <TokenNetworkImage tokenLogo={_toToken.logo_uri} networkLogo={toChain?.logo_uri} />
               <div className='flex flex-col'>
                 <p className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}>
-                  {calculateEstimatedValue(_toToken, _route.dst_amount_estimate)} {_toToken.symbol}
+                  {toTokenReadable(_toToken.decimals, _route.dst_amount_estimate)} {_toToken.symbol}
                 </p>
                 <div className='flex flex-row gap-1 items-center'>
                   <p

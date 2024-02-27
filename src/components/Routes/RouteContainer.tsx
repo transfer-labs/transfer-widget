@@ -6,7 +6,7 @@ import {
   type QuoteBridgeRoute,
 } from '@argoplatform/transfer-sdk';
 import { Route } from './Route';
-import { type WidgetState, type WidgetTheme } from 'models/const';
+import { type WidgetState, type WidgetTheme } from '../../models/const';
 import { areBasicRoutesEqual } from '../../utils/routes';
 import { AdditionalRoutes } from './AdditionalRoutes';
 
@@ -35,7 +35,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
 }) => {
   const [showAdditionalRoutes, setShowAdditionalRoutes] = useState<boolean>(false);
   return (
-    <div className='flex flex-col gap-3 w-full mt-4'>
+    <div className='flex flex-col gap-3 w-full'>
       <div className='flex flex-row justify-between w-full items-center'>
         <p className={'text-white font-manrope text-lg font-medium'}>Routes</p>
 
