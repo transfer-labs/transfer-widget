@@ -9,8 +9,8 @@ export const Error = {
   gas: {
     description: 'You do not have enough funds to pay for gas.',
   },
-  retrieving_bridge_routes: {
-    description: 'Error retrieving bridge routes.',
+  retrieving_routes: {
+    description: 'Error retrieving routes.',
   },
   no_user_wallet: {
     description: 'User wallet is not connected.',
@@ -18,11 +18,11 @@ export const Error = {
   no_user_address: {
     description: 'No user wallet address.',
   },
-  execute_bridge: {
-    description: 'Error executing bridge.',
+  execute: {
+    description: 'Error executing.',
   },
-  no_bridge_routes: {
-    description: 'No bridge routes found.',
+  no_routes: {
+    description: 'No routes found.',
   },
   no_route_selected: {
     description: 'No route selected.',
@@ -83,7 +83,7 @@ export interface ReviewState {
 }
 
 export interface Settings {
-  slippage?: number;
+  slippage: number;
 }
 
 export type WidgetTheme = 'default' | 'light';
