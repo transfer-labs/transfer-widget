@@ -1,5 +1,7 @@
 import { type SupportedToken } from '@argoplatform/transfer-sdk';
 
+export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
+
 export type Direction = 'to' | 'from';
 
 export const Error = {

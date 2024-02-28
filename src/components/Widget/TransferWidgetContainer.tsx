@@ -74,7 +74,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   theme,
   autoSize,
 }): ReactNode => {
-  const { toTokenReadable } = useTokenUtils();
+  const { toTokenReadable, shortenAddress } = useTokenUtils();
 
   function handleChainTokenSwitch(): void {
     const tempChain = fromChain;
@@ -196,11 +196,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
             <div className='flex flex-row gap-3 items-center'>
               <TransferLogo />
               <p className={`text-${theme === 'light' ? 'black' : 'white'} font-manrope font-bold text-xl`}>Transfer</p>
-              <p className='text-gray-400 font-manrope font-light text-sm'>
-                {userAddress !== undefined
-                  ? userAddress.substring(0, 5) + '...' + userAddress.substring(userAddress.length - 3)
-                  : ''}
-              </p>
+              <p className='text-gray-400 font-manrope font-light text-sm'>{shortenAddress(userAddress)}</p>
             </div>
             <div
               className={`p-1 rounded-md ${
