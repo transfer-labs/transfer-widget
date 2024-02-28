@@ -40,8 +40,8 @@ export const SettingsPage: FunctionComponent<SettingsPageProps> = ({
   const iconFill = theme === 'light' ? '#000' : '#fff';
 
   return (
-    <div className='w-full'>
-      <div className={`flex flex-row justify-between items-center ${themeClass}`}>
+    <div className='flex w-full flex-col gap-4'>
+      <div className={`flex flex-row justify-between items-center ${themeClass} gap-2`}>
         <p className={`font-manrope font-medium text-xl ${themeClass}`}>Settings</p>
         <div
           className={`p-2 ${
@@ -65,7 +65,7 @@ export const SettingsPage: FunctionComponent<SettingsPageProps> = ({
         animate={{ opacity: 1, scale: 1, x: 0 }}
         transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
       >
-        <div className={`flex flex-col gap-2 ${themeClass}`}>
+        <div className={`flex flex-col gap-4 ${themeClass}`}>
           <div className={`flex flex-row items-center gap-2 ${themeClass}`}>
             <p className={`font-manrope text-md font-medium ${themeClass}`}>Slippage</p>
             <DefaultTooltip label='Acceptable range to complete transaction.' side='right'>
@@ -86,7 +86,7 @@ export const SettingsPage: FunctionComponent<SettingsPageProps> = ({
               </svg>
             </DefaultTooltip>
           </div>
-          <div className='flex flex-col gap-2'>
+          <div className='flex flex-col gap-4'>
             <motion.div
               initial={{ opacity: 0, y: -50 }}
               animate={{ opacity: 1, y: 0 }}
