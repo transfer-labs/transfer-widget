@@ -18,10 +18,11 @@ import {
   type SupportedTokensByChain,
   type Settings,
   type WidgetTheme,
-} from 'models/const';
-import { type WidgetState } from '../../models/const';
+  type WidgetState,
+} from '../../models/const';
+import {} from '../../models/const';
 import { ReviewRoute } from './ReviewRoute';
-import { useTransfer } from '../../hooks/useTransfer';
+import { useTokenUtils } from '../../hooks/useTokenUtils';
 import { SettingsIcon } from '../Icons/SettingsIcon';
 import { SettingsPage } from './SettingsPage';
 import { TransferLogo } from '../Icons/TransferLogo';
@@ -73,7 +74,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   theme,
   autoSize,
 }): ReactNode => {
-  const { calculateEstimatedValue } = useTransfer();
+  const { toTokenReadable, shortenAddress } = useTokenUtils();
 
   function handleChainTokenSwitch(): void {
     const tempChain = fromChain;
@@ -188,17 +189,14 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
+        className='flex flex-col gap-4'
       >
         <div className='flex flex-col gap-3'>
           <div className='flex flex-row justify-between'>
             <div className='flex flex-row gap-3 items-center'>
               <TransferLogo />
               <p className={`text-${theme === 'light' ? 'black' : 'white'} font-manrope font-bold text-xl`}>Transfer</p>
-              <p className='text-gray-400 font-manrope font-light text-sm'>
-                {userAddress !== undefined
-                  ? userAddress.substring(0, 5) + '...' + userAddress.substring(userAddress.length - 3)
-                  : ''}
-              </p>
+              <p className='text-gray-400 font-manrope font-light text-sm'>{shortenAddress(userAddress)}</p>
             </div>
             <div
               className={`p-1 rounded-md ${
@@ -262,7 +260,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                 // balance='0.0'
                 amount={
                   toToken !== undefined && quoteResult !== undefined
-                    ? calculateEstimatedValue(toToken, quoteResult.best_route.dst_amount_estimate)
+                    ? toTokenReadable(toToken.decimals, quoteResult.best_route.dst_amount_estimate)
                     : '0'
                 }
                 onAnchorClick={() => {

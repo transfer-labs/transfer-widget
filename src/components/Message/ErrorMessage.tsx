@@ -1,6 +1,5 @@
 import React, { type ReactNode, type FunctionComponent } from 'react';
-import { type ErrorType, Error } from '../../models/const';
-import { type WidgetTheme } from 'models/const';
+import { type ErrorType, Error, type WidgetTheme } from '../../models/const';
 export interface ErrorMessageProps {
   errorType?: ErrorType;
   theme?: WidgetTheme;

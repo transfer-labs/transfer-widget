@@ -1,5 +1,5 @@
 import React, { type FunctionComponent } from 'react';
-import { type WidgetTheme } from 'models/const';
+import { type WidgetTheme } from '../../models/const';
 import { AnimatePresence } from 'framer-motion';
 
 interface WidgetContainerProps {

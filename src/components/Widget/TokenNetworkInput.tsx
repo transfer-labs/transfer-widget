@@ -1,7 +1,7 @@
 import React, { type FunctionComponent } from 'react';
 import { TokenNetworkImage } from './TokenNetworkImage';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
-import { type Direction, type WidgetTheme } from 'models/const';
+import { type Direction, type WidgetTheme } from '../../models/const';
 
 export interface TokenNetworkInputProps {
   direction: Direction;

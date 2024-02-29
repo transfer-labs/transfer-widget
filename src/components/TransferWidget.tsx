@@ -23,6 +23,7 @@ import {
 import { type WalletClient } from 'viem';
 import { findRouteFromSelected } from '../utils/routes';
 import { WidgetContainer } from './Widget/WidgetContainer';
+import { useTokenUtils } from '../hooks/useTokenUtils';
 
 export interface TransferWidgetProps {
   fromChainId?: number;
@@ -58,9 +59,10 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   const [toChain, setToChain] = useState<SupportedChain | undefined>(undefined);
   const [_amountToBeTransferred, setAmountToBeTransferred] = useState<string>(amountToBeTransferred ?? '');
   const [quoteResult, setQuoteResult] = useState<QuoteBridgeResult | undefined>(undefined);
-  const { supportedChains, getSupportedTokens, supportedTokensByChain, calculateAmountToBeTransferred } = useTransfer({
+  const { supportedChains, getSupportedTokens, supportedTokensByChain } = useTransfer({
     transfer,
   });
+  const { toTokenDecimals } = useTokenUtils();
   const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
   const [selectedRoute, setSelectedRoute] = useState<QuoteBridgeRoute | undefined>(undefined);
@@ -174,7 +176,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
           dst_chain_id: toChain.chain_id,
           src_chain_token_address: fromToken.address,
           dst_chain_token_address: toToken.address,
-          qty: calculateAmountToBeTransferred(fromToken, _amountToBeTransferred),
+          qty: toTokenDecimals(fromToken.decimals, _amountToBeTransferred),
           from_address: userAddress,
           to_address: userAddress,
           slippage: settings.slippage,
@@ -225,7 +227,6 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   }
 
   async function quoteBridge(bridgeRequest: BridgeRequest): Promise<void> {
-    setLoadingState();
     try {
       const result = await transfer.quote_bridge(bridgeRequest);
       if (Object.keys(result.best_route).length === 0) {
@@ -254,38 +255,28 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     }
   }
 
-  // Quote bridge
-  useEffect(() => {
-    if (widgetState.view !== 'default' || widgetState.loading) {
-      return;
-    }
-
-    if (
+  function canQuote(): boolean {
+    return (
       fromChain !== undefined &&
       fromToken !== undefined &&
       toChain !== undefined &&
       toToken !== undefined &&
       _amountToBeTransferred !== undefined &&
       +_amountToBeTransferred > 0
-    ) {
-      if (userAddress === undefined) {
-        setQuoteResult(undefined);
-        setErrorState('no_user_address');
-        return;
-      }
-      // Ready to be bridged
-      const bridgeRequest: BridgeRequest = {
-        src_chain_id: fromChain.chain_id,
-        dst_chain_id: toChain.chain_id,
-        src_chain_token_address: fromToken.address,
-        dst_chain_token_address: toToken.address,
-        qty: calculateAmountToBeTransferred(fromToken, _amountToBeTransferred),
-        from_address: userAddress,
-        to_address: userAddress,
-        slippage: settings.slippage,
-      };
-      void quoteBridge(bridgeRequest);
+    );
+  }
+
+  // Quote bridge
+  useEffect(() => {
+    if (widgetState.view !== 'default') {
+      return;
+    }
+
+    if (canQuote()) {
+      setLoadingState();
     } else {
+      setQuoteResult(undefined);
+      setSelectedRoute(undefined);
       setWidgetState((prevState) => ({
         ...prevState,
         loading: false,
@@ -297,6 +288,32 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         },
       }));
     }
+
+    const debounce = setTimeout(() => {
+      if (canQuote()) {
+        if (userAddress === undefined) {
+          setQuoteResult(undefined);
+          setErrorState('no_user_address');
+        } else {
+          // Ready to be bridged
+          const bridgeRequest: BridgeRequest = {
+            src_chain_id: fromChain?.chain_id ?? 0,
+            dst_chain_id: toChain?.chain_id ?? 0,
+            src_chain_token_address: fromToken?.address ?? '',
+            dst_chain_token_address: toToken?.address ?? '',
+            qty: toTokenDecimals(fromToken?.decimals ?? 1, _amountToBeTransferred),
+            from_address: userAddress,
+            to_address: userAddress,
+            slippage: settings.slippage,
+          };
+          void quoteBridge(bridgeRequest);
+        }
+      }
+    }, 700);
+
+    return () => {
+      clearTimeout(debounce);
+    };
   }, [fromChain, fromToken, toChain, toToken, _amountToBeTransferred, userAddress, widgetState.view]);
 
   // Process initial props

@@ -2,7 +2,8 @@ import React, { type FunctionComponent } from 'react';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
-import { type Direction, type WidgetTheme } from 'models/const';
+import { type Direction, type WidgetTheme } from '../../models/const';
+import { useTokenUtils } from '../../hooks/useTokenUtils';
 
 interface ChainSelectorProps {
   chains?: SupportedChain[];
@@ -53,6 +54,7 @@ export interface TokenSelectorProps {
 }
 const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selectedToken, handleTokenSelect, theme }) => {
   const [search, setSearch] = React.useState<string>('');
+  const { shortenAddress, isNullAddress } = useTokenUtils();
   // const themeClass =
   //   theme === 'light'
   //     ? 'bg-component-background-light border-border-color-light text-black'
@@ -104,10 +106,15 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selected
                 <div className='flex flex-row gap-1 items-center'>
                   <img className='w-12 h-12' src={token.logo_uri} />
                   <div className='flex flex-col'>
-                    <p className={`font-manrope text-lg ${theme === 'light' ? 'text-black' : 'text-white'}`}>
-                      {token.symbol}
-                    </p>
-                    <p className={`text-accent-color font-manrope text-md`}>{token.name}</p>
+                    <div className='flex flex-row items-center gap-2'>
+                      <p className={`font-manrope text-lg ${theme === 'light' ? 'text-black' : 'text-white'}`}>
+                        {token.symbol}
+                      </p>
+                      <p className={`text-accent-color font-manrope text-sm truncate`}>({token.name})</p>
+                    </div>
+                    {!isNullAddress(token.address) && (
+                      <p className={`text-accent-color font-manrope text-sm`}>{shortenAddress(token.address)}</p>
+                    )}
                   </div>
                 </div>
                 {/* <p className='text-accent-color font-manrope text-md'>*balance*</p> */}

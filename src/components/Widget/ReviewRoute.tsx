@@ -5,14 +5,14 @@ import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TokenNetworkImage } from './TokenNetworkImage';
 import { type SupportedToken, type QuoteBridgeRoute, type SupportedChain } from '@argoplatform/transfer-sdk';
-import { type WidgetState, type ReviewState, type WidgetTheme } from 'models/const';
+import { type WidgetState, type ReviewState, type WidgetTheme } from '../../models/const';
 import { ErrorMessage } from '../Message/ErrorMessage';
 import { SuccessMessage } from '../Message/SuccessMessage';
 import { PingText } from '../PingText';
 import { LinkText } from '../LinkText';
-import { useTransfer } from '../../hooks/useTransfer';
 import { capitalize } from '../../utils/text';
 import { FlipArrowIcon } from '../Icons/FlipArrowIcon';
+import { useTokenUtils } from '../../hooks/useTokenUtils';
 export interface ReviewRouteProps {
   route: QuoteBridgeRoute;
   fromToken?: SupportedToken;
@@ -40,7 +40,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
   autoSize,
   onClose,
 }) => {
-  const { calculateEstimatedValue } = useTransfer();
+  const { toTokenReadable } = useTokenUtils();
   const [isArrowClicked, setIsArrowClicked] = useState(false);
   return (
     <div className='w-full'>
@@ -196,7 +196,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                     <p
                       className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}
                     >
-                      {toToken !== undefined && calculateEstimatedValue(toToken, route.dst_amount_estimate)}{' '}
+                      {toToken !== undefined && toTokenReadable(toToken.decimals, route.dst_amount_estimate)}{' '}
                       {toToken?.symbol}
                     </p>
                     <div className='flex flex-row gap-1 items-center'>
