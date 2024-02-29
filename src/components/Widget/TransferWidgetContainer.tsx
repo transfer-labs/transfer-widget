@@ -4,12 +4,7 @@ import { RouteContainer } from '../Routes/RouteContainer';
 import { ErrorMessage } from '../Message/ErrorMessage';
 import { SwitchArrow } from '../SwitchArrow';
 import { ActionButton } from '../ActionButton';
-import {
-  type SupportedChain,
-  type SupportedToken,
-  type QuoteBridgeResult,
-  type QuoteBridgeRoute,
-} from '@argoplatform/transfer-sdk';
+import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { motion } from 'framer-motion';
 import { TokenNetworkSelector } from './TokenNetworkSelector';
 import {
@@ -20,12 +15,13 @@ import {
   type WidgetTheme,
   type WidgetState,
 } from '../../models/const';
-import {} from '../../models/const';
+import { getAmount } from '../../lib/transfer';
 import { ReviewRoute } from './ReviewRoute';
 import { useTokenUtils } from '../../hooks/useTokenUtils';
 import { SettingsIcon } from '../Icons/SettingsIcon';
 import { SettingsPage } from './SettingsPage';
 import { TransferLogo } from '../Icons/TransferLogo';
+import { type QuoteRoute, type QuoteResult } from '../../models/transfer';
 
 export interface TransferWidgetContainerProps {
   supportedChains?: SupportedChain[];
@@ -38,17 +34,17 @@ export interface TransferWidgetContainerProps {
   handleTokenSelect: (direction: Direction, token?: SupportedToken) => void;
   setAmountToBeTransferred: (amount: string) => void;
   amountToBeTransferred?: string;
-  quoteResult?: QuoteBridgeResult;
+  quoteResult?: QuoteResult;
   userAddress?: string;
   widgetState: WidgetState;
-  selectedRoute?: QuoteBridgeRoute;
   reviewState?: ReviewState;
   setWidgetState: (state: WidgetState) => void;
-  setSelectedRoute: (route: QuoteBridgeRoute | undefined) => void;
+  setSelectedRoute: (route: QuoteRoute | undefined) => void;
   setSettings: (settings: Settings) => void;
   settings: Settings;
   autoSize: boolean;
   theme?: WidgetTheme;
+  selectedRoute?: QuoteRoute;
 }
 
 export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerProps> = ({
@@ -259,8 +255,8 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                 theme={theme}
                 // balance='0.0'
                 amount={
-                  toToken !== undefined && quoteResult !== undefined
-                    ? toTokenReadable(toToken.decimals, quoteResult.best_route.dst_amount_estimate)
+                  toToken !== undefined && selectedRoute !== undefined
+                    ? toTokenReadable(toToken.decimals, getAmount(selectedRoute))
                     : '0'
                 }
                 onAnchorClick={() => {

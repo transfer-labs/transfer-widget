@@ -6,27 +6,35 @@ export type Direction = 'to' | 'from';
 
 export const Error = {
   default: {
+    key: 'default',
     description: 'Something went wrong. Please try again.',
   },
   gas: {
+    key: 'gas',
     description: 'You do not have enough funds to pay for gas.',
   },
   retrieving_routes: {
+    key: 'retrieving_routes',
     description: 'Error retrieving routes.',
   },
   no_user_wallet: {
+    key: 'no_user_wallet',
     description: 'User wallet is not connected.',
   },
   no_user_address: {
+    key: 'no_user_address',
     description: 'No user wallet address.',
   },
   execute: {
+    key: 'execute',
     description: 'Error executing.',
   },
   no_routes: {
+    key: 'no_routes',
     description: 'No routes found.',
   },
   no_route_selected: {
+    key: 'no_route_selected',
     description: 'No route selected.',
   },
 };
@@ -81,7 +89,7 @@ export interface WidgetState {
 
 export interface ReviewState {
   txnHash?: string;
-  bridgeState?: 'notStarted' | 'started' | 'done';
+  state?: 'notStarted' | 'started' | 'done';
 }
 
 export interface Settings {

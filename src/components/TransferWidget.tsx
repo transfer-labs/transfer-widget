@@ -6,11 +6,7 @@ import {
   Transfer,
   type SupportedChain,
   type SupportedToken,
-  type QuoteBridgeResult,
   type BridgeRequest,
-  type QuoteBridgeRoute,
-  type QuoteSwapResult,
-  type QuoteSwapRoute,
   type SwapRequest,
 } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
@@ -23,11 +19,11 @@ import {
   type Settings,
   type WidgetTheme,
 } from '../models/const';
-import { TransferAbstraction, type QuoteResult, type QuoteRoute } from '../models/transfer';
 import { type WalletClient } from 'viem';
-import { findRouteFromSelected } from '../utils/routes';
+import { findRouteFromSelected, isRouteSwap } from '../lib/transfer';
 import { WidgetContainer } from './Widget/WidgetContainer';
 import { useTokenUtils } from '../hooks/useTokenUtils';
+import { type QuoteRoute, type QuoteResult, type TransferResult } from '../models/transfer';
 
 export interface TransferWidgetProps {
   fromChainId?: number;
@@ -73,13 +69,8 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   const [fromChain, setFromChain] = useState<SupportedChain | undefined>(undefined);
   const [toChain, setToChain] = useState<SupportedChain | undefined>(undefined);
   const [_amountToBeTransferred, setAmountToBeTransferred] = useState<string>(amountToBeTransferred ?? '');
-
-  const [transferState, setTransferState] = useState<TransferAbstraction>(new TransferAbstraction());
-
-  // const [quoteBridgeResult, setQuotBridgeeResult] = useState<QuoteBridgeResult | undefined>(undefined);
-  // const [selectedBridgeRoute, setSelectedBridgeRoute] = useState<QuoteBridgeRoute | undefined>(undefined);
-  // const [quoteSwapResult, setQuoteSwapResult] = useState<QuoteSwapResult | undefined>(undefined);
-  // const [selectedSwapRoute, setSelectedSwapRoute] = useState<QuoteSwapRoute | undefined>(undefined);
+  const [quoteResult, setQuoteResult] = useState<QuoteResult | undefined>(undefined);
+  const [selectedQuoteRoute, setSelectedQuoteRoute] = useState<QuoteRoute | undefined>(undefined);
 
   const { supportedChains, getSupportedTokens, supportedTokensByChain } = useTransfer({
     transfer,
@@ -101,10 +92,10 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   });
   const [reviewState, setReviewState] = useState<ReviewState | undefined>(undefined);
 
-  // const selectedRouteRef = useRef(selectedRoute);
-  // useEffect(() => {
-  //   selectedRouteRef.current = selectedRoute;
-  // }, [selectedRoute]);
+  const selectedRouteRef = useRef(selectedQuoteRoute);
+  useEffect(() => {
+    selectedRouteRef.current = selectedQuoteRoute;
+  }, [selectedQuoteRoute]);
 
   function setLoadingState(): void {
     if (!widgetState.loading) {
@@ -149,7 +140,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
 
   function setReviewWidgetState(): void {
     setReviewState({
-      bridgeState: 'notStarted',
+      state: 'notStarted',
       txnHash: undefined,
     });
     setWidgetState({
@@ -158,96 +149,119 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       error: undefined,
       buttonState: {
         type: 'default',
-        label: 'Bridge',
+        label: 'Transfer',
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onClick: executeBridge,
+        onClick: executeRoute,
       },
     });
   }
 
-  async function executeBridge(): Promise<void> {
-    console.log('EXECUTE');
-    // if (walletClient === undefined) {
-    //   setErrorState('no_user_wallet');
-    //   return;
-    // }
-    // if (userAddress === undefined) {
-    //   setErrorState('no_user_address');
-    //   return;
-    // }
-    // const _selectedRoute = selectedRouteRef.current;
-    // if (_selectedRoute === undefined) {
-    //   setErrorState('no_route_selected');
-    //   return;
-    // }
+  async function executeRoute(): Promise<void> {
+    if (walletClient === undefined) {
+      setErrorState('no_user_wallet');
+      return;
+    }
+    if (userAddress === undefined) {
+      setErrorState('no_user_address');
+      return;
+    }
+    const _selectedRoute = selectedRouteRef.current;
+    if (_selectedRoute === undefined) {
+      setErrorState('no_route_selected');
+      return;
+    }
 
-    // if (
-    //   fromChain !== undefined &&
-    //   fromToken !== undefined &&
-    //   toChain !== undefined &&
-    //   toToken !== undefined &&
-    //   _amountToBeTransferred !== undefined &&
-    //   +_amountToBeTransferred > 0
-    // ) {
-    //   setLoadingState();
-    //   setReviewState({
-    //     bridgeState: 'started',
-    //   });
+    if (
+      fromChain !== undefined &&
+      fromToken !== undefined &&
+      toChain !== undefined &&
+      toToken !== undefined &&
+      _amountToBeTransferred !== undefined &&
+      +_amountToBeTransferred > 0
+    ) {
+      setLoadingState();
+      setReviewState({
+        state: 'started',
+      });
 
-    //   try {
-    //     const bridgeRequest: BridgeRequest = {
-    //       src_chain_id: fromChain.chain_id,
-    //       dst_chain_id: toChain.chain_id,
-    //       src_chain_token_address: fromToken.address,
-    //       dst_chain_token_address: toToken.address,
-    //       qty: toTokenDecimals(fromToken.decimals, _amountToBeTransferred),
-    //       from_address: userAddress,
-    //       to_address: userAddress,
-    //       slippage: settings.slippage,
-    //     };
-    //     const bridgeResult = await transfer.bridge(bridgeRequest);
-    //     if (bridgeResult !== undefined) {
-    //       const route = findRouteFromSelected(_selectedRoute, bridgeResult.best_route, bridgeResult.alternate_routes);
-    //       if (route === undefined) {
-    //         throw new Error('no_routes');
-    //       }
-    //       const txnReceipt = await transfer.execute_bridge({
-    //         route: bridgeResult?.best_route,
-    //         wallet_client: walletClient,
-    //       });
-    //       if (txnReceipt.status === 'reverted') {
-    //         throw new Error('execute_bridge');
-    //       }
+      try {
+        let result: TransferResult | undefined;
+        if (fromChain.chain_id === toChain.chain_id) {
+          const swapRequest: SwapRequest = {
+            chain_id: fromChain.chain_id,
+            token_in_address: fromToken.address,
+            token_out_address: toToken.address,
+            qty: toTokenDecimals(fromToken.decimals, _amountToBeTransferred),
+            from_address: userAddress,
+            slippage: settings.slippage,
+          };
+          result = await transfer.swap(swapRequest);
+        } else {
+          const bridgeRequest: BridgeRequest = {
+            src_chain_id: fromChain.chain_id,
+            dst_chain_id: toChain.chain_id,
+            src_chain_token_address: fromToken.address,
+            dst_chain_token_address: toToken.address,
+            qty: toTokenDecimals(fromToken.decimals, _amountToBeTransferred),
+            from_address: userAddress,
+            to_address: userAddress,
+            slippage: settings.slippage,
+          };
+          result = await transfer.bridge(bridgeRequest);
+        }
 
-    //       setReviewState({
-    //         txnHash: txnReceipt.transactionHash,
-    //         bridgeState: 'done',
-    //       });
-    //       setWidgetState((prevState) => ({
-    //         ...prevState,
-    //         loading: false,
-    //         error: undefined,
-    //         buttonState: {
-    //           type: 'default',
-    //           label: 'Bridge Again',
-    //           onClick: setDefaultState,
-    //         },
-    //       }));
-    //     } else {
-    //       throw new Error('retrieving_routes');
-    //     }
-    //   } catch (e: any) {
-    //     console.error(e);
-    //     setReviewState({
-    //       bridgeState: 'notStarted',
-    //     });
-    //     if (typeof e === 'string' && e in ErrorBody) {
-    //       setErrorState(e as ErrorType);
-    //     } else {
-    //       setErrorState('execute_bridge');
-    //     }
-    //   }
-    // }
+        if (result !== undefined) {
+          const route = findRouteFromSelected(_selectedRoute, result.best_route, result.alternate_routes);
+          if (route === undefined) {
+            throw new Error(ErrorBody.no_routes.key);
+          }
+
+          let txnReceipt;
+          if (isRouteSwap(route)) {
+            txnReceipt = await transfer.execute_swap({
+              swap: route,
+              wallet_client: walletClient,
+            });
+          } else {
+            txnReceipt = await transfer.execute_bridge({
+              route,
+              wallet_client: walletClient,
+            });
+          }
+
+          if (txnReceipt.status === 'reverted') {
+            throw new Error(ErrorBody.execute.key);
+          }
+
+          setReviewState({
+            txnHash: txnReceipt.transactionHash,
+            state: 'done',
+          });
+          setWidgetState((prevState) => ({
+            ...prevState,
+            loading: false,
+            error: undefined,
+            buttonState: {
+              type: 'default',
+              label: 'Transfer another',
+              onClick: setDefaultState,
+            },
+          }));
+        } else {
+          throw new Error(ErrorBody.retrieving_routes.key);
+        }
+      } catch (e: any) {
+        console.error(e);
+        setReviewState({
+          state: 'notStarted',
+        });
+        if (typeof e === 'string' && e in ErrorBody) {
+          setErrorState(e as ErrorType);
+        } else {
+          setErrorState('execute');
+        }
+      }
+    }
   }
 
   function canQuote(): boolean {
@@ -259,6 +273,11 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       _amountToBeTransferred !== undefined &&
       +_amountToBeTransferred > 0
     );
+  }
+
+  function reset(): void {
+    setSelectedQuoteRoute(undefined);
+    setQuoteResult(undefined);
   }
 
   async function handleQuote(args: HandleQuoteArgs): Promise<void> {
@@ -298,13 +317,11 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       }
 
       if (Object.keys(quoteResult.best_route).length === 0) {
-        transferState.setQuoteResult(quoteResult);
-        setTransferState(transferState);
+        reset();
         setErrorState('no_routes');
       } else {
-        transferState.setQuoteResult(quoteResult);
-        transferState.setSelectedQuoteRoute(quoteResult.best_route);
-        setTransferState(transferState);
+        setQuoteResult(quoteResult);
+        setSelectedQuoteRoute(quoteResult.best_route);
         setWidgetState((prevState) => ({
           ...prevState,
           loading: false,
@@ -318,8 +335,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       }
     } catch (e: any) {
       console.error(e);
-      transferState.reset();
-      setTransferState(transferState);
+      reset();
       setErrorState('retrieving_routes');
     }
   }
@@ -333,8 +349,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     if (canQuote()) {
       setLoadingState();
     } else {
-      transferState.reset();
-      setTransferState(transferState);
+      reset();
       setWidgetState((prevState) => ({
         ...prevState,
         loading: false,
@@ -350,8 +365,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     const debounce = setTimeout(() => {
       if (canQuote()) {
         if (userAddress === undefined) {
-          transferState.reset();
-          setTransferState(transferState);
+          reset();
           setErrorState('no_user_address');
         } else {
           void handleQuote({
@@ -431,10 +445,9 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     }
   }
 
-  function handleSelectRoute(route: QuoteRoute): void {
+  function handleSelectRoute(route?: QuoteRoute): void {
     if (route !== undefined) {
-      transferState.setSelectedQuoteRoute(route);
-      setTransferState(transferState);
+      setSelectedQuoteRoute(route);
     }
   }
 
@@ -449,7 +462,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
           handleChainSelect={handleChainSelect}
           handleTokenSelect={handleTokenSelect}
           amountToBeTransferred={_amountToBeTransferred}
-          transferState={transferState}
+          quoteResult={quoteResult}
           setAmountToBeTransferred={setAmountToBeTransferred}
           supportedChains={supportedChains}
           supportedTokensByChain={supportedTokensByChain}
@@ -462,6 +475,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
           settings={settings}
           autoSize={autoSize}
           theme={theme}
+          selectedRoute={selectedQuoteRoute}
         />
       </WidgetContainer>
     </TransferContext.Provider>
