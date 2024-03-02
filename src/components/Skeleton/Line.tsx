@@ -14,8 +14,8 @@ export const Line: React.FunctionComponent<LineProps> = ({ size = 'large' }) => 
   };
 
   return (
-    <div role='status' className='w-full animate-pulse flex items-center justify-center'>
-      <div className={`bg-zinc-500 rounded-full ${lineClass()}`}></div>
+    <div role='status' className='animate-pulse flex w-full'>
+      <div className={`bg-zinc-700 rounded-full ${lineClass()}`}></div>
     </div>
   );
 };

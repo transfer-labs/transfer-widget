@@ -1,24 +1,20 @@
 import React, { type FunctionComponent, useState } from 'react';
-import {
-  type SupportedChain,
-  type SupportedToken,
-  type QuoteBridgeResult,
-  type QuoteBridgeRoute,
-} from '@argoplatform/transfer-sdk';
+import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { Route } from './Route';
 import { type WidgetState, type WidgetTheme } from '../../models/const';
-import { areBasicRoutesEqual } from '../../utils/routes';
+import { areRoutesEqual } from '../../lib/transfer';
 import { AdditionalRoutes } from './AdditionalRoutes';
+import { type QuoteRoute, type QuoteResult } from '../../models/transfer';
 
 export interface RouteContainerProps {
-  quoteResult: QuoteBridgeResult;
+  quoteResult: QuoteResult;
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
   toToken?: SupportedToken;
   widgetState: WidgetState;
-  setSelectedRoute: (route: QuoteBridgeRoute | undefined) => void;
-  selectedRoute?: QuoteBridgeRoute;
+  setSelectedRoute: (route: QuoteRoute | undefined) => void;
+  selectedRoute?: QuoteRoute;
   theme: WidgetTheme;
 }
 
@@ -69,7 +65,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
           toToken={toToken}
           widgetState={widgetState}
           setSelectedRoute={setSelectedRoute}
-          isSelectedRoute={areBasicRoutesEqual(quoteResult.best_route, selectedRoute)}
+          isSelectedRoute={areRoutesEqual(quoteResult.best_route, selectedRoute)}
           isBest
           theme={theme}
         />

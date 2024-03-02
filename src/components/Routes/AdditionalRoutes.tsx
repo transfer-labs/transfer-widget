@@ -1,19 +1,20 @@
 import React, { type FunctionComponent } from 'react';
-import { type QuoteBridgeRoute, type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
-import { areBasicRoutesEqual } from '../../utils/routes';
+import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
+import { areRoutesEqual } from '../../lib/transfer';
 import { type WidgetState, type WidgetTheme } from '../../models/const';
 import { Route } from './Route';
 import { motion, AnimatePresence } from 'framer-motion';
+import { type QuoteRoute } from '../../models/transfer';
 
 interface AdditionalRoutesProps {
-  routes: QuoteBridgeRoute[];
+  routes: QuoteRoute[];
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
   toToken?: SupportedToken;
   widgetState: WidgetState;
-  setSelectedRoute: (route: QuoteBridgeRoute | undefined) => void;
-  selectedRoute?: QuoteBridgeRoute;
+  setSelectedRoute: (route: QuoteRoute | undefined) => void;
+  selectedRoute?: QuoteRoute;
   theme: WidgetTheme;
 }
 
@@ -65,7 +66,7 @@ export const AdditionalRoutes: FunctionComponent<AdditionalRoutesProps> = ({
                   toToken={toToken}
                   widgetState={widgetState}
                   setSelectedRoute={setSelectedRoute}
-                  isSelectedRoute={areBasicRoutesEqual(route, selectedRoute)}
+                  isSelectedRoute={areRoutesEqual(route, selectedRoute)}
                   theme={theme}
                 />
               </div>
