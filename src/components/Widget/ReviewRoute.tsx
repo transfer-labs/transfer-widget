@@ -4,7 +4,7 @@ import { ActionButton } from '../ActionButton';
 import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TokenNetworkImage } from './TokenNetworkImage';
-import { type SupportedToken, type SupportedChain } from '@argoplatform/transfer-sdk';
+import { type SupportedToken, type SupportedChain, type QuoteRoute } from '@argoplatform/transfer-sdk';
 import { type WidgetState, type ReviewState, type WidgetTheme } from '../../models/const';
 import { ErrorMessage } from '../Message/ErrorMessage';
 import { SuccessMessage } from '../Message/SuccessMessage';
@@ -13,8 +13,7 @@ import { LinkText } from '../LinkText';
 import { capitalize } from '../../utils/text';
 import { FlipArrowIcon } from '../Icons/FlipArrowIcon';
 import { useTokenUtils } from '../../hooks/useTokenUtils';
-import { type QuoteRoute } from '../../models/transfer';
-import { getAmount, isRouteBridge } from '../../lib/transfer';
+import { RouteSteps } from '../Routes/RouteSteps';
 
 export interface ReviewRouteProps {
   route: QuoteRoute;
@@ -130,9 +129,9 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                         {fromChain?.name}
                       </p>
                       <DividerCircle theme={theme} />
-                      {isRouteBridge(route) && (
+                      {route.bridgeProvider !== undefined && (
                         <div className='flex flex-row gap-.25 items-center'>
-                          <img src={route.bridge_info.logo_uri} className='w-4 h-4' />
+                          <img src={route.bridgeProvider.logoUri} className='w-4 h-4' />
                           <p
                             className={
                               theme === 'light'
@@ -140,7 +139,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                                 : 'text-accent-color' + ' font-manrope text-sm font-medium'
                             }
                           >
-                            {capitalize(route.bridge_info.name)}
+                            {capitalize(route.bridgeProvider.name)}
                           </p>
                         </div>
                       )}
@@ -148,7 +147,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                   </div>
                 </div>
               </motion.div>
-              {isRouteBridge(route) && (
+              {route.bridgeProvider !== undefined && (
                 <div className='flex flex-row w-full justify-end'>
                   <FlipArrowIcon
                     tooltipText='View Route Steps'
@@ -171,21 +170,14 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                     }}
                     transition={{ duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] }}
                   >
-                    {isRouteBridge(route) && (
-                      <div className='flex flex-col gap-.5'>
-                        {/* <div className='flex flex-row gap-.25 items-center'>
-                      <img src={route.bridgeInfo.logoURI} className='w-5 h-5' />
-                      <p className={theme === 'light' ? 'text-primary-dark' : 'text-accent-color' + ' font-manrope text-lg font-medium'}>{route.bridgeInfo.name}</p>
-                    </div> */}
-                        <p
-                          className={
-                            theme === 'light' ? 'text-primary-dark' : 'text-accent-color' + ' font-manrope text-sm m-0'
-                          }
-                        >
-                          Bridge from {fromToken?.name} to {toToken?.name} using {capitalize(route.bridge_info.name)}
-                        </p>
-                      </div>
-                    )}
+                    <RouteSteps
+                      route={route}
+                      theme={theme}
+                      fromToken={fromToken as SupportedToken}
+                      toToken={toToken as SupportedToken}
+                      fromChain={fromChain as SupportedChain}
+                      toChain={toChain as SupportedChain}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -206,7 +198,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                     <p
                       className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}
                     >
-                      {toToken !== undefined && toTokenReadable(toToken.decimals, getAmount(route))} {toToken?.symbol}
+                      {toToken !== undefined && toTokenReadable(toToken.decimals, route.amount)} {toToken?.symbol}
                     </p>
                     <div className='flex flex-row gap-1 items-center'>
                       <p
@@ -219,9 +211,9 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                         {toChain?.name}
                       </p>
                       <DividerCircle theme={theme} />
-                      {isRouteBridge(route) && (
+                      {route.bridgeProvider !== undefined && (
                         <div className='flex flex-row gap-.25 items-center'>
-                          <img src={route.bridge_info.logo_uri} className='w-4 h-4' />
+                          <img src={route.bridgeProvider.logoUri} className='w-4 h-4' />
                           <p
                             className={
                               theme === 'light'
@@ -229,7 +221,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                                 : 'text-accent-color' + ' font-manrope text-sm font-medium'
                             }
                           >
-                            {capitalize(route.bridge_info.name)}
+                            {capitalize(route.bridgeProvider.name)}
                           </p>
                         </div>
                       )}
@@ -252,7 +244,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                   status={
                     widgetState.error !== undefined ? 'error' : reviewState.state === 'started' ? 'loading' : 'error'
                   }
-                  text='Executing bridge...'
+                  text='Executing transaction...'
                 />
               </div>
             </motion.div>
@@ -264,10 +256,10 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                   text='View on Block Explorer'
                   link={`${fromChain?.block_explorer}tx/${reviewState.txnHash}`}
                 />
-                {isRouteBridge(route) && (
+                {route.bridgeProvider !== undefined && (
                   <LinkText
                     text='View on Bridge Explorer'
-                    link={`${route.bridge_info.bridge_explorer}tx/${reviewState.txnHash}`}
+                    link={`${route.bridgeProvider.bridgeExplorer}tx/${reviewState.txnHash}`}
                   />
                 )}
               </div>
@@ -275,7 +267,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
           )}
           {reviewState?.state !== undefined && reviewState.state === 'done' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-              <SuccessMessage text='Bridge Successful!' />
+              <SuccessMessage text='Success!' />
             </motion.div>
           )}
           <motion.div

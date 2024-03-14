@@ -1,13 +1,17 @@
 import React, { type FunctionComponent, useState } from 'react';
-import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
+import {
+  type SupportedChain,
+  type SupportedToken,
+  type QuoteRouteResponse,
+  type QuoteRoute,
+} from '@argoplatform/transfer-sdk';
 import { Route } from './Route';
 import { type WidgetState, type WidgetTheme } from '../../models/const';
-import { areRoutesEqual } from '../../lib/transfer';
 import { AdditionalRoutes } from './AdditionalRoutes';
-import { type QuoteRoute, type QuoteResult } from '../../models/transfer';
+import { useRoutes } from '../../hooks/useRoutes';
 
 export interface RouteContainerProps {
-  quoteResult: QuoteResult;
+  quoteResult: QuoteRouteResponse;
   fromChain?: SupportedChain;
   toChain?: SupportedChain;
   fromToken?: SupportedToken;
@@ -29,6 +33,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
   selectedRoute,
   theme,
 }) => {
+  const { areRoutesEqual } = useRoutes();
   const [showAdditionalRoutes, setShowAdditionalRoutes] = useState<boolean>(false);
   return (
     <div className='flex flex-col gap-3 w-full'>
@@ -46,7 +51,7 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
       </div>
       {showAdditionalRoutes ? (
         <AdditionalRoutes
-          routes={quoteResult.alternate_routes}
+          routes={quoteResult.alternativeRoutes}
           fromChain={fromChain}
           toChain={toChain}
           fromToken={fromToken}
@@ -58,14 +63,14 @@ export const RouteContainer: FunctionComponent<RouteContainerProps> = ({
         />
       ) : (
         <Route
-          route={quoteResult.best_route}
+          route={quoteResult.bestRoute}
           fromChain={fromChain}
           toChain={toChain}
           fromToken={fromToken}
           toToken={toToken}
           widgetState={widgetState}
           setSelectedRoute={setSelectedRoute}
-          isSelectedRoute={areRoutesEqual(quoteResult.best_route, selectedRoute)}
+          isSelectedRoute={areRoutesEqual(quoteResult.bestRoute, selectedRoute)}
           isBest
           theme={theme}
         />

@@ -8,6 +8,7 @@ interface UseTokenReturn {
 }
 
 export function useTokenUtils(): UseTokenReturn {
+  // Converts a token amount to its wei representation
   function toTokenDecimals(decimals: number, amount: string): string {
     return (+amount * 10 ** decimals).toString();
   }

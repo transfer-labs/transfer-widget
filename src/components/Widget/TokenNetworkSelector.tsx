@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type Direction, type WidgetTheme } from '../../models/const';
 import { useTokenUtils } from '../../hooks/useTokenUtils';
+import { type PortfolioMap } from '../../hooks/useTransfer';
+import { useBalance } from '../../hooks/useBalance';
 
 interface ChainSelectorProps {
   chains?: SupportedChain[];
@@ -31,30 +33,38 @@ const ChainSelector: FunctionComponent<ChainSelectorProps> = ({ chains, selected
               }}
             >
               <DefaultTooltip label={chain.name} side='top'>
-                <img src={chain.logo_uri} className='w-12 h-12' />
+                <img src={chain.logo_uri} className='w-10 h-10' />
               </DefaultTooltip>
             </div>
           );
         })}
       </div>
       {selectedChain !== undefined && (
-        <p className={`text-accent-color font-manrope font-medium text-md ${themeClass}`}>
-          Network: {selectedChain.name}
-        </p>
+        <p className={`text-accent-color font-manrope font-medium text-sm ${themeClass}`}>{selectedChain.name}</p>
       )}
     </div>
   );
 };
 
 export interface TokenSelectorProps {
+  currentChain?: SupportedChain;
   tokens?: SupportedToken[];
   handleTokenSelect: (token: SupportedToken) => void;
   selectedToken?: SupportedToken;
   theme?: WidgetTheme;
+  portfolioMap?: PortfolioMap;
 }
-const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selectedToken, handleTokenSelect, theme }) => {
+const TokenSelector: FunctionComponent<TokenSelectorProps> = ({
+  currentChain,
+  tokens,
+  selectedToken,
+  handleTokenSelect,
+  theme,
+  portfolioMap,
+}) => {
   const [search, setSearch] = React.useState<string>('');
   const { shortenAddress, isNullAddress } = useTokenUtils();
+  const { truncate } = useBalance();
   // const themeClass =
   //   theme === 'light'
   //     ? 'bg-component-background-light border-border-color-light text-black'
@@ -84,13 +94,13 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selected
           ?.filter((token) => {
             const _search = search.trim().toLowerCase();
             return (
-              token.name.toLowerCase().includes(_search) ||
-              token.address.toLowerCase().includes(_search) ||
+              Boolean(token.name.toLowerCase().includes(_search)) ||
+              Boolean(token.address.toLowerCase().includes(_search)) ||
               token.symbol.toLowerCase().includes(_search)
             );
           })
           .map((token) => {
-            const tokenThemeClass = `flex w-full flex-row justify-between items-center hover:bg-shadow-element-${
+            const tokenThemeClass = `flex w-full flex-row justify-between items-center p-1 hover:bg-shadow-element-${
               theme === 'light' ? 'light' : 'dark'
             } cursor-pointer rounded-lg border-2 ${
               selectedToken?.address === token.address ? 'border-success-green' : 'border-transparent'
@@ -103,17 +113,26 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({ tokens, selected
                   handleTokenSelect(token);
                 }}
               >
-                <div className='flex flex-row gap-1 items-center'>
-                  <img className='w-12 h-12' src={token.logo_uri} />
-                  <div className='flex flex-col'>
-                    <div className='flex flex-row items-center gap-2'>
-                      <p className={`font-manrope text-lg ${theme === 'light' ? 'text-black' : 'text-white'}`}>
-                        {token.symbol}
-                      </p>
-                      <p className={`text-accent-color font-manrope text-sm truncate`}>({token.name})</p>
+                <div className='flex flex-row gap-2 items-center w-full'>
+                  <img className='w-8 h-8' src={token.logo_uri} />
+                  <div className='flex flex-col w-full'>
+                    <div className='flex flex-row w-full items-end justify-between'>
+                      <div className='flex flex-row items-end gap-2'>
+                        <p className={`font-manrope text-base ${theme === 'light' ? 'text-black' : 'text-white'}`}>
+                          {token.symbol}
+                        </p>
+                        <p className={`text-accent-color font-manrope text-sm truncate`}>{token.name}</p>
+                      </div>
+                      {currentChain !== undefined &&
+                        token !== undefined &&
+                        portfolioMap?.[currentChain.chain_id]?.[token.address] !== undefined && (
+                          <p className={`text-accent-color font-manrope text-xs truncate`}>
+                            {truncate(portfolioMap[currentChain.chain_id][token.address].balance)}
+                          </p>
+                        )}
                     </div>
                     {!isNullAddress(token.address) && (
-                      <p className={`text-accent-color font-manrope text-sm`}>{shortenAddress(token.address)}</p>
+                      <p className={`text-accent-color font-manrope text-xs`}>{shortenAddress(token.address)}</p>
                     )}
                   </div>
                 </div>
@@ -137,6 +156,7 @@ export interface TokenNetworkSelectorProps {
   autoSize: boolean;
   theme: WidgetTheme;
   onClose: () => void;
+  portfolioMap?: PortfolioMap;
 }
 
 export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> = ({
@@ -150,6 +170,7 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
   handleTokenSelect,
   onClose,
   theme,
+  portfolioMap,
 }) => {
   const themeClass = theme === 'light' ? 'text-black' : 'text-white';
   const closeButtonThemeClass = `p-2 ${
@@ -171,7 +192,7 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
               transition={{ duration: 0.5, type: 'spring', bounce: 0.3 }}
             >
               <div className='flex flex-row justify-between items-center'>
-                <p className={`font-manrope font-medium text-xl ${themeClass}`}>
+                <p className={`font-manrope font-medium text-lg ${themeClass}`}>
                   Select {direction.charAt(0).toUpperCase() + direction.slice(1)} Network
                 </p>
                 <div className={closeButtonThemeClass} onClick={onClose}>
@@ -204,13 +225,13 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
             </motion.div>
           </div>
 
-          <div className='flex flex-col gap-2'>
+          <div className='flex flex-col gap-2 mt-4'>
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, type: 'spring', bounce: 0.3 }}
             >
-              <p className={`font-manrope font-medium text-xl ${themeClass}`}>
+              <p className={`font-manrope font-medium text-lg ${themeClass}`}>
                 Select {direction.charAt(0).toUpperCase() + direction.slice(1)} Token
               </p>
             </motion.div>
@@ -220,9 +241,11 @@ export const TokenNetworkSelector: FunctionComponent<TokenNetworkSelectorProps> 
               transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
             >
               <TokenSelector
+                currentChain={selectedChain}
                 tokens={tokens}
                 selectedToken={selectedToken}
                 theme={theme}
+                portfolioMap={portfolioMap}
                 handleTokenSelect={(token) => {
                   onClose();
                   handleTokenSelect(direction, token);

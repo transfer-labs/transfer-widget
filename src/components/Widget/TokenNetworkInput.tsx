@@ -1,17 +1,20 @@
-import React, { type FunctionComponent } from 'react';
+import React, { useEffect, type FunctionComponent } from 'react';
+import { useState } from 'react';
 import { TokenNetworkImage } from './TokenNetworkImage';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
 import { type Direction, type WidgetTheme } from '../../models/const';
+import { useBalance } from '../../hooks/useBalance';
+import { type PortfolioMap } from '../../hooks/useTransfer';
 
 export interface TokenNetworkInputProps {
   direction: Direction;
   amount?: string;
   chain?: SupportedChain;
   token?: SupportedToken;
-  balance?: string;
   onAnchorClick: () => void;
   setAmount?: (amount: string) => void;
   theme?: WidgetTheme;
+  portfolioMap?: PortfolioMap;
 }
 
 export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
@@ -19,14 +22,26 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
   amount,
   chain,
   token,
-  balance,
   setAmount,
   onAnchorClick,
   theme,
+  portfolioMap,
 }) => {
-  function handleAmountChange(e: React.ChangeEvent<HTMLInputElement>): void {
+  const [balance, setBalance] = useState<string>('0.0');
+
+  useEffect(() => {
+    if (chain !== undefined && token !== undefined && portfolioMap?.[chain.chain_id]?.[token.address] !== undefined) {
+      setBalance(truncate(portfolioMap[chain.chain_id][token.address].balance));
+    } else {
+      setBalance('0.0');
+    }
+  }, [chain, token, portfolioMap]);
+
+  const { truncate } = useBalance();
+
+  function handleAmountChange(amount: string): void {
     if (setAmount !== undefined && direction === 'from') {
-      setAmount(e.target.value);
+      setAmount(amount);
     }
   }
 
@@ -49,13 +64,25 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
                 ? 'text-black'
                 : 'text-white'
               : 'text-unselected-text'
-          }`}
+          } [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
           type='number'
           value={amount}
           placeholder='0'
           disabled={direction === 'to'}
-          onChange={handleAmountChange}
+          onChange={(e) => {
+            handleAmountChange(e.target.value);
+          }}
         />
+        {direction === 'from' && balance !== '0.0' && (
+          <button
+            className='bg-tooltip-green border-border-color-dark text-sm text-success-green rounded-md py-1 px-2 mx-4'
+            onClick={() => {
+              handleAmountChange(balance);
+            }}
+          >
+            Max
+          </button>
+        )}
         <div className='flex flex-col'>
           {chain !== undefined && token !== undefined ? (
             <div className='flex flex-row gap-4 justify-center items-center cursor-pointer' onClick={onAnchorClick}>
@@ -73,9 +100,6 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
             </div>
           ) : (
             <div className='flex flex-row gap-2 items-center' onClick={onAnchorClick}>
-              {/* <a href='#' className='text-unselected-text whitespace-nowrap hidden min-[414px]:block'>
-                Select {direction} chain and token
-              </a> */}
               <div className='w-[53px] h-[50px]'>
                 <svg width='50' height='50' viewBox='0 0 64 59' fill='none' xmlns='http://www.w3.org/2000/svg'>
                   <path
@@ -91,23 +115,9 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
           )}
         </div>
       </div>
-
-      {/* Add when balance is added */}
-      {/* <div className='flex flex-row justify-end w-full h-5 pt-2'>
-        <div className='flex flex-row gap-1 items-center justify-center'>
-          {balance !== undefined && balance !== '' && (
-            <>
-              <p className='text-unselected-text font-manrope text-sm'>Balance: {balance}</p>
-
-              {direction === 'from' && (
-                <button className='bg-tooltip-green border-border-color-dark text-sm text-success-green rounded-md py-.25 px-1'>
-                  Max
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      </div> */}
+      <div className={`flex flex-row justify-start items-center h-5 pt-2 ${direction !== 'from' && 'invisible'}`}>
+        <p className='text-unselected-text font-manrope text-sm'>Balance: {balance}</p>
+      </div>
     </div>
   );
 };

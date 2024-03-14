@@ -6,10 +6,11 @@ import {
   Transfer,
   type SupportedChain,
   type SupportedToken,
-  type BridgeRequest,
-  type SwapRequest,
+  type QuoteRouteResponse,
+  type QuoteRoute,
 } from '@argoplatform/transfer-sdk';
 import { useTransfer } from '../hooks/useTransfer';
+import { useRoutes } from '../hooks/useRoutes';
 import {
   type ErrorType,
   type Direction,
@@ -20,10 +21,8 @@ import {
   type WidgetTheme,
 } from '../models/const';
 import { type WalletClient } from 'viem';
-import { findRouteFromSelected, isRouteSwap } from '../lib/transfer';
 import { WidgetContainer } from './Widget/WidgetContainer';
 import { useTokenUtils } from '../hooks/useTokenUtils';
-import { type QuoteRoute, type QuoteResult, type TransferResult } from '../models/transfer';
 
 export interface TransferWidgetProps {
   fromChainId?: number;
@@ -40,10 +39,10 @@ export interface TransferWidgetProps {
 }
 
 export interface HandleQuoteArgs {
-  fromChain?: SupportedChain;
-  toChain?: SupportedChain;
-  fromToken?: SupportedToken;
-  toToken?: SupportedToken;
+  fromChain: SupportedChain;
+  toChain: SupportedChain;
+  fromToken: SupportedToken;
+  toToken: SupportedToken;
   amount: string;
   slippage: number;
   fromAddress: string;
@@ -63,19 +62,20 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   autoSize = false,
 }): ReactNode => {
   const transfer = new Transfer({
-    is_testnet: isTestnet,
+    is_testnet: isTestnet ?? false,
   });
 
   const [fromChain, setFromChain] = useState<SupportedChain | undefined>(undefined);
   const [toChain, setToChain] = useState<SupportedChain | undefined>(undefined);
   const [_amountToBeTransferred, setAmountToBeTransferred] = useState<string>(amountToBeTransferred ?? '');
-  const [quoteResult, setQuoteResult] = useState<QuoteResult | undefined>(undefined);
+  const [quoteResult, setQuoteResult] = useState<QuoteRouteResponse | undefined>(undefined);
   const [selectedQuoteRoute, setSelectedQuoteRoute] = useState<QuoteRoute | undefined>(undefined);
-
-  const { supportedChains, getSupportedTokens, supportedTokensByChain } = useTransfer({
+  const { supportedChains, getSupportedTokens, supportedTokensByChain, portfolioMap } = useTransfer({
+    userAddress,
     transfer,
   });
   const { toTokenDecimals } = useTokenUtils();
+  const { findRoute } = useRoutes();
   const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
   const [settings, setSettings] = useState<Settings>({
@@ -185,49 +185,27 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       });
 
       try {
-        let result: TransferResult | undefined;
-        if (fromChain.chain_id === toChain.chain_id) {
-          const swapRequest: SwapRequest = {
-            chain_id: fromChain.chain_id,
-            token_in_address: fromToken.address,
-            token_out_address: toToken.address,
-            qty: toTokenDecimals(fromToken.decimals, _amountToBeTransferred),
-            from_address: userAddress,
-            slippage: settings.slippage,
-          };
-          result = await transfer.swap(swapRequest);
-        } else {
-          const bridgeRequest: BridgeRequest = {
-            src_chain_id: fromChain.chain_id,
-            dst_chain_id: toChain.chain_id,
-            src_chain_token_address: fromToken.address,
-            dst_chain_token_address: toToken.address,
-            qty: toTokenDecimals(fromToken.decimals, _amountToBeTransferred),
-            from_address: userAddress,
-            to_address: userAddress,
-            slippage: settings.slippage,
-          };
-          result = await transfer.bridge(bridgeRequest);
-        }
+        const routes = await transfer.getRoutes({
+          fromChainId: fromChain.chain_id,
+          toChainId: toChain.chain_id,
+          fromTokenAddress: fromToken.address,
+          toTokenAddress: toToken.address,
+          fromUserAddress: userAddress,
+          toUserAddress: userAddress,
+          amount: toTokenDecimals(fromToken.decimals, _amountToBeTransferred),
+          slippage: settings.slippage,
+        });
 
-        if (result !== undefined) {
-          const route = findRouteFromSelected(_selectedRoute, result.best_route, result.alternate_routes);
+        if (routes !== undefined) {
+          const route = findRoute(_selectedRoute, routes);
           if (route === undefined) {
             throw new Error(ErrorBody.no_routes.key);
           }
 
-          let txnReceipt;
-          if (isRouteSwap(route)) {
-            txnReceipt = await transfer.execute_swap({
-              swap: route,
-              wallet_client: walletClient,
-            });
-          } else {
-            txnReceipt = await transfer.execute_bridge({
-              route,
-              wallet_client: walletClient,
-            });
-          }
+          const txnReceipt = await transfer.execute({
+            route,
+            walletClient,
+          });
 
           if (txnReceipt.status === 'reverted') {
             throw new Error(ErrorBody.execute.key);
@@ -255,8 +233,8 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         setReviewState({
           state: 'notStarted',
         });
-        if (typeof e === 'string' && e in ErrorBody) {
-          setErrorState(e as ErrorType);
+        if (e.message in ErrorBody) {
+          setErrorState(e.message as ErrorType);
         } else {
           setErrorState('execute');
         }
@@ -281,47 +259,25 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
   }
 
   async function handleQuote(args: HandleQuoteArgs): Promise<void> {
-    if (
-      args.fromChain === undefined ||
-      args.toChain === undefined ||
-      args.fromToken === undefined ||
-      args.toToken === undefined
-    ) {
-      return;
-    }
     setLoadingState();
     try {
-      let quoteResult: QuoteResult;
-      if (args.fromChain.chain_id === args.toChain.chain_id) {
-        const swapRequest: SwapRequest = {
-          chain_id: args.fromChain.chain_id,
-          token_in_address: args.fromToken.address,
-          token_out_address: args.toToken.address,
-          qty: toTokenDecimals(args.fromToken.decimals, args.amount),
-          from_address: args.fromAddress,
-          slippage: settings.slippage,
-        };
-        quoteResult = await transfer.quote_swap(swapRequest);
-      } else {
-        const bridgeRequest: BridgeRequest = {
-          src_chain_id: args.fromChain.chain_id,
-          dst_chain_id: args.toChain.chain_id,
-          src_chain_token_address: args.fromToken.address,
-          dst_chain_token_address: args.toToken.address,
-          qty: toTokenDecimals(args.fromToken.decimals, args.amount),
-          from_address: args.fromAddress,
-          to_address: args.toAddress,
-          slippage: settings.slippage,
-        };
-        quoteResult = await transfer.quote_bridge(bridgeRequest);
-      }
+      const quoteRoutes = await transfer.getQuoteRoutes({
+        fromChainId: args.fromChain.chain_id,
+        toChainId: args.toChain.chain_id,
+        fromTokenAddress: args.fromToken.address,
+        toTokenAddress: args.toToken.address,
+        fromUserAddress: args.fromAddress,
+        toUserAddress: args.toAddress,
+        slippage: settings.slippage,
+        amount: toTokenDecimals(args.fromToken.decimals, args.amount),
+      });
 
-      if (Object.keys(quoteResult.best_route).length === 0) {
+      if (Object.keys(quoteRoutes.bestRoute).length === 0) {
         reset();
         setErrorState('no_routes');
       } else {
-        setQuoteResult(quoteResult);
-        setSelectedQuoteRoute(quoteResult.best_route);
+        setQuoteResult(quoteRoutes);
+        setSelectedQuoteRoute(quoteRoutes.bestRoute);
         setWidgetState((prevState) => ({
           ...prevState,
           loading: false,
@@ -369,10 +325,10 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
           setErrorState('no_user_address');
         } else {
           void handleQuote({
-            fromChain,
-            toChain,
-            fromToken,
-            toToken,
+            fromChain: fromChain as SupportedChain,
+            toChain: toChain as SupportedChain,
+            fromToken: fromToken as SupportedToken,
+            toToken: toToken as SupportedToken,
             amount: _amountToBeTransferred,
             slippage: settings.slippage,
             fromAddress: userAddress,
@@ -423,7 +379,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         void setSupportedChainAndToken(supportedChains, 'to', toChainId, toTokenAddress);
       }
     }
-  }, [supportedChains, fromChainId, toChainId, fromTokenAddress, toTokenAddress]);
+  }, [supportedChains, fromChainId, toChainId, fromTokenAddress, toTokenAddress, portfolioMap]);
 
   function handleChainSelect(direction: Direction, chain?: SupportedChain): void {
     if (chain !== undefined) {
@@ -476,6 +432,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
           autoSize={autoSize}
           theme={theme}
           selectedRoute={selectedQuoteRoute}
+          portfolioMap={portfolioMap}
         />
       </WidgetContainer>
     </TransferContext.Provider>

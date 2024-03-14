@@ -18,7 +18,7 @@ export const SwitchArrow: FunctionComponent<SwitchArrowProps> = ({ onClick, them
 
   return (
     <motion.div
-      className={'absolute top-[43.5%] left-[47%] transform'}
+      className={'absolute top-[48.5%] left-[47%] transform'}
       onMouseEnter={() => {
         setIsHovered(true);
       }}

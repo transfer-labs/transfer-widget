@@ -1,10 +1,9 @@
 import React, { type FunctionComponent } from 'react';
-import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
-import { areRoutesEqual } from '../../lib/transfer';
+import { type SupportedChain, type SupportedToken, type QuoteRoute } from '@argoplatform/transfer-sdk';
 import { type WidgetState, type WidgetTheme } from '../../models/const';
 import { Route } from './Route';
 import { motion, AnimatePresence } from 'framer-motion';
-import { type QuoteRoute } from '../../models/transfer';
+import { useRoutes } from '../../hooks/useRoutes';
 
 interface AdditionalRoutesProps {
   routes: QuoteRoute[];
@@ -29,6 +28,8 @@ export const AdditionalRoutes: FunctionComponent<AdditionalRoutesProps> = ({
   selectedRoute,
   theme,
 }) => {
+  const { areRoutesEqual } = useRoutes();
+
   if (routes.length === 0) {
     return (
       <AnimatePresence>
