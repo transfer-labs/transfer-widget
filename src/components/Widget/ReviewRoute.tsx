@@ -1,5 +1,4 @@
 import React, { type FunctionComponent, useState } from 'react';
-import { DividerCircle } from '../Routes/Route';
 import { ActionButton } from '../ActionButton';
 import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -10,7 +9,6 @@ import { ErrorMessage } from '../Message/ErrorMessage';
 import { SuccessMessage } from '../Message/SuccessMessage';
 import { PingText } from '../PingText';
 import { LinkText } from '../LinkText';
-import { capitalize } from '../../utils/text';
 import { FlipArrowIcon } from '../Icons/FlipArrowIcon';
 import { useTokenUtils } from '../../hooks/useTokenUtils';
 import { RouteSteps } from '../Routes/RouteSteps';
@@ -128,35 +126,19 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                       >
                         {fromChain?.name}
                       </p>
-                      <DividerCircle theme={theme} />
-                      {route.bridgeProvider !== undefined && (
-                        <div className='flex flex-row gap-.25 items-center'>
-                          <img src={route.bridgeProvider.logoUri} className='w-4 h-4' />
-                          <p
-                            className={
-                              theme === 'light'
-                                ? 'text-primary-dark'
-                                : 'text-accent-color' + ' font-manrope text-sm font-medium'
-                            }
-                          >
-                            {capitalize(route.bridgeProvider.name)}
-                          </p>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
               </motion.div>
-              {route.bridgeProvider !== undefined && (
-                <div className='flex flex-row w-full justify-end'>
-                  <FlipArrowIcon
-                    tooltipText='View Route Steps'
-                    isClicked={isArrowClicked}
-                    setIsClicked={setIsArrowClicked}
-                    theme={theme}
-                  />
-                </div>
-              )}
+              <div className='flex flex-row w-full justify-end'>
+                <FlipArrowIcon
+                  tooltipText='View Route Steps'
+                  isClicked={isArrowClicked}
+                  setIsClicked={setIsArrowClicked}
+                  theme={theme}
+                />
+              </div>
+
               <AnimatePresence initial={false}>
                 {isArrowClicked && (
                   <motion.div
@@ -210,21 +192,6 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                       >
                         {toChain?.name}
                       </p>
-                      <DividerCircle theme={theme} />
-                      {route.bridgeProvider !== undefined && (
-                        <div className='flex flex-row gap-.25 items-center'>
-                          <img src={route.bridgeProvider.logoUri} className='w-4 h-4' />
-                          <p
-                            className={
-                              theme === 'light'
-                                ? 'text-primary-dark'
-                                : 'text-accent-color' + ' font-manrope text-sm font-medium'
-                            }
-                          >
-                            {capitalize(route.bridgeProvider.name)}
-                          </p>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
