@@ -1,4 +1,4 @@
-import React, { type FunctionComponent } from 'react';
+import React, { useMemo, type FunctionComponent } from 'react';
 import { DefaultTooltip } from '../Tooltip/DefaultTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
@@ -6,6 +6,7 @@ import { type Direction, type WidgetTheme } from '../../models/const';
 import { useTokenUtils } from '../../hooks/useTokenUtils';
 import { type PortfolioMap } from '../../hooks/useTransfer';
 import { useBalance } from '../../hooks/useBalance';
+import { AddNewToken } from './AddNewToken';
 
 interface ChainSelectorProps {
   chains?: SupportedChain[];
@@ -63,7 +64,7 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({
   portfolioMap,
 }) => {
   const [search, setSearch] = React.useState<string>('');
-  const { shortenAddress, isNullAddress } = useTokenUtils();
+  const { shortenAddress, isNullAddress, isAddress } = useTokenUtils();
   const { truncate } = useBalance();
   // const themeClass =
   //   theme === 'light'
@@ -79,6 +80,18 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({
   } rounded-lg border-1 border-border-color-${
     theme === 'light' ? 'light' : 'dark'
   } px-2 py-4 flex-col w-full gap-3 max-h-[300px] min-h-[300px] overflow-y-auto`;
+
+  const filteredTokens = useMemo(() => {
+    return tokens?.filter((token) => {
+      const _search = search.trim().toLowerCase();
+      return (
+        Boolean(token.name.toLowerCase().includes(_search)) ||
+        Boolean(token.address.toLowerCase().includes(_search)) ||
+        token.symbol.toLowerCase().includes(_search)
+      );
+    });
+  }, [tokens, search]);
+
   return (
     <div className='flex flex-col gap-2'>
       <input
@@ -90,56 +103,57 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({
         }}
       />
       <div className={tokenListThemeClass}>
-        {tokens
-          ?.filter((token) => {
-            const _search = search.trim().toLowerCase();
-            return (
-              Boolean(token.name.toLowerCase().includes(_search)) ||
-              Boolean(token.address.toLowerCase().includes(_search)) ||
-              token.symbol.toLowerCase().includes(_search)
-            );
-          })
-          .map((token) => {
-            const tokenThemeClass = `flex w-full flex-row justify-between items-center p-1 hover:bg-shadow-element-${
-              theme === 'light' ? 'light' : 'dark'
-            } cursor-pointer rounded-lg border-2 ${
-              selectedToken?.address === token.address ? 'border-success-green' : 'border-transparent'
-            }`;
-            return (
-              <div
-                key={token.address}
-                className={tokenThemeClass}
-                onClick={() => {
-                  handleTokenSelect(token);
-                }}
-              >
-                <div className='flex flex-row gap-2 items-center w-full'>
-                  <img className='w-8 h-8' src={token.logo_uri} />
-                  <div className='flex flex-col w-full'>
-                    <div className='flex flex-row w-full items-end justify-between'>
-                      <div className='flex flex-row items-end gap-2'>
-                        <p className={`font-manrope text-base ${theme === 'light' ? 'text-black' : 'text-white'}`}>
-                          {token.symbol}
-                        </p>
-                        <p className={`text-accent-color font-manrope text-sm truncate`}>{token.name}</p>
-                      </div>
-                      {currentChain !== undefined &&
-                        token !== undefined &&
-                        portfolioMap?.[currentChain.chain_id]?.[token.address] !== undefined && (
-                          <p className={`text-accent-color font-manrope text-xs truncate`}>
-                            {truncate(portfolioMap[currentChain.chain_id][token.address].balance)}
-                          </p>
-                        )}
+        {filteredTokens?.map((token) => {
+          const tokenThemeClass = `flex w-full flex-row justify-between items-center p-1 hover:bg-shadow-element-${
+            theme === 'light' ? 'light' : 'dark'
+          } cursor-pointer rounded-lg border-2 ${
+            selectedToken?.address === token.address ? 'border-success-green' : 'border-transparent'
+          }`;
+          return (
+            <div
+              key={token.address}
+              className={tokenThemeClass}
+              onClick={() => {
+                handleTokenSelect(token);
+              }}
+            >
+              <div className='flex flex-row gap-2 items-center w-full'>
+                <img className='w-8 h-8' src={token.logo_uri} />
+                <div className='flex flex-col w-full'>
+                  <div className='flex flex-row w-full items-end justify-between'>
+                    <div className='flex flex-row items-end gap-2'>
+                      <p className={`font-manrope text-base ${theme === 'light' ? 'text-black' : 'text-white'}`}>
+                        {token.symbol}
+                      </p>
+                      <p className={`text-accent-color font-manrope text-sm truncate`}>{token.name}</p>
                     </div>
-                    {!isNullAddress(token.address) && (
-                      <p className={`text-accent-color font-manrope text-xs`}>{shortenAddress(token.address)}</p>
-                    )}
+                    {currentChain !== undefined &&
+                      token !== undefined &&
+                      portfolioMap?.[currentChain.chain_id]?.[token.address] !== undefined && (
+                        <p className={`text-accent-color font-manrope text-xs truncate`}>
+                          {truncate(portfolioMap[currentChain.chain_id][token.address].balance)}
+                        </p>
+                      )}
                   </div>
+                  {!isNullAddress(token.address) && (
+                    <p className={`text-accent-color font-manrope text-xs`}>{shortenAddress(token.address)}</p>
+                  )}
                 </div>
-                {/* <p className='text-accent-color font-manrope text-md'>*balance*</p> */}
               </div>
-            );
-          })}
+              {/* <p className='text-accent-color font-manrope text-md'>*balance*</p> */}
+            </div>
+          );
+        })}
+        {isAddress(search) &&
+          (filteredTokens === undefined || filteredTokens.length === 0) &&
+          currentChain !== undefined && (
+            <AddNewToken
+              handleTokenSelect={handleTokenSelect}
+              search={search}
+              theme={theme}
+              chainId={currentChain.chain_id}
+            />
+          )}
       </div>
     </div>
   );

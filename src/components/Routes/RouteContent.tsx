@@ -8,6 +8,7 @@ import { BestRouteIcon } from '../Icons/BestRouteIcon';
 import { RouteSteps } from './RouteSteps';
 import { type WidgetTheme } from '../../models/const';
 import { useTokenUtils } from '../../hooks/useTokenUtils';
+import { useRoutes } from '../../hooks/useRoutes';
 
 interface RouteContentProps {
   route: QuoteRoute;
@@ -31,6 +32,7 @@ export const RouteContent: FunctionComponent<RouteContentProps> = ({
   const [viewRouteSteps, setViewRouteSteps] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { toTokenReadable } = useTokenUtils();
+  const { getTotalFees } = useRoutes();
 
   return (
     <>
@@ -162,7 +164,7 @@ export const RouteContent: FunctionComponent<RouteContentProps> = ({
       {/* TODO: Replace */}
       <RouteDetails
         gas={'$0.00'}
-        fees={'$0.00'}
+        fees={getTotalFees(route)}
         time={'~2 min'}
         steps={route.dexs.length + (route.bridgeProvider !== undefined ? 1 : 0)}
       />

@@ -5,6 +5,7 @@ interface UseTokenReturn {
   toTokenReadable: (decimals: number, amount: number) => string;
   shortenAddress: (address?: string, chars?: number) => string;
   isNullAddress: (address: string) => boolean;
+  isAddress: (address: string) => boolean;
 }
 
 export function useTokenUtils(): UseTokenReturn {
@@ -26,10 +27,15 @@ export function useTokenUtils(): UseTokenReturn {
     return address === NULL_ADDRESS;
   }
 
+  function isAddress(address: string): boolean {
+    return address.length === 42 && address.startsWith('0x');
+  }
+
   return {
     toTokenDecimals,
     toTokenReadable,
     shortenAddress,
     isNullAddress,
+    isAddress,
   };
 }

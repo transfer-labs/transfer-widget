@@ -10,6 +10,7 @@ import { capitalize } from '../utils/text';
 interface UseRoutesReturn {
   areRoutesEqual: (r1?: QuoteRoute, r2?: QuoteRoute) => boolean;
   findRoute: (selectedRoute: QuoteRoute, routeResponse: RouteResponse) => Route | undefined;
+  getTotalFees: (route: QuoteRoute) => string;
   getRouteSteps: (
     route: QuoteRoute,
     fromChain: SupportedChain,
@@ -45,6 +46,10 @@ export function useRoutes(): UseRoutesReturn {
     if (areRoutesEqual(selectedRoute, routeResponse.bestRoute)) return routeResponse.bestRoute;
     if (routeResponse.alternativeRoutes.length === 0) return undefined;
     return routeResponse.alternativeRoutes.find((route) => areRoutesEqual(selectedRoute, route));
+  }
+
+  function getTotalFees(route: QuoteRoute): string {
+    return route.fees.reduce((acc, fee) => acc + fee.amount, 0).toString();
   }
 
   function getRouteSteps(
@@ -96,5 +101,6 @@ export function useRoutes(): UseRoutesReturn {
     areRoutesEqual,
     findRoute,
     getRouteSteps,
+    getTotalFees,
   };
 }
