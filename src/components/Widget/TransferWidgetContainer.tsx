@@ -4,7 +4,12 @@ import { RouteContainer } from '../Routes/RouteContainer';
 import { ErrorMessage } from '../Message/ErrorMessage';
 import { SwitchArrow } from '../SwitchArrow';
 import { ActionButton } from '../ActionButton';
-import { type SupportedChain, type SupportedToken } from '@argoplatform/transfer-sdk';
+import {
+  type QuoteRouteResponse,
+  type SupportedChain,
+  type SupportedToken,
+  type QuoteRoute,
+} from '@argoplatform/transfer-sdk';
 import { motion } from 'framer-motion';
 import { TokenNetworkSelector } from './TokenNetworkSelector';
 import {
@@ -15,13 +20,12 @@ import {
   type WidgetTheme,
   type WidgetState,
 } from '../../models/const';
-import { getAmount } from '../../lib/transfer';
+import { type PortfolioMap } from '../../hooks/useTransfer';
 import { ReviewRoute } from './ReviewRoute';
 import { useTokenUtils } from '../../hooks/useTokenUtils';
 import { SettingsIcon } from '../Icons/SettingsIcon';
 import { SettingsPage } from './SettingsPage';
 import { TransferLogo } from '../Icons/TransferLogo';
-import { type QuoteRoute, type QuoteResult } from '../../models/transfer';
 
 export interface TransferWidgetContainerProps {
   supportedChains?: SupportedChain[];
@@ -34,7 +38,7 @@ export interface TransferWidgetContainerProps {
   handleTokenSelect: (direction: Direction, token?: SupportedToken) => void;
   setAmountToBeTransferred: (amount: string) => void;
   amountToBeTransferred?: string;
-  quoteResult?: QuoteResult;
+  quoteResult?: QuoteRouteResponse;
   userAddress?: string;
   widgetState: WidgetState;
   reviewState?: ReviewState;
@@ -45,6 +49,7 @@ export interface TransferWidgetContainerProps {
   autoSize: boolean;
   theme?: WidgetTheme;
   selectedRoute?: QuoteRoute;
+  portfolioMap?: PortfolioMap;
 }
 
 export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerProps> = ({
@@ -69,6 +74,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
   setSettings,
   theme,
   autoSize,
+  portfolioMap,
 }): ReactNode => {
   const { toTokenReadable, shortenAddress } = useTokenUtils();
 
@@ -162,6 +168,7 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
         handleTokenSelect={handleTokenSelect}
         autoSize={autoSize}
         theme={theme ?? 'default'}
+        portfolioMap={portfolioMap}
         direction={widgetState.view === 'selectTokenNetworkFrom' ? 'from' : 'to'}
         onClose={() => {
           setWidgetState({
@@ -217,13 +224,13 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
               transition={{ delay: 0.3, duration: 0.5, type: 'spring', bounce: 0.3 }}
             >
               <TokenNetworkInput
+                portfolioMap={portfolioMap}
                 chain={fromChain}
                 token={fromToken}
                 direction='from'
                 theme={theme}
                 setAmount={setAmountToBeTransferred}
                 amount={amountToBeTransferred}
-                // balance='0.0'
                 onAnchorClick={() => {
                   setWidgetState({
                     ...widgetState,
@@ -253,10 +260,9 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
                 token={toToken}
                 direction='to'
                 theme={theme}
-                // balance='0.0'
                 amount={
                   toToken !== undefined && selectedRoute !== undefined
-                    ? toTokenReadable(toToken.decimals, getAmount(selectedRoute))
+                    ? toTokenReadable(toToken.decimals, selectedRoute.amount)
                     : '0'
                 }
                 onAnchorClick={() => {

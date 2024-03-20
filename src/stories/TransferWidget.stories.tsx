@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { TransferWidget } from '../components/TransferWidget';
+import { TWMock } from './TWMock';
 import { createWalletClient, custom } from 'viem';
 import { mainnet } from 'viem/chains';
 declare global {
@@ -12,18 +12,18 @@ const client = createWalletClient({
   transport: custom(window.ethereum),
 });
 
-const meta: Meta<typeof TransferWidget> = {
-  component: TransferWidget,
+const meta: Meta<typeof TWMock> = {
+  component: TWMock,
 };
 
-type Story = StoryObj<typeof TransferWidget>;
+type Story = StoryObj<typeof TWMock>;
 
 export default meta;
 
 export const Default: Story = {
   args: {
     isTestnet: true,
-    userAddress: '0x3ee16d933bc109641A3915D650B223EA40Aca096',
+    userAddress: '0x968961A3A78bCeb7F91323054eCB332b19887fBf',
   },
 };
 
@@ -35,7 +35,7 @@ export const BridgeSelected: Story = {
     toTokenAddress: '0x742DfA5Aa70a8212857966D491D67B09Ce7D6ec7',
     amountToBeTransferred: '1',
     isTestnet: true,
-    userAddress: '0x3ee16d933bc109641A3915D650B223EA40Aca096',
+    userAddress: '0x968961A3A78bCeb7F91323054eCB332b19887fBf',
     walletClient: client,
   },
 };
@@ -48,7 +48,7 @@ export const SwapSelected: Story = {
     toTokenAddress: '0x0000000000000000000000000000000000000000',
     amountToBeTransferred: '1',
     isTestnet: true,
-    userAddress: '0x3ee16d933bc109641A3915D650B223EA40Aca096',
+    userAddress: '0x968961A3A78bCeb7F91323054eCB332b19887fBf',
     walletClient: client,
   },
 };
