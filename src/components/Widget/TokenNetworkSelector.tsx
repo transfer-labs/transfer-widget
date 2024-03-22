@@ -24,17 +24,17 @@ const ChainSelector: FunctionComponent<ChainSelectorProps> = ({ chains, selected
       <div className='flex flex-row items-center w-full gap-4 overflow-x-auto'>
         {chains?.map((chain) => {
           const chainThemeClass =
-            selectedChain?.chain_id === chain.chain_id ? 'border-success-green' : 'border-transparent';
+            selectedChain?.chainId === chain.chainId ? 'border-success-green' : 'border-transparent';
           return (
             <div
-              key={chain.chain_id}
+              key={chain.chainId}
               className={`hover:cursor-pointer border-2 rounded-lg ${chainThemeClass}`}
               onClick={() => {
                 handleChainSelect(chain);
               }}
             >
               <DefaultTooltip label={chain.name} side='top'>
-                <img src={chain.logo_uri} className='w-10 h-10' />
+                <img src={chain.logoUri} className='w-10 h-10' />
               </DefaultTooltip>
             </div>
           );
@@ -118,7 +118,7 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({
               }}
             >
               <div className='flex flex-row gap-2 items-center w-full'>
-                <img className='w-8 h-8' src={token.logo_uri} />
+                <img className='w-8 h-8' src={token.logoUri} />
                 <div className='flex flex-col w-full'>
                   <div className='flex flex-row w-full items-end justify-between'>
                     <div className='flex flex-row items-end gap-2'>
@@ -129,9 +129,9 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({
                     </div>
                     {currentChain !== undefined &&
                       token !== undefined &&
-                      portfolioMap?.[currentChain.chain_id]?.[token.address] !== undefined && (
+                      portfolioMap?.[currentChain.chainId]?.[token.address] !== undefined && (
                         <p className={`text-accent-color font-manrope text-xs truncate`}>
-                          {truncate(portfolioMap[currentChain.chain_id][token.address].balance)}
+                          {truncate(portfolioMap[currentChain.chainId][token.address].balance)}
                         </p>
                       )}
                   </div>
@@ -151,7 +151,7 @@ const TokenSelector: FunctionComponent<TokenSelectorProps> = ({
               handleTokenSelect={handleTokenSelect}
               search={search}
               theme={theme}
-              chainId={currentChain.chain_id}
+              chainId={currentChain.chainId}
             />
           )}
       </div>

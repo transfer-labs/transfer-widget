@@ -1,6 +1,6 @@
 import React, { type FunctionComponent, useState } from 'react';
 import { ActionButton } from '../ActionButton';
-import { GasInfo, FeeInfo, TimeInfo } from '../Routes/RouteDetails';
+import { FeeInfo, TimeInfo } from '../Routes/RouteDetails';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TokenNetworkImage } from './TokenNetworkImage';
 import { type SupportedToken, type SupportedChain, type QuoteRoute } from '@argoplatform/transfer-sdk';
@@ -12,6 +12,7 @@ import { LinkText } from '../LinkText';
 import { FlipArrowIcon } from '../Icons/FlipArrowIcon';
 import { useTokenUtils } from '../../hooks/useTokenUtils';
 import { RouteSteps } from '../Routes/RouteSteps';
+import { useRoutes } from '../../hooks/useRoutes';
 
 export interface ReviewRouteProps {
   route: QuoteRoute;
@@ -41,6 +42,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
   onClose,
 }) => {
   const { toTokenReadable } = useTokenUtils();
+  const { getEstimateTime, getTotalFees } = useRoutes();
   const [isArrowClicked, setIsArrowClicked] = useState(false);
   return (
     <div className='w-full'>
@@ -102,14 +104,13 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, duration: 0.5, ease: 'easeInOut' }}
                 >
-                  {/* TODO replace */}
-                  <TimeInfo value={'~2 min'} color='accent-color' side='left' />
+                  <TimeInfo value={getEstimateTime(route.timeEstimate)} color='accent-color' side='left' />
                 </motion.div>
               </div>
 
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
                 <div className='flex flex-row gap-1 items-center justify-center'>
-                  <TokenNetworkImage tokenLogo={fromToken?.logo_uri} networkLogo={fromChain?.logo_uri} />
+                  <TokenNetworkImage tokenLogo={fromToken?.logoUri} networkLogo={fromChain?.logoUri} />
                   <div className='flex flex-col'>
                     <p
                       className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}
@@ -130,7 +131,15 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                   </div>
                 </div>
               </motion.div>
-              <div className='flex flex-row w-full justify-end'>
+              <div className='flex flex-row w-full justify-between'>
+                <div className='flex flex-row items-center'>
+                  {/* <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
+                    <GasInfo value={'$1.32'} color='unselected-text' side='right' />
+                  </motion.div> */}
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
+                    <FeeInfo value={getTotalFees(route.fees)} color='unselected-text' side='right' />
+                  </motion.div>
+                </div>
                 <FlipArrowIcon
                   tooltipText='View Route Steps'
                   isClicked={isArrowClicked}
@@ -164,18 +173,9 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
                 )}
               </AnimatePresence>
 
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
-                {/* TODO: Replace */}
-                <GasInfo value={'$1.32'} color='unselected-text' side='right' />
-              </motion.div>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
-                {/* TODO: Replace */}
-                <FeeInfo value={'$2.44'} color='unselected-text' side='right' />
-              </motion.div>
-
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>
                 <div className='flex flex-row gap-1 items-center justify-center'>
-                  <TokenNetworkImage tokenLogo={toToken?.logo_uri} networkLogo={toChain?.logo_uri} />
+                  <TokenNetworkImage tokenLogo={toToken?.logoUri} networkLogo={toChain?.logoUri} />
                   <div className='flex flex-col'>
                     <p
                       className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}
@@ -219,10 +219,7 @@ export const ReviewRoute: FunctionComponent<ReviewRouteProps> = ({
           {reviewState?.txnHash !== undefined && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
               <div className='w-full flex flex-col justify-start p-2 gap-2'>
-                <LinkText
-                  text='View on Block Explorer'
-                  link={`${fromChain?.block_explorer}tx/${reviewState.txnHash}`}
-                />
+                <LinkText text='View on Block Explorer' link={`${fromChain?.blockExplorer}tx/${reviewState.txnHash}`} />
                 {route.bridgeProvider !== undefined && (
                   <LinkText
                     text='View on Bridge Explorer'

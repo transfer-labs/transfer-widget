@@ -33,7 +33,7 @@ export function useTransfer(props?: UseTransferArgs): UseTransferReturn {
   React.useEffect(() => {
     async function _setSupportedChains(transfer: Transfer): Promise<void> {
       try {
-        const chains = await transfer.get_supported_chains();
+        const chains = await transfer.getSupportedChains();
         setSupportedChains(chains);
       } catch (e) {
         console.error(e);
@@ -80,7 +80,7 @@ export function useTransfer(props?: UseTransferArgs): UseTransferReturn {
       return supportedTokensByChain[chainId];
     }
     try {
-      const tokens = await props.transfer.get_supported_tokens(chainId);
+      const tokens = await props.transfer.getSupportedTokens(chainId);
       setSupportedTokensByChain((prev) => {
         return {
           ...prev,

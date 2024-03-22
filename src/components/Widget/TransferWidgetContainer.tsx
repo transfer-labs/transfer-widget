@@ -93,11 +93,11 @@ export const TransferWidgetContainer: FunctionComponent<TransferWidgetContainerP
     }
 
     if (widgetState.view === 'selectTokenNetworkFrom' && fromChain !== undefined) {
-      return supportedTokensByChain[fromChain.chain_id];
+      return supportedTokensByChain[fromChain.chainId];
     }
 
     if (widgetState.view === 'selectTokenNetworkTo' && toChain !== undefined) {
-      return supportedTokensByChain[toChain.chain_id];
+      return supportedTokensByChain[toChain.chainId];
     }
 
     return undefined;

@@ -20,7 +20,7 @@ export const AddNewToken: FunctionComponent<TokenSelectorProps> = ({ handleToken
       className={tokenThemeClass}
       onClick={() => {
         handleTokenSelect({
-          chain_id: chainId,
+          chainId,
           address: search,
           decimals: 18,
           symbol: shortenAddress(search, 2),

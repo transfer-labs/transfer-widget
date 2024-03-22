@@ -186,8 +186,8 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
 
       try {
         const routes = await transfer.getRoutes({
-          fromChainId: fromChain.chain_id,
-          toChainId: toChain.chain_id,
+          fromChainId: fromChain.chainId,
+          toChainId: toChain.chainId,
           fromTokenAddress: fromToken.address,
           toTokenAddress: toToken.address,
           fromUserAddress: userAddress,
@@ -262,8 +262,8 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     setLoadingState();
     try {
       const quoteRoutes = await transfer.getQuoteRoutes({
-        fromChainId: args.fromChain.chain_id,
-        toChainId: args.toChain.chain_id,
+        fromChainId: args.fromChain.chainId,
+        toChainId: args.toChain.chainId,
         fromTokenAddress: args.fromToken.address,
         toTokenAddress: args.toToken.address,
         fromUserAddress: args.fromAddress,
@@ -351,7 +351,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
       chainId: number,
       tokenAddress?: string,
     ): Promise<void> {
-      const chain = _supportedChains.find((chain) => chain.chain_id === chainId);
+      const chain = _supportedChains.find((chain) => chain.chainId === chainId);
       if (direction === 'from') {
         setFromChain(chain);
       } else {
@@ -383,7 +383,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
 
   function handleChainSelect(direction: Direction, chain?: SupportedChain): void {
     if (chain !== undefined) {
-      void getSupportedTokens(chain.chain_id);
+      void getSupportedTokens(chain.chainId);
     }
 
     if (direction === 'from') {

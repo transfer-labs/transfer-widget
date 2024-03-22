@@ -30,8 +30,8 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
   const [balance, setBalance] = useState<string>('0.0');
 
   useEffect(() => {
-    if (chain !== undefined && token !== undefined && portfolioMap?.[chain.chain_id]?.[token.address] !== undefined) {
-      setBalance(truncate(portfolioMap[chain.chain_id][token.address].balance));
+    if (chain !== undefined && token !== undefined && portfolioMap?.[chain.chainId]?.[token.address] !== undefined) {
+      setBalance(truncate(portfolioMap[chain.chainId][token.address].balance));
     } else {
       setBalance('0.0');
     }
@@ -96,7 +96,7 @@ export const TokenNetworkInput: FunctionComponent<TokenNetworkInputProps> = ({
                 </p>
                 <p className='text-accent-color font-manrope text-sm whitespace-nowrap'>{chain.name.split(' ')[0]}</p>
               </div>
-              <TokenNetworkImage tokenLogo={token.logo_uri} networkLogo={chain.logo_uri} />
+              <TokenNetworkImage tokenLogo={token.logoUri} networkLogo={chain.logoUri} />
             </div>
           ) : (
             <div className='flex flex-row gap-2 items-center' onClick={onAnchorClick}>

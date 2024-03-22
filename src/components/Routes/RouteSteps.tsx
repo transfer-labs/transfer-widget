@@ -26,10 +26,12 @@ export const RouteSteps: FunctionComponent<RouteStepsProps> = ({
   return (
     <div className='flex p-1'>
       <div className='relative'>
+        {/* line */}
         <div className='absolute w-[1px] bg-zinc-400 left-0 top-0 bottom-0 transform translate-x-[3px]'></div>
         {steps.map((item, index) => (
           <div key={index} className='flex flex-row items-center my-2'>
-            <div className={`bg-zinc-400 w-2 h-2 rounded-full`}></div>
+            {/* dots */}
+            <div className={`bg-zinc-400 w-[7px] h-[7px] rounded-full`}></div>
             <div className='flex flex-row ml-2 text-left gap-2 items-center'>
               {item.logoUri !== null && <img src={item.logoUri} className='w-3 h-3' />}
               <p className={`${textColor} font-manrope text-sm m-0`}>{item.text}</p>

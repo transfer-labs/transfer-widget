@@ -32,7 +32,7 @@ export const RouteContent: FunctionComponent<RouteContentProps> = ({
   const [viewRouteSteps, setViewRouteSteps] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { toTokenReadable } = useTokenUtils();
-  const { getTotalFees } = useRoutes();
+  const { getTotalFees, getEstimateTime } = useRoutes();
 
   return (
     <>
@@ -52,7 +52,7 @@ export const RouteContent: FunctionComponent<RouteContentProps> = ({
         {/* token, bridge info (unexpanded), and expanded button  */}
         <div className='relative flex flex-row justify-between w-full items-start sm:items-center'>
           <div className='flex flex-row gap-1 items-center justify-center'>
-            <TokenNetworkImage tokenLogo={toToken.logo_uri} networkLogo={toChain?.logo_uri} />
+            <TokenNetworkImage tokenLogo={toToken.logoUri} networkLogo={toChain?.logoUri} />
             <div className='flex flex-col'>
               <p className={theme === 'light' ? 'text-black' : 'text-white' + ' font-manrope text-xl font-medium'}>
                 {toTokenReadable(toToken.decimals, route.amount)} {toToken.symbol}
@@ -65,24 +65,6 @@ export const RouteContent: FunctionComponent<RouteContentProps> = ({
                 >
                   {toChain?.name}
                 </p>
-
-                {/* {_route.bridgeProvider !== undefined && (
-                    <>
-                      <DividerCircle theme={theme} />
-                      <div className='flex flex-row gap-.25 items-center'>
-                        <img src={_route.bridgeProvider?.logoUri} className='w-4 h-4' />
-                        <p
-                          className={
-                            theme === 'light'
-                              ? 'text-primary-dark'
-                              : 'text-accent-color' + ' font-manrope text-sm font-medium'
-                          }
-                        >
-                          {capitalize(_route.bridgeProvider.name)}
-                        </p>
-                      </div>
-                    </>
-                  )} */}
               </div>
             </div>
           </div>
@@ -159,13 +141,10 @@ export const RouteContent: FunctionComponent<RouteContentProps> = ({
           )}
         </AnimatePresence>
       </div>
-
-      {/* icons regarding the route details */}
-      {/* TODO: Replace */}
       <RouteDetails
         gas={'$0.00'}
-        fees={getTotalFees(route)}
-        time={'~2 min'}
+        fees={getTotalFees(route.fees)}
+        time={getEstimateTime(route.timeEstimate)}
         steps={route.dexs.length + (route.bridgeProvider !== undefined ? 1 : 0)}
       />
     </>

@@ -102,7 +102,7 @@ const StepsInfo: FunctionComponent<InfoProps> = ({ value = '0', side = 'bottom',
 export const RouteDetails: FunctionComponent<RouteDetailsProps> = ({ gas, fees, time, steps }) => {
   return (
     <div className='flex flex-row justify-between w-full items-center'>
-      <GasInfo value={gas} />
+      {/* <GasInfo value={gas} /> */}
       <FeeInfo value={fees} />
       <TimeInfo value={time} />
       <StepsInfo value={steps} />

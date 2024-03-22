@@ -4,13 +4,16 @@ import {
   type Route,
   type SupportedChain,
   type SupportedToken,
+  type Fee,
 } from '@argoplatform/transfer-sdk';
 import { capitalize } from '../utils/text';
+import { useBalance } from './useBalance';
 
 interface UseRoutesReturn {
   areRoutesEqual: (r1?: QuoteRoute, r2?: QuoteRoute) => boolean;
   findRoute: (selectedRoute: QuoteRoute, routeResponse: RouteResponse) => Route | undefined;
-  getTotalFees: (route: QuoteRoute) => string;
+  getTotalFees: (fees: Fee[]) => string;
+  getEstimateTime: (time: number) => string;
   getRouteSteps: (
     route: QuoteRoute,
     fromChain: SupportedChain,
@@ -26,6 +29,7 @@ interface RouteStep {
 }
 
 export function useRoutes(): UseRoutesReturn {
+  const { round } = useBalance();
   function areRoutesEqual(r1?: QuoteRoute, r2?: QuoteRoute): boolean {
     if (r1 === undefined || r2 === undefined) {
       return false;
@@ -33,7 +37,7 @@ export function useRoutes(): UseRoutesReturn {
       return r1.bridgeProvider.name === r2.bridgeProvider.name;
     } else {
       return (
-        r1.aggrgators.length === r2.aggrgators.length &&
+        r1.aggregators.length === r2.aggregators.length &&
         r1.dexs.length === r2.dexs.length &&
         r1.dexs.length > 0 &&
         r2.dexs.length > 0 &&
@@ -48,8 +52,19 @@ export function useRoutes(): UseRoutesReturn {
     return routeResponse.alternativeRoutes.find((route) => areRoutesEqual(selectedRoute, route));
   }
 
-  function getTotalFees(route: QuoteRoute): string {
-    return route.fees.reduce((acc, fee) => acc + fee.amount, 0).toString();
+  function getTotalFees(fees: Fee[]): string {
+    const fee = fees.reduce((acc, fee) => acc + (isNaN(fee.usdAmount) ? 0 : fee.usdAmount), 0);
+    return `$${round(fee, 2)}`;
+  }
+
+  function getEstimateTime(time: number): string {
+    if (time === 0) {
+      return 'Instant';
+    } else if (time < 60) {
+      return `~${time} sec`;
+    } else {
+      return `~${Math.floor(time / 60)} min`;
+    }
   }
 
   function getRouteSteps(
@@ -62,14 +77,14 @@ export function useRoutes(): UseRoutesReturn {
     const steps: RouteStep[] = [];
     steps.push({
       text: `Send ${fromToken.symbol} from ${fromChain.name}`,
-      logoUri: fromToken.logo_uri,
+      logoUri: fromToken.logoUri,
     });
 
     route.dexs.forEach((dex) => {
-      if (dex.chainId === fromChain.chain_id) {
+      if (dex.chainId === fromChain.chainId) {
         steps.push({
           text: `Swap on ${dex.name}`,
-          logoUri: fromChain.logo_uri,
+          logoUri: fromChain.logoUri,
         });
       }
     });
@@ -82,17 +97,17 @@ export function useRoutes(): UseRoutesReturn {
     }
 
     route.dexs.forEach((dex) => {
-      if (dex.chainId === toChain.chain_id) {
+      if (dex.chainId === toChain.chainId) {
         steps.push({
           text: `Swap on ${dex.name}`,
-          logoUri: toChain.logo_uri,
+          logoUri: toChain.logoUri,
         });
       }
     });
 
     steps.push({
       text: `Receive ${toToken.symbol} from ${toChain.name}`,
-      logoUri: toToken.logo_uri,
+      logoUri: toToken.logoUri,
     });
     return steps;
   }
@@ -102,5 +117,6 @@ export function useRoutes(): UseRoutesReturn {
     findRoute,
     getRouteSteps,
     getTotalFees,
+    getEstimateTime,
   };
 }
