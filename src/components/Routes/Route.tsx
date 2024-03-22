@@ -62,7 +62,7 @@ export const Route: FunctionComponent<RouteProps> = ({
     ) {
       return (
         <RouteContent
-          isBest
+          isBest={isBest}
           route={route}
           fromChain={fromChain}
           toChain={toChain}
