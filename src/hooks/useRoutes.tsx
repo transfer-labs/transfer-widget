@@ -96,14 +96,16 @@ export function useRoutes(): UseRoutesReturn {
       });
     }
 
-    route.dexs.forEach((dex) => {
-      if (dex.chainId === toChain.chainId) {
-        steps.push({
-          text: `Swap on ${dex.name}`,
-          logoUri: toChain.logoUri,
-        });
-      }
-    });
+    if (fromChain.chainId !== toChain.chainId) {
+      route.dexs.forEach((dex) => {
+        if (dex.chainId === toChain.chainId) {
+          steps.push({
+            text: `Swap on ${dex.name}`,
+            logoUri: toChain.logoUri,
+          });
+        }
+      });
+    }
 
     steps.push({
       text: `Receive ${toToken.symbol} from ${toChain.name}`,
