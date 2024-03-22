@@ -10,7 +10,7 @@ export interface TokenSelectorProps {
   chainId: number;
 }
 export const AddNewToken: FunctionComponent<TokenSelectorProps> = ({ handleTokenSelect, theme, search, chainId }) => {
-  const { shortenAddress } = useTokenUtils();
+  const { getEmptyToken } = useTokenUtils();
   const tokenThemeClass = `flex w-full flex-row justify-between items-center p-1 hover:bg-shadow-element-${
     theme === 'light' ? 'light' : 'dark'
   } cursor-pointer rounded-lg`;
@@ -19,13 +19,7 @@ export const AddNewToken: FunctionComponent<TokenSelectorProps> = ({ handleToken
     <div
       className={tokenThemeClass}
       onClick={() => {
-        handleTokenSelect({
-          chainId,
-          address: search,
-          decimals: 18,
-          symbol: shortenAddress(search, 2),
-          name: 'Unknown token',
-        });
+        handleTokenSelect(getEmptyToken(search, chainId));
       }}
     >
       <div className='flex flex-row gap-4 items-center w-full'>

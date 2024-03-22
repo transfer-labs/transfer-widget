@@ -74,7 +74,7 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
     userAddress,
     transfer,
   });
-  const { toTokenDecimals } = useTokenUtils();
+  const { toTokenDecimals, getEmptyToken } = useTokenUtils();
   const { findRoute } = useRoutes();
   const [fromToken, setFromToken] = useState<SupportedToken | undefined>(undefined);
   const [toToken, setToToken] = useState<SupportedToken | undefined>(undefined);
@@ -362,7 +362,10 @@ export const TransferWidget: FunctionComponent<TransferWidgetProps> = ({
         const tokens = await getSupportedTokens(chainId);
         const lowerCaseTokenAddress = tokenAddress.toLowerCase();
         if (tokens !== undefined) {
-          const token = tokens.find((token) => token.address.toLowerCase() === lowerCaseTokenAddress);
+          let token = tokens.find((token) => token.address.toLowerCase() === lowerCaseTokenAddress);
+          if (token === undefined) {
+            token = getEmptyToken(tokenAddress, chainId);
+          }
           if (direction === 'from') {
             setFromToken(token);
           } else {
